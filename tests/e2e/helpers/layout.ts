@@ -26,7 +26,7 @@ const TAP_TARGET_SELECTOR = 'button, a, [role=tab], input, select';
 /**
  * Asserts every visible `button`, `a`, `[role=tab]`, `input` and `select` is at least
  * `min` × `min` CSS px (Conventions §5). Elements inside `[data-inline-text]` (links in running
- * text) are skipped. On failure, the message lists each offending element with its text.
+ * text) and visually-hidden (sr-only) elements are skipped. On failure, the message lists each offending element with its text.
  */
 export async function expectTapTargets(page: Page, min = 44): Promise<void> {
   const offenders: SmallTapTarget[] = await page.evaluate(
@@ -38,11 +38,14 @@ export async function expectTapTargets(page: Page, min = 44): Promise<void> {
         }
         const style = window.getComputedStyle(element);
         const rect = element.getBoundingClientRect();
+        // Visually-hidden (sr-only) elements, e.g. the skip link until focused, are not visible.
+        const visuallyHidden =
+          rect.width <= 1 ||
+          rect.height <= 1 ||
+          style.clip === 'rect(0px, 0px, 0px, 0px)' ||
+          style.clipPath === 'inset(50%)';
         const visible =
-          rect.width > 0 &&
-          rect.height > 0 &&
-          style.visibility !== 'hidden' &&
-          style.display !== 'none';
+          !visuallyHidden && style.visibility !== 'hidden' && style.display !== 'none';
         if (!visible) {
           continue;
         }
