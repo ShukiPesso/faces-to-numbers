@@ -228,7 +228,7 @@
   wave: 6
   size: S
   status: todo
-  depends_on: [C-01, C-02, C-04, H-02, H-05, D-09, C-05]
+  depends_on: [C-01, C-02, C-04, H-02, H-05, D-09, C-05, C-06]
   owns:
     - review/H-06-signoff.md
     - content-source/
@@ -313,3 +313,44 @@
     - "Every open C-02 item for a civilian has a verdict with sources; every proposed correction has exact old/new text."
   verify:
     - "test -f review/C-05-laad.md"
+
+- id: C-06
+  title: Apply the content corrections Shuki approved from C-02 and C-05
+  agent: content
+  model: opus
+  wave: 3
+  size: M
+  status: todo
+  depends_on: [C-05, F-02, T-01]
+  owns:
+    - content-source/
+    - src/content/data/
+  reads:
+    - review/C-02-verification.md
+    - review/C-05-laad.md
+    - content-source/README.md
+    - docs/DECISIONS_ANSWERS.md
+  goal: "content-source/ says exactly what the sources say: every correction Shuki approved on 2026-10-11 is applied, logged and regenerated, and nothing else changes."
+  context: |
+    Shuki approved (2026-10-11): apply ALL proposed edits in review/C-05-laad.md §4 ("ready-to-approve list"),
+    plus the C-02 corrections that C-05 left standing for police/soldier/station rows, and the spelling הירש (not הרש)
+    for Hersh Goldberg-Polin everywhere it appears in visitor-facing text. Keep the id `hersh-goldberg-polin` and the
+    file name unchanged. Items marked STILL OPEN stay as they are, EXCEPT Awad's bandages/tourniquets and "early
+    morning" lines, which C-05 marks REMOVE — apply the AP-based replacement C-05 gives. Eliyahu's daughter's name
+    stays as it is until Shuki confirms it.
+    For Ofir and Nitzan's burial: use C-05's wording (buried in Even Yehuda, reinterred in Kfar Aza in September 2025)
+    — do NOT apply C-02's older "Even Yehuda" edit alone.
+  steps:
+    - "Make a checklist from C-05 §4 and the C-02 MISMATCH/MINOR rows not overridden by C-05. For each item note file, section key, old text, new text, source."
+    - "Apply each edit with an exact search-and-replace of the old text. If the old text is not found verbatim, do not improvise: list it as SKIPPED with the reason."
+    - "Add new sources exactly as '- <title> — <url>' lines in the sources section; fix the dead Wikipedia link for Hersh to the live title C-05 names."
+    - "Update content-source/CORRECTIONS.md (one row per change: person, before → after, source, date 2026-10-11, 'approved by Shuki') and content-source/VERIFICATION.md (set each item's new status)."
+    - "Run npm run content:build, then npm run content:check, npm test (integrity tests must pass), npm run lint, npm run typecheck."
+    - "Also check the station files and tour.md for the same wording (e.g. 'שער' on route 232, 'הרש')."
+  dont:
+    - "Never change wording that is not on the approved list. Never add facts. Do not touch ids, file names or front-matter keys except `name` for the הירש spelling."
+  acceptance:
+    - "Every approved item is APPLIED or SKIPPED-with-reason in reports/C-06.md; CORRECTIONS.md and VERIFICATION.md updated; content:check and all tests pass."
+    - "`grep -rn 'הרש ' content-source/ src/content/data/` finds no visitor-facing occurrence of the old spelling."
+  verify:
+    - "npm run content:build && npm run content:check && npm test && npm run lint && npm run typecheck"

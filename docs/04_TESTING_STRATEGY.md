@@ -101,7 +101,7 @@ Fixture JSON is written by hand (it is fictional, so no converter is needed) and
 | CT-SRC-01 | `SourceList` | renders title + publisher, links open externally, URL text in `<bdi dir="ltr">` |
 | CT-DEPTH-01 | `DepthTabs` | `role="tablist"`, 3 tabs, `aria-selected`; ArrowLeft = next / ArrowRight = previous (RTL); Home/End; selection persisted via `setDepth` |
 | CT-GATE-01 | `ContentWarningGate` | `standard` → children visible; `graphic` → children absent until "show"; "skip" keeps them hidden and moves focus past; opened state remembered in session |
-| CT-SILENCE-01 | `SilenceMoment` | idle → start button with seconds; running → countdown (fake timers); ends quietly with end message; no `<audio>`, no vibration call; reduced motion → no animation class |
+| CT-SILENCE-01 | `SilenceMoment` | idle → start button with seconds; running → calm static panel (title + prompt + stop button), **no changing digits in the DOM** while running (fake timers: text identical at t=1s and t=seconds-1); after `seconds` → end message; stop → end message immediately; no `<audio>`, no vibration call; reduced motion → no animation class |
 | CT-NEARBY-01 | `NearbyBanner` | renders each state (idle/locating/denied/unavailable/at/near/none) with correct text, `aria-live="polite"`, link to station when at/near |
 | CT-CARD-01 | `StationCard` | order badge, title, subtitle, duration text, kind label, visited mark, link to `#/station/<slug>` |
 | CT-PCARD-01 | `PersonCard` | name + honorific, subtitle, opening line, link to `#/person/<id>`; "סיפור נלווה" label only when rendered with `variant="companion"` |
