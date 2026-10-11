@@ -6,7 +6,7 @@
   model: opus
   wave: 1
   size: S
-  status: todo
+  status: done
   depends_on: []
   owns:
     - design/01-principles.md

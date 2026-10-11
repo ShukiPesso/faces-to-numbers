@@ -6,7 +6,7 @@
   model: fable
   wave: 1
   size: L
-  status: todo
+  status: done
   depends_on: []
   owns:
     - review/C-02-verification.md
@@ -45,7 +45,7 @@
   model: sonnet
   wave: 1
   size: M
-  status: todo
+  status: done
   depends_on: []
   owns:
     - review/C-03-coordinates.md

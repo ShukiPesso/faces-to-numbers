@@ -7,7 +7,7 @@
   model: sonnet
   wave: 1
   size: M
-  status: todo
+  status: done
   depends_on: [P0-02]
   owns:
     - src/lib/geo.ts
@@ -41,7 +41,7 @@
   model: fable
   wave: 1
   size: L
-  status: todo
+  status: done
   depends_on: [P0-02]
   owns:
     - scripts/content/
@@ -92,7 +92,7 @@
   model: sonnet
   wave: 1
   size: M
-  status: todo
+  status: done
   depends_on: [P0-02]
   owns:
     - src/lib/format.ts

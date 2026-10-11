@@ -28,18 +28,18 @@ P0-01 → P0-02 → F-02 → F-03 → F-06 → F-08 → F-16 → F-18 → T-10 �
 
 | ID | Title | Agent | Model | Size | Depends on | Status |
 |---|---|---|---|---|---|---|
-| [C-02](tasks/C-02.md) | Verify every quote and key fact against the original articles | content | fable | L | — | todo |
-| [C-03](tasks/C-03.md) | Candidate coordinates for every station (for Shuki to verify) | content | sonnet | M | — | todo |
-| [D-01](tasks/D-01.md) | Design principles and tone | design | opus | S | — | todo |
+| [C-02](tasks/C-02.md) | Verify every quote and key fact against the original articles | content | fable | L | — | done |
+| [C-03](tasks/C-03.md) | Candidate coordinates for every station (for Shuki to verify) | content | sonnet | M | — | done |
+| [D-01](tasks/D-01.md) | Design principles and tone | design | opus | S | — | done |
 | [D-02](tasks/D-02.md) | Design tokens with a contrast table | design | sonnet | M | D-01 | todo |
 | [D-03](tasks/D-03.md) | Component specifications for every component | design | opus | L | D-02 | todo |
 | [D-05](tasks/D-05.md) | Route schematic map as an offline SVG | design | sonnet | M | D-02 | todo |
 | [D-06](tasks/D-06.md) | Icon list (Lucide) with RTL rules | design | haiku | S | D-01 | todo |
-| [F-01](tasks/F-01.md) | Geo and link utilities with 100% test coverage | dev | sonnet | M | P0-02 | todo |
-| [F-02](tasks/F-02.md) | Content converter — Markdown sources to validated JSON (anti-hallucination core) | dev | fable | L | P0-02 | todo |
-| [F-04](tasks/F-04.md) | Format and storage utilities with 100% test coverage | dev | sonnet | M | P0-02 | todo |
+| [F-01](tasks/F-01.md) | Geo and link utilities with 100% test coverage | dev | sonnet | M | P0-02 | done |
+| [F-02](tasks/F-02.md) | Content converter — Markdown sources to validated JSON (anti-hallucination core) | dev | fable | L | P0-02 | done |
+| [F-04](tasks/F-04.md) | Format and storage utilities with 100% test coverage | dev | sonnet | M | P0-02 | done |
 | [H-03](tasks/H-03.md) | Inform the families and record their consent (runs in parallel; blocks public launch) | human | human | L | — | todo |
-| [O-02](tasks/O-02.md) | Continuous integration — checks, bundle budgets, end-to-end on every pull request | devops | sonnet | M | P0-01, P0-03 | todo |
+| [O-02](tasks/O-02.md) | Continuous integration — checks, bundle budgets, end-to-end on every pull request | devops | sonnet | M | P0-01, P0-03 | done |
 
 ## Wave 2 — Building blocks
 

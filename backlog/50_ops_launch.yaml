@@ -6,7 +6,7 @@
   model: sonnet
   wave: 1
   size: M
-  status: todo
+  status: done
   depends_on: [P0-01, P0-03]
   owns:
     - .github/workflows/ci.yml
