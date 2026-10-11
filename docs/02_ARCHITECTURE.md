@@ -60,7 +60,7 @@ Hebrew fonts are bundled (not Google Fonts CDN) so they work offline. Max 2 fami
 
 | Area | Package | Major |
 |---|---|---|
-| Runtime | Node.js | 20 LTS |
+| Runtime | Node.js | 20 LTS (≥ 20.19; CI uses 20) |
 | Build | `vite` | 5 |
 | UI | `react`, `react-dom` | 18 |
 | Language | `typescript` (strict) | 5 |
@@ -68,9 +68,9 @@ Hebrew fonts are bundled (not Google Fonts CDN) so they work offline. Max 2 fami
 | Styling | `tailwindcss`, `postcss`, `autoprefixer` | 3 / 8 / 10 |
 | Validation | `zod` | 3 |
 | Markdown | `react-markdown` (no raw HTML) | 9 |
-| Icons | `lucide-react` | 0 (latest) |
+| Icons | `lucide-react` | 1 |
 | Fonts | `@fontsource/<family>` | 5 |
-| PWA | `vite-plugin-pwa` | 0 (latest) |
+| PWA | `vite-plugin-pwa` | 2 (`@vitejs/plugin-react` stays on 5 — v6 needs Vite 8) |
 | Unit/Component tests | `vitest`, `@testing-library/react`, `@testing-library/user-event`, `@testing-library/jest-dom`, `jsdom` | 2 / 16 / 14 / 6 / 25 |
 | E2E | `@playwright/test`, `@axe-core/playwright` | 1 / 4 |
 | Lint/format | `eslint` (flat config), `typescript-eslint`, `eslint-plugin-react-hooks`, `prettier` | 9 / 8 / 5 / 3 |
