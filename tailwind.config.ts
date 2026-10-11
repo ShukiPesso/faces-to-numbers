@@ -91,7 +91,7 @@ const config: Config = {
       },
       borderWidth: {
         hairline: 'var(--border-width-hairline)',
-        accent: 'var(--border-width-accent)',
+        'accent-line': 'var(--border-width-accent)',
       },
       fontWeight: {
         regular: 'var(--font-weight-regular)',
