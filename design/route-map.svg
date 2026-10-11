@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 640" width="360" height="640" role="img" aria-labelledby="rm-t rm-d" font-family="Assistant, Heebo, 'Arial Hebrew', Arial, 'Noto Sans Hebrew', system-ui, sans-serif">
+<title id="rm-t">תרשים סכמטי של המסלול</title>
+<desc id="rm-d">תרשים סכמטי, לא מפה ולא בקנה מידה, של שבע תחנות המסלול מצפון לדרום: שדרות, כביש המוות והחטיפות, גבעת התצפיתניות, מיגונית ענר שפירא, מתחם פסטיבל נובה, חניון הרכבים השרופים והדרך הביתה. גבול רצועת עזה מסומן בקו מקווקו בצד המערבי.</desc>
+<rect width="360" height="640" fill="#FAF8F4"/>
+<g fill="#595959" font-size="14">
+<line x1="30" y1="50" x2="30" y2="560" stroke="#595959" stroke-width="2" stroke-dasharray="3 6"/>
+<text transform="translate(18 305) rotate(-90)" text-anchor="middle">גבול רצועת עזה</text>
+<path d="M334 40V68M334 40l-5 8M334 40l5 8" fill="none" stroke="#595959" stroke-width="2"/>
+<text x="326" y="60" text-anchor="end">צפון</text>
+</g>
+<g fill="none" stroke="#1F3864" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+<path id="route-line-drive" d="M170 85C170 120 140 150 140 190C140 230 105 250 100 290" stroke-dasharray="10 8"/>
+<path id="route-line-stops" d="M100 290C95 330 90 350 90 395C90 440 120 460 130 500C210 520 275 450 270 375"/>
+<path id="route-line-closing" d="M270 375C305 380 322 400 322 430C322 470 335 495 342 522" stroke-dasharray="10 8"/>
+<path d="M330 508L342 522L326 522" stroke-width="3"/>
+</g>
+<g id="markers" font-size="16" font-weight="600">
+<g id="marker-sderot"><circle cx="170" cy="85" r="15" fill="#FFFFFF" stroke="#1F3864" stroke-width="3"/><text x="170" y="91" text-anchor="middle" fill="#1F3864">1</text><text x="194" y="91" fill="#1B1B1F">שדרות</text></g>
+<g id="marker-route-232"><circle cx="140" cy="190" r="15" fill="#FFFFFF" stroke="#1F3864" stroke-width="3"/><text x="140" y="196" text-anchor="middle" fill="#1F3864">2</text><text x="164" y="196" fill="#1B1B1F">כביש המוות והחטיפות</text></g>
+<g id="marker-observers-hill"><circle cx="100" cy="290" r="15" fill="#FFFFFF" stroke="#1F3864" stroke-width="3"/><text x="100" y="296" text-anchor="middle" fill="#1F3864">3</text><text x="124" y="296" fill="#1B1B1F">גבעת התצפיתניות</text></g>
+<g id="marker-reim-shelter"><circle cx="90" cy="395" r="15" fill="#FFFFFF" stroke="#1F3864" stroke-width="3"/><text x="90" y="401" text-anchor="middle" fill="#1F3864">4</text><text x="114" y="401" fill="#1B1B1F">מיגונית ענר שפירא</text></g>
+<g id="marker-nova"><circle cx="130" cy="500" r="15" fill="#FFFFFF" stroke="#1F3864" stroke-width="3"/><text x="130" y="506" text-anchor="middle" fill="#1F3864">5</text><text x="130" y="540" text-anchor="middle" fill="#1B1B1F">מתחם פסטיבל נובה</text></g>
+<g id="marker-tkuma"><circle cx="270" cy="375" r="15" fill="#FFFFFF" stroke="#1F3864" stroke-width="3"/><text x="270" y="381" text-anchor="middle" fill="#1F3864">6</text><text x="290" y="326" text-anchor="middle" fill="#1B1B1F">חניון הרכבים</text><text x="290" y="346" text-anchor="middle" fill="#1B1B1F">השרופים</text></g>
+<g id="marker-closing-drive"><circle cx="322" cy="430" r="15" fill="#FFFFFF" stroke="#1F3864" stroke-width="3"/><text x="322" y="436" text-anchor="middle" fill="#1F3864">7</text><text x="348" y="548" text-anchor="end" fill="#1B1B1F">הדרך הביתה</text></g>
+</g>
+<g font-size="14" fill="#595959">
+<line x1="60" y1="590" x2="100" y2="590" stroke="#1F3864" stroke-width="3" stroke-dasharray="10 8" stroke-linecap="round"/>
+<text x="110" y="595">נסיעה</text>
+<line x1="180" y1="590" x2="220" y2="590" stroke="#1F3864" stroke-width="3" stroke-linecap="round"/>
+<text x="230" y="595">עצירה</text>
+<text x="180" y="620" text-anchor="middle">תרשים סכמטי, לא מפה ולא בקנה מידה</text>
+</g>
+</svg>

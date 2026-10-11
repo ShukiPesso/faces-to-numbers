@@ -41,6 +41,21 @@ Radius 4 / 8 / 12px. `--shadow-card` `0 1px 2px rgba(27,27,31,.06)`. Motion 150m
 `--ease-standard` `cubic-bezier(.2,0,0,1)`. Layout `--measure` 68ch, `--content-max` 720px, `--tap-min` 44px.
 Focus ring: `outline: var(--focus-ring-width) solid var(--color-focus); outline-offset: var(--focus-ring-offset)`
 (3px, offset 2px).
+`--focus-ring` is a shorthand for the first two parts, `3px solid var(--color-focus)`: use
+`outline: var(--focus-ring); outline-offset: var(--focus-ring-offset)`. The offset stays separate and must
+never be dropped (Conventions §5 `--focus-ring` maps to this).
+
+### Added for D-03 (R-1 to R-4)
+
+| Token | Value | Use |
+|---|---|---|
+| `--icon-sm` / `--icon-md` | 20px / 24px | Lucide icon sizes (stroke 1.75 to 2) |
+| `--border-width-hairline` | 1px | card and control borders |
+| `--border-width-accent` | 4px | gold/red start-borders, active nav/tab indicator (the thin-line limit in `01-principles.md`) |
+| `--z-sticky` / `--z-nav` / `--z-skip` | 10 / 20 / 30 | sticky prev/next bar / BottomNav / focused skip link |
+| `--sidenav-width` | 18rem (288px) | SideNav column at lg and up |
+| `--bottomnav-size`, `--stickybar-size` | 4rem, 4.5rem (fallbacks) | reserved bottom space; **set at runtime by layout code** (F-06, from the measured height of the bars) on the root element, which overrides these fallbacks |
+
 
 ## Contrast table
 
