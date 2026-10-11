@@ -41,6 +41,8 @@ const config: Config = {
       read: ['var(--text-read)', { lineHeight: 'var(--leading-read)' }],
     },
     spacing: {
+      0: '0px',
+      px: '1px',
       1: 'var(--space-1)',
       2: 'var(--space-2)',
       3: 'var(--space-3)',
@@ -55,9 +57,11 @@ const config: Config = {
       12: 'var(--space-12)',
     },
     borderRadius: {
+      none: '0px',
       sm: 'var(--radius-sm)',
       md: 'var(--radius-md)',
       lg: 'var(--radius-lg)',
+      full: '9999px',
     },
     boxShadow: {
       card: 'var(--shadow-card)',
@@ -66,6 +70,34 @@ const config: Config = {
       maxWidth: {
         measure: 'var(--measure)',
         content: 'var(--content-max)',
+      },
+      width: {
+        'icon-sm': 'var(--icon-sm)',
+        'icon-md': 'var(--icon-md)',
+        sidenav: 'var(--sidenav-width)',
+      },
+      height: {
+        'icon-sm': 'var(--icon-sm)',
+        'icon-md': 'var(--icon-md)',
+      },
+      size: {
+        'icon-sm': 'var(--icon-sm)',
+        'icon-md': 'var(--icon-md)',
+      },
+      zIndex: {
+        sticky: 'var(--z-sticky)',
+        nav: 'var(--z-nav)',
+        skip: 'var(--z-skip)',
+      },
+      borderWidth: {
+        hairline: 'var(--border-width-hairline)',
+        accent: 'var(--border-width-accent)',
+      },
+      fontWeight: {
+        regular: 'var(--font-weight-regular)',
+        semibold: 'var(--font-weight-semibold)',
+        display: 'var(--font-weight-display)',
+        'display-bold': 'var(--font-weight-display-bold)',
       },
     },
   },
