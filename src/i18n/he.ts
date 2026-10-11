@@ -7,7 +7,7 @@
 export const he = {
   'app.name': 'פנים למספרים',
   'app.tagline': 'סיור עצמאי בעוטף עזה, בעקבות 7 באוקטובר',
-  'app.skipToContent': 'דילוג לתוכן',
+  'app.skipToContent': 'לדלג לתוכן',
   'app.titleSuffix': ' · פנים למספרים',
 
   'nav.label': 'ניווט ראשי',
@@ -41,11 +41,12 @@ export const he = {
   'station.access': 'גישה ושעות',
   'station.lastVerified': 'המידע נבדק לאחרונה ב-{date}',
   'station.navigate': 'ניווט לתחנה',
-  'station.navigateWaze': 'ניווט ב-Waze',
-  'station.navigateGoogle': 'ניווט ב-Google Maps',
-  'station.locationUnverified': 'המיקום המדויק של התחנה עדיין בבדיקה. אפשר להיעזר בתיאור.',
-  'station.markVisited': 'סימון שהגענו לכאן',
-  'station.unmarkVisited': 'ביטול הסימון',
+  'station.navigateWaze': 'לנווט ב-Waze',
+  'station.navigateGoogle': 'לנווט ב-Google Maps',
+  'station.locationUnverified':
+    'המיקום בבדיקה, ולכן אין כאן קישורי ניווט. אפשר להיעזר בתיאור התחנה.',
+  'station.markVisited': 'לסמן שביקרתם כאן',
+  'station.unmarkVisited': 'לבטל את הסימון',
   'station.next': 'לתחנה הבאה',
   'station.prev': 'לתחנה הקודמת',
   'station.end': 'סוף המסלול',
@@ -63,7 +64,7 @@ export const he = {
   'person.sources': 'מקורות',
   'person.guideNote': 'הערה',
   'person.companion': 'סיפור נלווה',
-  'person.backToStation': 'חזרה לתחנה: {title}',
+  'person.backToStation': 'לחזור לתחנה: {title}',
 
   'depth.label': 'כמה זמן יש לכם',
   'depth.s30': '30 שניות',
@@ -72,18 +73,18 @@ export const he = {
   'depth.s30.hint': 'טקסט קצר להקראה בקול',
 
   'warning.title': 'לפני שממשיכים',
-  'warning.body': 'בהמשך יש תיאור של פציעה ומוות. אפשר לקרוא, ואפשר לדלג.',
+  'warning.body': 'הקטע הבא כולל תיאורים קשים. אפשר לקרוא אותו, ואפשר לדלג עליו.',
   'warning.show': 'להציג את הקטע',
   'warning.skip': 'לדלג על הקטע',
-  'warning.skipped': 'הקטע הוסתר. אפשר לחזור אליו בכל רגע.',
+  'warning.skipped': 'הקטע לא מוצג. אפשר להציג אותו בכל רגע.',
 
   'silence.title': 'רגע של שקט',
   'silence.start': 'להתחיל {seconds} שניות של שקט',
   'silence.remaining': 'נותרו {seconds} שניות',
-  'silence.ended': 'תודה שעצרתם.',
+  'silence.ended': 'רגע השקט הסתיים. אפשר להמשיך כשתרצו.',
   'silence.stop': 'לסיים',
 
-  'photo.pending': 'התמונה תתווסף באישור המשפחה',
+  'photo.pending': 'תמונה תתווסף רק באישור המשפחה',
   'photo.credit': 'צילום: {credit}',
 
   'nearby.button': 'איפה אני',
@@ -96,16 +97,16 @@ export const he = {
   'nearby.unavailable': 'לא ניתן לאתר מיקום כרגע. אפשר לבחור תחנה מהרשימה.',
   'nearby.open': 'לפתוח את התחנה',
 
-  'offline.ready': 'הסיור שמור במכשיר וזמין גם בלי קליטה',
-  'offline.now': 'אין כרגע חיבור. כל התוכן עדיין זמין.',
-  'update.available': 'יש גרסה מעודכנת של הסיור',
+  'offline.ready': 'הסיור שמור במכשיר וזמין גם בלי קליטה.',
+  'offline.now': 'אין כרגע חיבור. התוכן שנשמר במכשיר זמין גם עכשיו.',
+  'update.available': 'יש גרסה מעודכנת של הסיור.',
   'update.reload': 'לעדכן',
 
   'readAloud.label': 'מצב הקראה',
   'readAloud.on': 'מצב הקראה פעיל',
   'readAloud.off': 'מצב הקראה כבוי',
 
-  'share.button': 'שיתוף',
+  'share.button': 'לשתף',
   'share.copied': 'הקישור הועתק',
   'share.failed': 'לא ניתן לשתף. אפשר להעתיק את הכתובת מהדפדפן.',
 
@@ -121,13 +122,13 @@ export const he = {
 
   'notFound.title': 'הדף לא נמצא',
   'notFound.body': 'ייתכן שהקישור שגוי או שהדף הועבר.',
-  'notFound.home': 'חזרה לדף הבית',
+  'notFound.home': 'לחזור לדף הבית',
 
   'error.title': 'משהו השתבש',
-  'error.body': 'אפשר לטעון את הדף מחדש. התוכן שמור במכשיר.',
+  'error.body': 'אפשר לנסות לטעון את הדף מחדש.',
   'error.reload': 'לטעון מחדש',
 
-  'common.close': 'סגירה',
+  'common.close': 'לסגור',
   'common.externalLink': '(נפתח בחלון חדש)',
 } as const;
 
