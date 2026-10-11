@@ -1,0 +1,23 @@
+{
+  "id": "test-person-2",
+  "order": 2,
+  "sourceFile": "content-source/people/00_test-person-2.md",
+  "name": "דמות בדיקה 2",
+  "pronoun": "she",
+  "subtitle": "תיאור בדיוני של דמות בדיקה 2",
+  "stationIds": ["test-b"],
+  "opening": "משפט פתיחה בדיוני של דמות בדיקה 2.",
+  "oct7": "טקסט בדיוני של דמות בדיקה 2 בסעיף המוסתר עד לחיצה.",
+  "oct7Sensitivity": "graphic",
+  "personality": "טקסט אופי בדיוני של דמות בדיקה 2.",
+  "past": "טקסט עבר בדיוני של דמות בדיקה 2.",
+  "quote": { "text": "ציטוט בדיוני של דמות בדיקה 2", "by": "דוברת בדיונית 2" },
+  "guideLevels": {
+    "s30": "טקסט בדיוני של חצי דקה עבור דמות בדיקה 2.",
+    "m2": "טקסט בדיוני של שתי דקות עבור דמות בדיקה 2.",
+    "m5": "טקסט בדיוני של חמש דקות עבור דמות בדיקה 2."
+  },
+  "photo": { "status": "pending" },
+  "consent": { "family": "not_contacted" },
+  "sources": [{ "title": "מקור בדיוני 2", "url": "https://example.com/test-person-2" }]
+}
