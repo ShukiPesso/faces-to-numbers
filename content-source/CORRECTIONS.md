@@ -61,7 +61,7 @@ Every row: date 2026-10-11 · approved by Shuki · applied by exact search-and-r
 | Nitzan Libstein (`after`) | ״נטמנו זה לצד זה באדמת כפר עזה״ → ״נטמנו זה לצד זה – תחילה באבן יהודה, ומספטמבר 2025 באדמת כפר עזה״ | Le'ad 43503; Izkor; ynet | 2026-10-11 | approved by Shuki |
 | Nitzan Libstein (`quote`) | two sentences joined with ״.״ → joined with ״…״ (marks the cut) | Le'ad 43503 (same ellipsis); ynet byp11keefa | 2026-10-11 | approved by Shuki |
 | Nitzan Libstein (`sources`) | added Le'ad 43503 | — | 2026-10-11 | approved by Shuki |
-| Hersh Goldberg-Polin (`name`, all sections) | הרש → הירש (id `hersh-goldberg-polin` and file name unchanged; station 04 talkingPoint not yet changed — see note below) | Le'ad 44204 header; Hapoel; ynet; Kan | 2026-10-11 | approved by Shuki |
+| Hersh Goldberg-Polin (`name`, all sections, station 04) | הרש → הירש (id `hersh-goldberg-polin` and file name unchanged) | Le'ad 44204 header; Hapoel; ynet; Kan | 2026-10-11 | approved by Shuki |
 | Hersh Goldberg-Polin (`oct7`) | ״נקטעה זרועו השמאלית״ → ״נקטעה ידו השמאלית מתחת למרפק״ | Le'ad 44204; Times of Israel | 2026-10-11 | approved by Shuki |
 | Hersh Goldberg-Polin (`personality`) | ״חובב טיולים שתכנן מסע ארוך בעולם״ → ״תכנן לצאת בדצמבר 2023 לטיול ארוך של שנתיים ברחבי העולם״ | Le'ad 44204; Times of Israel | 2026-10-11 | approved by Shuki |
 | Hersh Goldberg-Polin (`past`) | stitched quote by ״אחד מחבריו ליציע״ → „אנחנו ידענו שהירש זה שם נרדף לאור, אהבה ושלום […] …ביד” — חבריו לארגון האוהדים של הפועל ירושלים | hapoel 34818 | 2026-10-11 | approved by Shuki |
@@ -92,5 +92,8 @@ Every row: date 2026-10-11 · approved by Shuki · applied by exact search-and-r
 | Raz Peretz (`after`) | ״אחרי כשנה וחצי של מאמץ ואלפי שעות התנדבות נחנך האתר״ → ״נחנך האתר״; ״ולצידם **גינה מוזיקלית**״ → ״ולצידה מתוכננת גינה מוזיקלית״ | not found (duration/hours); ynet r1dihrh30 + Izkor (garden planned) | 2026-10-11 | approved by Shuki |
 | Station 01 Sderot (`background`) | ״בקרב על שדרות נפלו 11 שוטרים״ → ״בטבח בשדרות נרצחו 11 שוטרים״ | Kan 880715 | 2026-10-11 | approved by Shuki |
 | Station 06 Tkuma (`accessNotes`, `sources`) | ״לפי מידע שפורסם ב-2025, האתר פתוח בימים א׳–ו׳…״ → ״לפי מידע שפורסם באוקטובר 2026, האתר פתוח בימים א׳–ה׳ בין 09:00 ל-17:00 ובימי שישי עד 13:00, וסגור בשבת. יש הסברים בקודי QR על השלטים, ואפשר להזמין הדרכה מראש.״; added poenta.co.il and tkumacars.com | poenta.co.il (7.10.2026); tkumacars.com | 2026-10-11 | approved by Shuki |
+| Roni Eshel (`personality`, 5 min) | ״מנהלת הבית״ → ״המנהלת של הבית״ (2×); ״בכל מחיר, בלב גדול ומאיר״ → ״בכל מחיר עם לב גדול ומאיר״ | Kan 7.10.360 memorial 7750 | 2026-10-11 | approved by Shuki |
+| Roni Eshel (`oct7`) | ״הודעת וואטסאפ מרגיעה״ → ״הודעה מרגיעה״ | ynet s111r495mt; zman; walla (no medium stated) | 2026-10-11 | approved by Shuki |
+| Raz Peretz (`subtitle`) | ״מפקד פלוגה בגדוד 51, גולני״ → ״מפקד פלוגת המפקדה בגדוד 51 של גולני״ | Izkor; ynet r1dihrh30 | 2026-10-11 | approved by Shuki |
 
-**Approved but not yet applied (blocked):** Roni Eshel ״מנהלת הבית״ → ״המנהלת של הבית״ (2×), ״בכל מחיר, בלב גדול ומאיר״ → ״בכל מחיר עם לב גדול ומאיר״, ״הודעת וואטסאפ מרגיעה״ → ״הודעה מרגיעה״; station 04 reim-shelter ״והכאב של הרש,״ → ״והכאב של הירש,״. These two source files are mirrored byte-for-byte by the frozen oracle `contracts/example-person.json` / `contracts/example-station.json` (test `tests/unit/to-json.test.ts`); they can be applied only together with a contract update by the orchestrator. See `reports/C-06.md`.
+The Roni Eshel and station 04 edits are mirrored in the frozen oracle `contracts/example-person.json` / `contracts/example-station.json` (orchestrator decision, C-06).

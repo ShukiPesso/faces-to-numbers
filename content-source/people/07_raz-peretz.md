@@ -4,7 +4,7 @@ order: 7
 name: רס״ן רז פרץ
 honorific: הי״ד
 pronoun: he
-subtitle: מפקד פלוגה בגדוד 51, גולני · בן 24 · מעפולה · מוזיקאי ותקליטן
+subtitle: מפקד פלוגת המפקדה בגדוד 51 של גולני · בן 24 · מעפולה · מוזיקאי ותקליטן
 stationIds: [reim-shelter]
 oct7Sensitivity: graphic
 photoReferenceUrl: https://www.izkor.gov.il/%D7%A8%D7%96%20%D7%A4%D7%A8%D7%A5/en_c623ffc6a32dc369300f9127561d99a4
