@@ -124,7 +124,7 @@
   model: opus
   wave: 2
   size: M
-  status: todo
+  status: done
   depends_on: [F-02, F-01]
   owns:
     - src/content/index.ts
@@ -231,6 +231,7 @@
     - "Do not use BrowserRouter (hash routing only, ADR-002)."
     - "No physical direction classes (ml mr pl pr left right text-left text-right)."
   acceptance:
+    - "Fixture wiring proven end to end (moved here from F-03): after npm run build && npm run build:e2e, grep finds the fixture text 'דמות בדיקה' in dist-e2e/ and NOT in dist/, and a real station title in dist/ and NOT in dist-e2e/."
     - "All seven routes render; unknown routes show NotFound; layout tests pass."
     - "At 390 px the bottom nav is visible and the side nav hidden; at 1440 px the opposite (attach two screenshots to the report)."
   verify:

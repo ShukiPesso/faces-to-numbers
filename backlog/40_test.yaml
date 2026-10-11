@@ -8,7 +8,7 @@
   model: opus
   wave: 2
   size: M
-  status: todo
+  status: done
   depends_on: [F-02, P0-03]
   owns:
     - tests/integrity/drift.test.ts

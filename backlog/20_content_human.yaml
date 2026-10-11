@@ -119,7 +119,7 @@
   model: sonnet
   wave: 2
   size: M
-  status: todo
+  status: done
   depends_on: [F-02]
   owns:
     - review/C-01-conversion-proofread.md
@@ -284,7 +284,7 @@
   model: fable
   wave: 2
   size: M
-  status: todo
+  status: done
   depends_on: [C-02]
   owns:
     - review/C-05-laad.md

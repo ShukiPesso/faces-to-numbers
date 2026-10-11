@@ -31,10 +31,10 @@ P0-01 → P0-02 → F-02 → F-03 → F-06 → F-08 → F-16 → F-18 → T-10 �
 | [C-02](tasks/C-02.md) | Verify every quote and key fact against the original articles | content | fable | L | — | done |
 | [C-03](tasks/C-03.md) | Candidate coordinates for every station (for Shuki to verify) | content | sonnet | M | — | done |
 | [D-01](tasks/D-01.md) | Design principles and tone | design | opus | S | — | done |
-| [D-02](tasks/D-02.md) | Design tokens with a contrast table | design | sonnet | M | D-01 | todo |
+| [D-02](tasks/D-02.md) | Design tokens with a contrast table | design | sonnet | M | D-01 | done |
 | [D-03](tasks/D-03.md) | Component specifications for every component | design | opus | L | D-02 | todo |
 | [D-05](tasks/D-05.md) | Route schematic map as an offline SVG | design | sonnet | M | D-02 | todo |
-| [D-06](tasks/D-06.md) | Icon list (Lucide) with RTL rules | design | haiku | S | D-01 | todo |
+| [D-06](tasks/D-06.md) | Icon list (Lucide) with RTL rules | design | haiku | S | D-01 | done |
 | [F-01](tasks/F-01.md) | Geo and link utilities with 100% test coverage | dev | sonnet | M | P0-02 | done |
 | [F-02](tasks/F-02.md) | Content converter — Markdown sources to validated JSON (anti-hallucination core) | dev | fable | L | P0-02 | done |
 | [F-04](tasks/F-04.md) | Format and storage utilities with 100% test coverage | dev | sonnet | M | P0-02 | done |
@@ -45,17 +45,17 @@ P0-01 → P0-02 → F-02 → F-03 → F-06 → F-08 → F-16 → F-18 → T-10 �
 
 | ID | Title | Agent | Model | Size | Depends on | Status |
 |---|---|---|---|---|---|---|
-| [C-01](tasks/C-01.md) | Proofread the generated JSON against the Markdown sources | content | sonnet | M | F-02 | todo |
-| [C-05](tasks/C-05.md) | Second verification pass on open items using the official "Le'ad" memorial site | content | fable | M | C-02 | todo |
+| [C-01](tasks/C-01.md) | Proofread the generated JSON against the Markdown sources | content | sonnet | M | F-02 | done |
+| [C-05](tasks/C-05.md) | Second verification pass on open items using the official "Le'ad" memorial site | content | fable | M | C-02 | done |
 | [D-04](tasks/D-04.md) | Responsive page mockups with real content (gate G2) | design | fable | L | D-03, D-05, D-06 | todo |
-| [D-07](tasks/D-07.md) | Microcopy review of all UI strings (values only) | design | opus | M | D-01, P0-02 | todo |
+| [D-07](tasks/D-07.md) | Microcopy review of all UI strings (values only) | design | opus | M | D-01, P0-02 | done |
 | [D-08](tasks/D-08.md) | Brand mark, app icons and social image | design | sonnet | M | D-02 | todo |
-| [F-03](tasks/F-03.md) | Content loader, cross-reference validation and fictional E2E fixtures | dev | opus | M | F-02, F-01 | todo |
+| [F-03](tasks/F-03.md) | Content loader, cross-reference validation and fictional E2E fixtures | dev | opus | M | F-02, F-01 | done |
 | [F-05](tasks/F-05.md) | Wire design tokens and self-hosted fonts into Tailwind | dev | haiku | S | D-02, P0-01 | todo |
 | [F-06](tasks/F-06.md) | App shell — hash routing, responsive layout, skip link, 404 and page stubs | dev | opus | L | F-05, F-04, F-03, D-03, D-06, P0-02 | todo |
 | [F-07](tasks/F-07.md) | Primitive components — Button, headings, Markdown, quote, photo frame, sources, share | dev | sonnet | M | F-05, D-03, D-06, F-04 | todo |
 | [H-02](tasks/H-02.md) | Verify station coordinates and set them in the content source | human | human | M | C-03, F-02 | todo |
-| [T-01](tasks/T-01.md) | Content integrity — no drift, independent fidelity check, sources (CI-03, CI-04, CI-05) | test | opus | M | F-02, P0-03 | todo |
+| [T-01](tasks/T-01.md) | Content integrity — no drift, independent fidelity check, sources (CI-03, CI-04, CI-05) | test | opus | M | F-02, P0-03 | done |
 
 **Gate G2 — Look & feel** (Shuki): approve the mockups from D-04 before wave-4 pages are built.
 

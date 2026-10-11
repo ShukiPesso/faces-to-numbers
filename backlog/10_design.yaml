@@ -41,7 +41,7 @@
   model: sonnet
   wave: 1
   size: M
-  status: todo
+  status: done
   depends_on: [D-01]
   owns:
     - design/tokens.json
@@ -155,7 +155,7 @@
   model: haiku
   wave: 1
   size: S
-  status: todo
+  status: done
   depends_on: [D-01]
   owns:
     - design/icons.md
@@ -224,7 +224,7 @@
   model: opus
   wave: 2
   size: M
-  status: todo
+  status: done
   depends_on: [D-01, P0-02]
   owns:
     - design/microcopy.md
