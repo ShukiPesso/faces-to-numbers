@@ -1,0 +1,226 @@
+# Wave 0 — Foundation. Mostly sequential; give the dev/test/devops tasks to strong agents.
+
+- id: H-01
+  title: Answer open decisions; create Base44 app, deploy key and GitHub repo
+  agent: human
+  model: human
+  wave: 0
+  size: S
+  status: todo
+  depends_on: []
+  owns:
+    - docs/DECISIONS_ANSWERS.md
+  reads:
+    - docs/07_DECISIONS_FOR_SHUKI.md
+    - docs/02_ARCHITECTURE.md
+  goal: "All open decisions are answered and the accounts and secrets the build needs exist."
+  context: |
+    Several tasks are blocked until Shuki decides (hosting approach, name, closing stop wording, family outreach).
+    Deploying needs a Base44 app id and an API key that is allowed to deploy. The key is a secret: it lives only in
+    the repository's encrypted secrets, never in a file or a chat message.
+  steps:
+    - "Read docs/07_DECISIONS_FOR_SHUKI.md and write one line per decision in docs/DECISIONS_ANSWERS.md (decision number, answer). Writing 'default' is a valid answer."
+    - "In Base44, create an empty app named 'פנים למספרים' (or ask the orchestrator to create it with the Base44 tools) and write its App ID in docs/DECISIONS_ANSWERS.md. The App ID is not secret."
+    - "Create a workspace API key with the apps:deploy scope only. Store it only as a repository secret."
+    - "Create a private GitHub repository and give the orchestrator access. The orchestrator commits this plan package as the first commit."
+    - "Add repository secrets BASE44_APP_ID and BASE44_API_KEY (GitHub → Settings → Secrets and variables → Actions)."
+  dont:
+    - "Do not write the API key in any file, issue, chat or commit message."
+    - "Do not use a key with broader permissions than apps:deploy if a scoped key is possible."
+  acceptance:
+    - "docs/DECISIONS_ANSWERS.md has an answer for each of the 16 decisions."
+    - "The repository exists and the secrets BASE44_APP_ID and BASE44_API_KEY are listed in its settings."
+    - "The Base44 App ID is recorded in docs/DECISIONS_ANSWERS.md."
+  verify:
+    - "Orchestrator confirms the two secret names exist in the repository settings (values are never shown)."
+
+- id: P0-01
+  title: Scaffold the repository with every dependency and npm script
+  agent: dev
+  model: opus
+  wave: 0
+  size: M
+  status: todo
+  depends_on: []
+  owns:
+    - package.json
+    - package-lock.json
+    - index.html
+    - vite.config.ts
+    - tsconfig.json
+    - tsconfig.node.json
+    - tailwind.config.ts
+    - postcss.config.js
+    - eslint.config.js
+    - .prettierrc.json
+    - .gitignore
+    - .nvmrc
+    - .editorconfig
+    - src/main.tsx
+    - src/vite-env.d.ts
+    - src/styles/index.css
+    - public/robots.txt
+    - reports/.gitkeep
+    - design/.gitkeep
+    - review/.gitkeep
+  reads:
+    - docs/02_ARCHITECTURE.md
+    - README.md
+  goal: "A clean, strict, empty app skeleton exists with every dependency and npm script the project needs, so no later task ever has to edit package.json."
+  context: |
+    The plan package (docs/, contracts/, content-source/, backlog/, tasks/, templates/, scripts/generate_tasks.py,
+    README.md, TASK_BOARD.md) is already committed at the repository root. You add the application skeleton around it
+    without touching those folders. Later tasks are forbidden to edit package.json, so install everything now —
+    including packages that will only be used in later waves.
+  steps:
+    - "Write `20` to .nvmrc and use Node 20. Create a Vite + React + TypeScript project IN THE REPO ROOT without overwriting or deleting any existing file or folder."
+    - "Install runtime dependencies (latest within the major): react@18 react-dom@18 react-router-dom@6 zod@3 react-markdown@9 lucide-react @fontsource/assistant@5 @fontsource/frank-ruhl-libre@5."
+    - "Install dev dependencies: typescript@5 vite@5 @vitejs/plugin-react tailwindcss@3 postcss@8 autoprefixer@10 vite-plugin-pwa vitest@2 @vitest/coverage-v8@2 jsdom@25 @testing-library/react@16 @testing-library/user-event@14 @testing-library/jest-dom@6 @playwright/test@1 @axe-core/playwright@4 eslint@9 typescript-eslint@8 eslint-plugin-react-hooks@5 eslint-plugin-react-refresh prettier@3 gray-matter@4 tsx@4 @types/node."
+    - "Add every npm script from docs/02_ARCHITECTURE.md §7 exactly as written. Some point to files that later tasks create; that is expected."
+    - "tsconfig.json: strict true, noUncheckedIndexedAccess true, resolveJsonModule true, jsx react-jsx, target ES2022, module ESNext, moduleResolution bundler, paths '@/*' → 'src/*'; include src, tests, scripts."
+    - "index.html: <html lang=\"he\" dir=\"rtl\">; viewport meta 'width=device-width, initial-scale=1, viewport-fit=cover'; <title>פנים למספרים</title>; <meta name=\"theme-color\" content=\"#FAF8F4\">."
+    - "vite.config.ts: react plugin; base './'; resolve.alias '@' → src; resolve.alias '@content-data' → src/content/data.fixture.ts when mode === 'e2e', otherwise src/content/data.real.ts (use the defineConfig(({ mode }) => …) form). Do NOT add the PWA plugin (task F-18)."
+    - "tailwind.config.ts: content ['./index.html', './src/**/*.{ts,tsx}']; theme left empty (task F-05 fills it). postcss.config.js with tailwindcss and autoprefixer."
+    - "eslint.config.js: flat config; typescript-eslint recommendedTypeChecked; react-hooks; react-refresh; rules: no-explicit-any error, no-console warn (allow warn, error); ignores dist, dist-e2e, coverage, playwright-report, test-results, spike."
+    - "src/main.tsx renders a placeholder: <main id=\"main\"><h1>פנים למספרים</h1></main>. src/styles/index.css contains the three @tailwind directives and is imported by main.tsx."
+    - ".gitignore: node_modules, dist, dist-e2e, coverage, playwright-report, test-results, .env*, *.tar.gz. .prettierrc.json: { \"printWidth\": 100, \"singleQuote\": true }."
+    - "Create reports/.gitkeep, design/.gitkeep and review/.gitkeep."
+  dont:
+    - "Do not create components, pages, content files or tests — other tasks own them."
+    - "Do not add any dependency that is not listed in the steps."
+    - "Do not modify docs/, contracts/, content-source/, backlog/, tasks/, templates/, README.md or TASK_BOARD.md."
+    - "Do not enable the PWA plugin or any service worker."
+  acceptance:
+    - "npm ci succeeds from a clean clone."
+    - "npm run lint and npm run typecheck exit 0."
+    - "npm run build produces dist/index.html containing lang=\"he\" and dir=\"rtl\"."
+    - "npm run build:e2e succeeds and writes dist-e2e/."
+    - "package.json contains every script named in docs/02_ARCHITECTURE.md §7."
+  verify:
+    - "npm ci && npm run lint && npm run typecheck && npm run build && npm run build:e2e"
+    - "grep -c 'dir=\"rtl\"' dist/index.html"
+
+- id: P0-02
+  title: Copy the frozen contracts into src and implement t()
+  agent: dev
+  model: sonnet
+  wave: 0
+  size: S
+  status: todo
+  depends_on: [P0-01]
+  owns:
+    - src/content/schema.ts
+    - src/i18n/he.ts
+    - src/lib/i18n.ts
+    - tests/unit/i18n.test.ts
+  reads:
+    - contracts/content.schema.ts
+    - contracts/strings.he.ts
+    - contracts/README.md
+    - docs/02_ARCHITECTURE.md
+  goal: "The zod content schema and the Hebrew string table exist in src byte-identical to the contracts, and t() is implemented and tested."
+  steps:
+    - "Copy contracts/content.schema.ts to src/content/schema.ts without any change."
+    - "Copy contracts/strings.he.ts to src/i18n/he.ts without any change."
+    - "Create src/lib/i18n.ts: import { he } from '@/i18n/he'; export type StringKey = keyof typeof he; export function t(key, params?) that replaces every {name} placeholder with String(params[name]) when params has that name, leaves unknown placeholders untouched, and in dev (import.meta.env.DEV) calls console.warn once per missing placeholder."
+    - "Write tests/unit/i18n.test.ts (UT-I18N-01). Compute expectations FROM he so later wording changes don't break tests: expect(t('home.resume', { n: 4 })).toBe(he['home.resume'].replace('{n}', '4')); expect(t('tour.stationOf', { n: 2, total: 7 })) equals the value with both replaced; a missing param leaves '{n}' in the output; a key without placeholders returns its value unchanged."
+  dont:
+    - "Do not edit, reformat or 'improve' the copied files — diff must print nothing."
+    - "Do not add, remove or rename keys in he.ts."
+  acceptance:
+    - "diff contracts/content.schema.ts src/content/schema.ts and diff contracts/strings.he.ts src/i18n/he.ts both print nothing."
+    - "UT-I18N-01 passes."
+    - "npm run lint and npm run typecheck exit 0."
+  verify:
+    - "diff contracts/content.schema.ts src/content/schema.ts && diff contracts/strings.he.ts src/i18n/he.ts"
+    - "npm test -- tests/unit/i18n.test.ts"
+    - "npm run lint && npm run typecheck"
+
+- id: P0-03
+  title: Test infrastructure — Vitest, Playwright projects and shared helpers
+  agent: test
+  model: opus
+  wave: 0
+  size: M
+  status: todo
+  depends_on: [P0-01]
+  owns:
+    - vitest.config.ts
+    - tests/setup.ts
+    - playwright.config.ts
+    - tests/e2e/helpers/
+    - tests/e2e/infra.spec.ts
+    - tests/unit/infra.test.ts
+  reads:
+    - docs/04_TESTING_STRATEGY.md
+    - docs/02_ARCHITECTURE.md
+  goal: "Any later test task can start writing tests immediately: Vitest (jsdom, coverage thresholds) and Playwright (six projects, two web servers, every helper) are configured and proven with one trivial test each."
+  steps:
+    - "vitest.config.ts: mergeConfig with the Vite config (call it with mode 'test'); environment node by default and jsdom for tests/component/** (environmentMatchGlobs); setupFiles ['tests/setup.ts']; include tests/{unit,component,integrity}/**/*.test.{ts,tsx}; coverage provider v8 with thresholds — src/lib/**: lines 100, branches 100; src/components/**: lines 80."
+    - "tests/setup.ts: import '@testing-library/jest-dom/vitest'; when document exists set document.documentElement lang='he' and dir='rtl'; afterEach clear localStorage and sessionStorage when they exist."
+    - "playwright.config.ts: testDir tests/e2e; two webServer entries — real: 'npm run build && npm run preview' on port 4173; fixture: 'npm run build:e2e && npm run preview:e2e' on port 4174; reuseExistingServer when not CI; timeout 180000 for servers."
+    - "Projects exactly as docs/04_TESTING_STRATEGY.md §2: mobile-chrome (devices['Pixel 7'], baseURL 4173, grepInvert /@fixture|@smoke/), mobile-safari (devices['iPhone 13'], 4173, grepInvert /@fixture|@smoke|@sw/), tablet (devices['iPad Mini'], 4173, grepInvert /@fixture|@smoke|@sw/), desktop (devices['Desktop Chrome'] with viewport 1440x900, 4173, grepInvert /@fixture|@smoke/), fixture-chrome (devices['Pixel 7'], 4174, grep /@fixture/), smoke (devices['Pixel 7'], baseURL process.env.LIVE_URL, grep /@smoke/). retries 2 on CI, workers 2 on CI, trace 'on-first-retry', reporter [['list'], ['html', { open: 'never' }]]."
+    - "Create every helper in docs/04_TESTING_STRATEGY.md §3 with exactly those export names. geo.ts: FIXTURE_POINTS { atA, nearB, far } with the coordinates from §3; grantGeo(context, point) grants 'geolocation' and sets it; denyGeo(context) clears permissions; spyGeolocation(page) uses addInitScript to wrap navigator.geolocation.getCurrentPosition and count calls in window.__geoCalls."
+    - "offline.ts: waitForServiceWorker(page) uses expect.poll until navigator.serviceWorker.controller is not null (after awaiting navigator.serviceWorker.ready); goOffline/goOnline call context.setOffline."
+    - "layout.ts: expectNoHorizontalOverflow(page) asserts documentElement.scrollWidth <= clientWidth; expectTapTargets(page, min = 44) checks every visible button, a, [role=tab], input, select — width and height ≥ min — skipping elements inside [data-inline-text]; on failure list offending elements' text."
+    - "a11y.ts: expectNoSeriousA11yViolations(page) runs AxeBuilder and fails on impact serious or critical, printing ids and targets."
+    - "routes.ts: allRoutes() reads src/content/data/stations.json and src/content/data/people/*.json with fs at runtime and returns ['/', '/tour', '/about', '/sources', ...'/station/<slug>', ...'/person/<id>']; if the data folder does not exist yet return ['/']."
+    - "banned.ts: export BANNED_UI_WORDS = ['כל הכבוד', 'מעולה', 'הצלחתם', 'ניצחתם', 'צברתם', 'ניקוד', 'תג הישג', 'רמה הבאה'] and expectNoBannedWords(page) checking document.body.innerText."
+    - "tests/e2e/infra.spec.ts: one test that opens '/' and expects html[lang=he][dir=rtl] and a visible h1. tests/unit/infra.test.ts: one trivial passing test."
+  dont:
+    - "Do not write feature tests — only infrastructure and the two trivial tests."
+    - "Do not use page.waitForTimeout anywhere."
+    - "Do not edit vite.config.ts (owned by P0-01); use mergeConfig in vitest.config.ts."
+    - "Do not commit installed browsers or test reports."
+  acceptance:
+    - "npm test passes (infra unit test)."
+    - "npx playwright test tests/e2e/infra.spec.ts passes on mobile-chrome, mobile-safari, tablet and desktop."
+    - "Every helper export listed in docs/04_TESTING_STRATEGY.md §3 exists with that exact name and full types."
+  verify:
+    - "npm test"
+    - "npx playwright install --with-deps chromium webkit && npx playwright test tests/e2e/infra.spec.ts"
+    - "npm run lint && npm run typecheck"
+
+- id: O-01
+  title: Spike — verify Base44 deploy-dist end to end and document it
+  agent: devops
+  model: opus
+  wave: 0
+  size: M
+  status: todo
+  depends_on: [P0-01, H-01]
+  owns:
+    - docs/DEPLOY_BASE44.md
+    - scripts/deploy-base44.sh
+    - spike/
+  reads:
+    - docs/02_ARCHITECTURE.md
+    - docs/08_RISKS.md
+    - docs/DECISIONS_ANSWERS.md
+  goal: "We know from a real deploy — not from guessing — exactly how to publish the static build to Base44, how the hosting behaves, and how to fall back to another host."
+  context: |
+    Base44 documents POST /api/apps/{app_id}/deploy-dist ("Deploy a prebuilt site", BETA): upload a .tar.gz of the
+    build folder's CONTENTS (index.html at the archive root), at most 50 MB packed and unpacked and 1,000 files,
+    5 requests per minute per workspace. It replaces the whole published site and returns { deployed_at, app_url }.
+    It accepts a personal API key with editor access or a workspace key with the apps:deploy scope.
+    The API host, the authentication header name and the upload encoding (multipart field vs raw body) are NOT in
+    this plan. Find them in Base44's official API documentation, or ask the orchestrator to read the contract with
+    the Base44 MCP tool describe_api. Never guess them.
+  steps:
+    - "Find and record (with source links) the API base URL, the auth header and the upload encoding for deploy-dist."
+    - "Create spike/: index.html (lang he, dir rtl, an h1, links to '#/a' and '#/b'), sw.js that precaches index.html, manifest.webmanifest, and a tiny inline script that registers sw.js."
+    - "Write scripts/deploy-base44.sh: set -euo pipefail; inputs DIST_DIR (default dist), BASE44_APP_ID, BASE44_API_KEY, optional BASE44_API_BASE — all from environment variables, never echoed; pack with tar -czf site.tar.gz -C \"$DIST_DIR\" .; refuse to upload if the archive is over 50 MB or the folder has more than 1000 files; upload with curl --fail-with-body; print deployed_at and app_url; if $GITHUB_OUTPUT is set append app_url=<url> to it; exit non-zero on any failure."
+    - "Deploy spike/ with the script. On the live URL record: (1) index.html status and content-type; (2) sw.js content-type and whether it registers; (3) whether '/#/b' loads; (4) what '/does-not-exist' returns (index or 404); (5) cache-control headers for index.html and for a static asset; (6) HTTPS; (7) whether a second deploy within the same minute is accepted."
+    - "Write docs/DEPLOY_BASE44.md: the exact request (curl example with placeholders), auth header name, encoding, limits, the seven observations with pasted curl -I output, a rollback procedure (redeploy the previous dist artifact), and a tested-on-paper fallback: deploying the same dist/ to Cloudflare Pages or Netlify in under 10 minutes."
+  dont:
+    - "Do not guess the host, the header or the encoding — find a source or report BLOCKED."
+    - "Do not print, commit or paste the API key; pass it only through environment variables."
+    - "Do not deploy more than 5 times in one minute."
+    - "Do not use the Base44 builder AI to create or change app code."
+  acceptance:
+    - "docs/DEPLOY_BASE44.md answers all seven observations with evidence."
+    - "The report contains the app_url and deployed_at returned by a successful deploy of spike/."
+    - "The fallback-host procedure is documented."
+  verify:
+    - "DIST_DIR=spike bash scripts/deploy-base44.sh   (with BASE44_APP_ID and BASE44_API_KEY exported)"
+    - "curl -sI \"$APP_URL\" && curl -sI \"$APP_URL/sw.js\""

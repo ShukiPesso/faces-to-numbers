@@ -1,0 +1,114 @@
+# Ops lane — continuous integration, deploy to Base44, launch.
+
+- id: O-02
+  title: Continuous integration — checks, bundle budgets, end-to-end on every pull request
+  agent: devops
+  model: sonnet
+  wave: 1
+  size: M
+  status: todo
+  depends_on: [P0-01, P0-03]
+  owns:
+    - .github/workflows/ci.yml
+    - scripts/check-bundle-size.mjs
+    - tests/unit/check-bundle-size.test.ts
+  reads:
+    - docs/02_ARCHITECTURE.md
+    - docs/04_TESTING_STRATEGY.md
+    - docs/03_CONVENTIONS.md
+    - package.json
+    - playwright.config.ts
+  goal: "No pull request reaches main unless lint, types, content drift, unit/component/integrity tests, budgets and all end-to-end projects pass."
+  steps:
+    - "scripts/check-bundle-size.mjs (plain Node 20 ESM, no dependencies): read dist/ recursively; gzip each .js and .css with zlib.gzipSync; sum JS gzip, CSS gzip, raw size of .woff2 files, total size of files listed in dist/sw.js precache (if sw.js is missing, use the total of dist/), and the number of files. Compare against the budgets in docs/02_ARCHITECTURE.md §9 (put them in one BUDGETS constant at the top). Print a table (budget, actual, limit, OK/FAIL). Exit 1 if any FAIL or if dist/ does not exist (with a clear message: run npm run build first)."
+    - "Export the pure comparison function (e.g. evaluate(sizes, budgets) → rows) and test it in tests/unit/check-bundle-size.test.ts with inline numbers: all under, one over, exactly at the limit (passes)."
+    - ".github/workflows/ci.yml — on pull_request and push to main. Job `check`: ubuntu-latest, actions/checkout@v4, actions/setup-node@v4 with node 20 and cache npm, npm ci, npm run check. Job `e2e` (needs check): npm ci, npx playwright install --with-deps chromium webkit, npx playwright test (all projects except smoke, which is skipped automatically without LIVE_URL); always upload playwright-report/ and test-results/ as artifacts (retention 14 days)."
+    - "Set `concurrency: { group: ci-${{ github.ref }}, cancel-in-progress: true }` and `permissions: contents: read`."
+    - "Write in your report the exact branch-protection settings Shuki must turn on in GitHub (required checks: check, e2e; require PR before merge) — you cannot change repository settings yourself."
+  dont:
+    - "No secrets in this workflow. It must work on pull requests from branches without access to BASE44_* secrets."
+    - "Do not add dependencies to package.json (owned by P0-01)."
+  acceptance:
+    - "The bundle-size unit test passes; the script prints the table and exits 0 on a fresh `npm run build` of the scaffold."
+    - "The workflow file is valid (actionlint or a dry run) and its steps match the npm scripts in docs/02_ARCHITECTURE.md §7."
+  verify:
+    - "npx vitest run tests/unit/check-bundle-size.test.ts"
+    - "npm run build && node scripts/check-bundle-size.mjs"
+    - "npx --yes actionlint-bin@1 .github/workflows/ci.yml || echo 'actionlint unavailable — check YAML by eye and say so in the report'"
+
+- id: O-03
+  title: Deploy pipeline to Base44 with post-deploy smoke tests
+  agent: devops
+  model: opus
+  wave: 5
+  size: M
+  status: todo
+  depends_on: [O-01, O-02, F-18, T-10]
+  owns:
+    - .github/workflows/deploy.yml
+    - scripts/deploy-base44.sh
+    - docs/DEPLOY_BASE44.md
+  reads:
+    - docs/02_ARCHITECTURE.md
+    - docs/08_RISKS.md
+    - docs/DECISIONS_ANSWERS.md
+    - spike/
+    - tests/e2e/smoke.spec.ts
+  goal: "A merge to main publishes the tested build to Base44 automatically, then proves the live site works — and a bad deploy can be rolled back in minutes."
+  context: |
+    O-01 already proved the deploy-dist call by hand and documented the exact host, auth header and encoding in
+    docs/DEPLOY_BASE44.md. Use exactly that — do not guess or "improve" the API call. The API key is a secret:
+    it exists only as the GitHub repository secret BASE44_API_KEY (Shuki adds it). It must never appear in a
+    file, a log line, a commit, a report or chat. BASE44_APP_ID is also stored as a secret.
+  steps:
+    - "Harden scripts/deploy-base44.sh from O-01: keep set -euo pipefail; refuse to run if dist/index.html is missing; check the 50 MB / 1000 files limits before upload; on HTTP 429 wait 65 s and retry once (5 requests/minute limit); never print the request headers; print only deployed_at and app_url."
+    - ".github/workflows/deploy.yml — on push to main and workflow_dispatch. `concurrency: { group: deploy, cancel-in-progress: false }`. Job `deploy`: environment `production`; npm ci; npm run check; npm run build; upload dist/ as artifact `site-<short sha>` (retention 90 days — this is the rollback copy); run scripts/deploy-base44.sh with env BASE44_APP_ID and BASE44_API_KEY from secrets; expose app_url as a job output."
+    - "Job `smoke` (needs deploy): npm ci; npx playwright install --with-deps chromium; LIVE_URL=${{ needs.deploy.outputs.app_url }} npx playwright test --project=smoke. Upload the report."
+    - "Add a workflow_dispatch input `rollback_run_id`: when given, download the artifact from that run instead of building, and deploy it (same script). Document the exact click-path in docs/DEPLOY_BASE44.md."
+    - "Update docs/DEPLOY_BASE44.md: one-time setup for Shuki (create the two secrets, create the `production` environment with himself as required reviewer), how a deploy runs, how to roll back, how to move to another static host if the beta API changes (R-01): the dist/ folder works on any static host because routing is hash-based."
+    - "First real deploy: run the workflow via workflow_dispatch, attach the run URL and the live URL to your report."
+  dont:
+    - "Never write, echo or commit the API key. Never use `set -x` in the deploy script. Never use the Base44 builder AI to change the app."
+    - "Do not deploy from pull requests or from branches other than main."
+  acceptance:
+    - "One successful run: deploy job green, smoke job green against the real Base44 URL."
+    - "`git grep -n BASE44_API_KEY` shows only references to the secret name, never a value."
+    - "docs/DEPLOY_BASE44.md has setup, deploy, rollback and host-migration sections."
+  verify:
+    - "bash -n scripts/deploy-base44.sh"
+    - "git grep -nE \"(api[_-]?key|token)\\s*[:=]\\s*['\\\"][A-Za-z0-9]{12,}\" || echo 'no hard-coded secrets'"
+    - "LIVE_URL=<app_url from the run> npx playwright test --project=smoke"
+
+- id: L-01
+  title: Soft launch — final checklist, go/no-go, first users
+  agent: devops
+  model: opus
+  wave: 6
+  size: S
+  status: todo
+  depends_on: [H-06, T-11, D-09, T-09, H-03, O-03, H-05]
+  owns:
+    - review/L-01-launch.md
+  reads:
+    - review/
+    - reports/
+    - docs/01_PROJECT_BRIEF.md
+    - docs/07_DECISIONS_FOR_SHUKI.md
+    - docs/08_RISKS.md
+    - content-source/VERIFICATION.md
+    - content-source/CORRECTIONS.md
+  goal: "Shuki gets one page that says, with evidence, whether the site is ready for its first real visitors — and nothing goes public with an unverified quote or without the families' answer."
+  steps:
+    - "Collect the verdicts: T-11 test audit (READY?), D-09 design QA, C-04 rendered proofread, H-05 field test, H-06 sign-off, H-03 consent tracker, Lighthouse from T-09, last deploy + smoke from O-03."
+    - "Content gate: in content-source/VERIFICATION.md count items still not ✅. Any quote or fact not verified → NO-GO unless Shuki explicitly removed it from the site edition (check CORRECTIONS.md)."
+    - "Family gate: for every person, record the consent status from H-03. A family that declined → their page must not be live (check the content). Photos only for status granted (H-04 is after launch — at launch all photos are placeholders)."
+    - "Safety gate: field test confirmed that the driver warning, offline mode and location button work in the car on the real route."
+    - "Write review/L-01-launch.md: a GO / NO-GO table with evidence links, open risks from docs/08_RISKS.md with their current state, and the soft-launch plan — first link shared only with Shuki's own team and 2–3 trusted guides, a short feedback form (a mailto link to contactEmail is enough), a review date two weeks later."
+    - "Do not announce publicly. Shuki decides when to share wider."
+  dont:
+    - "Do not mark GO if any HIGH finding in review/ is open."
+    - "Do not post, email or share the URL anywhere yourself."
+  acceptance:
+    - "review/L-01-launch.md exists with a GO/NO-GO verdict, every gate filled with evidence, and the soft-launch plan."
+  verify:
+    - "test -f review/L-01-launch.md"

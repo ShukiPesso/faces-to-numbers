@@ -1,0 +1,400 @@
+# Dev lane — features, pages, PWA and performance.
+
+- id: F-08
+  title: Reading depth tabs and the read-aloud toggle
+  agent: dev
+  model: sonnet
+  wave: 3
+  size: M
+  status: todo
+  depends_on: [F-06, F-07, F-04]
+  owns:
+    - src/components/reading/DepthTabs.tsx
+    - src/components/reading/ReadAloudToggle.tsx
+    - src/components/layout/Header.tsx
+    - tests/component/DepthTabs.test.tsx
+    - tests/component/ReadAloudToggle.test.tsx
+  reads:
+    - design/components/reading.md
+    - design/components/layout.md
+    - docs/02_ARCHITECTURE.md
+    - docs/04_TESTING_STRATEGY.md
+    - src/app/PrefsProvider.tsx
+  goal: "Visitors choose a reading depth with an accessible RTL tablist and toggle read-aloud mode from the header; both choices persist."
+  steps:
+    - "DepthTabs: props value (Depth) and onChange(depth). role='tablist' with aria-label t('depth.label') and data-testid depth-tabs; three buttons with role='tab', aria-selected, roving tabIndex; labels t('depth.s30'), t('depth.m2'), t('depth.m5'). Keyboard: ArrowLeft → next tab (RTL), ArrowRight → previous, Home → first, End → last; focus follows selection."
+    - "ReadAloudToggle: a button with aria-pressed, visible label t('readAloud.label'), data-testid read-aloud-toggle; reads and writes readAloud through PrefsProvider."
+    - "Put ReadAloudToggle inside the data-slot='header-actions' element in Header.tsx. Change nothing else in Header."
+    - "Tests CT-DEPTH-01 and CT-RA-01 from docs/04_TESTING_STRATEGY.md."
+  dont:
+    - "Changing depth must not reload, navigate or scroll the page."
+  acceptance:
+    - "CT-DEPTH-01 and CT-RA-01 pass; keyboard behaviour is correct for RTL."
+  verify:
+    - "npm test -- tests/component/DepthTabs.test.tsx tests/component/ReadAloudToggle.test.tsx"
+    - "npm run lint && npm run typecheck"
+
+- id: F-09
+  title: Content-warning gate and moment-of-silence components
+  agent: dev
+  model: sonnet
+  wave: 3
+  size: M
+  status: todo
+  depends_on: [F-07, F-04, D-07]
+  owns:
+    - src/components/reading/ContentWarningGate.tsx
+    - src/components/reading/SilenceMoment.tsx
+    - tests/component/ContentWarningGate.test.tsx
+    - tests/component/SilenceMoment.test.tsx
+  reads:
+    - design/components/reading.md
+    - design/01-principles.md
+    - docs/04_TESTING_STRATEGY.md
+    - src/lib/storage.ts
+  goal: "Graphic passages sit behind a calm, optional gate, and a moment of silence can be started deliberately and ends quietly."
+  steps:
+    - "ContentWarningGate: props personId, sensitivity, children. 'standard' → render children. 'graphic' → if isGateOpened(personId) render children; otherwise render a calm panel (data-testid warning-gate) with t('warning.title'), t('warning.body') and two buttons: warning-show → openGate(personId), render children and move focus to the first element of the revealed content; warning-skip → show t('warning.skipped') with the show button still available, and move focus to the next element after the gate."
+    - "SilenceMoment: props seconds and prompt. idle: t('silence.title'), the prompt, and a start button (data-testid silence-start, label t('silence.start', { seconds })). running: a large calm countdown (data-testid silence-timer) updated each second with setInterval, plus a stop button t('silence.stop'); announce only start and end (aria-live), not every second. ended: t('silence.ended'). No sound, no vibration; at most a slow opacity change, none under prefers-reduced-motion. Clear the interval on unmount."
+    - "Tests CT-GATE-01 and CT-SILENCE-01 (use vi.useFakeTimers)."
+  dont:
+    - "Never start the silence timer automatically. Never play a sound or vibrate."
+    - "Do not hide content permanently — the visitor can always choose to show it."
+  acceptance:
+    - "CT-GATE-01 and CT-SILENCE-01 pass."
+  verify:
+    - "npm test -- tests/component/ContentWarningGate.test.tsx tests/component/SilenceMoment.test.tsx"
+    - "npm run lint && npm run typecheck"
+
+- id: F-10
+  title: Tour components — station card, person card, stepper, navigation links, driver banner
+  agent: dev
+  model: sonnet
+  wave: 3
+  size: M
+  status: todo
+  depends_on: [F-01, F-03, F-04, F-07, D-03]
+  owns:
+    - src/components/tour/StationCard.tsx
+    - src/components/tour/PersonCard.tsx
+    - src/components/tour/ProgressStepper.tsx
+    - src/components/tour/NavLinks.tsx
+    - src/components/tour/DriveBanner.tsx
+    - tests/component/tour-cards.test.tsx
+  reads:
+    - design/components/tour.md
+    - docs/02_ARCHITECTURE.md
+    - docs/04_TESTING_STRATEGY.md
+    - src/content/schema.ts
+  goal: "StationCard, PersonCard, ProgressStepper, NavLinks and DriveBanner exist per spec with component tests."
+  steps:
+    - "StationCard: props station, visited, current?. A Link to stationPath(slug) containing t('tour.stationOf', { n: order, total }), title, subtitle, DurationBadge, the kind label t('tour.kind.stop' | 'tour.kind.drive') and, when visited, t('tour.visited') with a check icon. data-testid station-card-<id>."
+    - "PersonCard: props person, variant ('primary' | 'companion'). Name + honorific, subtitle, opening (Markdown), and a link t('person.toStory', { name }) to personPath(id). Companion variant shows the label t('person.companion'). data-testid person-card-<id>."
+    - "ProgressStepper: props stations, visitedIds, currentId?. Ordered list; aria-current='step' on the current item; visited items show a check with an accessible name."
+    - "NavLinks: props location (GeoPoint | null). If location?.verified → two external Buttons, data-testid nav-waze and nav-google, hrefs from wazeUrl/googleMapsUrl, labels t('station.navigateWaze') / t('station.navigateGoogle'). Otherwise the text t('station.locationUnverified') with data-testid location-unverified and NO links."
+    - "DriveBanner: role='note', data-testid driver-warning, car icon and t('drive.warning')."
+    - "tests/component/tour-cards.test.tsx: CT-CARD-01, CT-PCARD-01, CT-NAVL-01, CT-DRIVE-01, CT-STEP-01."
+  dont:
+    - "Never render navigation links for an unverified or null location."
+  acceptance:
+    - "All five component tests pass."
+  verify:
+    - "npm test -- tests/component/tour-cards.test.tsx"
+    - "npm run lint && npm run typecheck"
+
+- id: F-11
+  title: RouteMap component from the designed SVG
+  agent: dev
+  model: sonnet
+  wave: 3
+  size: M
+  status: todo
+  depends_on: [D-05, F-03, F-07]
+  owns:
+    - src/components/tour/RouteMap.tsx
+    - tests/component/RouteMap.test.tsx
+  reads:
+    - design/route-map.svg
+    - design/route-map.md
+    - docs/04_TESTING_STRATEGY.md
+  goal: "The schematic route map renders inline (offline), with every station marker linking to its station and showing visited/current state."
+  steps:
+    - "Convert design/route-map.svg into inline JSX in RouteMap.tsx (no external file fetch). Keep every <g id='marker-<station-id>'> and the geometry exactly."
+    - "Props stations, visitedIds, currentId?. Wrap each marker group in a Link to its station; apply visited and current styling only through the classes described in design/route-map.md."
+    - "The <svg> has role='img', aria-label t('tour.mapAlt') and data-testid route-map."
+    - "Test: 7 marker links with the correct hrefs; aria-label present; the visited class applied for visited ids."
+  dont:
+    - "Do not redraw or alter the map geometry or labels."
+  acceptance:
+    - "RouteMap test passes; the component adds no network request."
+  verify:
+    - "npm test -- tests/component/RouteMap.test.tsx"
+    - "npm run lint && npm run typecheck"
+
+- id: F-12
+  title: "'Where am I' — on-device geolocation hook and nearby banner"
+  agent: dev
+  model: sonnet
+  wave: 3
+  size: M
+  status: todo
+  depends_on: [F-01, F-03, F-07, F-04]
+  owns:
+    - src/hooks/useNearbyStation.ts
+    - src/components/tour/NearbyBanner.tsx
+    - tests/unit/useNearbyStation.test.ts
+    - tests/component/NearbyBanner.test.tsx
+  reads:
+    - docs/02_ARCHITECTURE.md
+    - design/components/tour.md
+    - docs/04_TESTING_STRATEGY.md
+  goal: "A visitor can tap 'איפה אני' and get a suggestion of the nearest verified station — computed only on the device, only after a tap."
+  steps:
+    - "useNearbyStation exactly per docs/02_ARCHITECTURE.md §6. locate(): if 'geolocation' is not in navigator → status unavailable; else status locating and call getCurrentPosition with { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }; on success → { status: 'done', result: findNearbyStation({ lat, lng }, getStations()) }; on error code 1 → denied; any other error → unavailable. reset() returns to idle. Never call geolocation on mount."
+    - "NearbyBanner: props state, onLocate. A button (data-testid where-am-i, label t('nearby.button')); the privacy line t('nearby.privacy'); an aria-live='polite' region (data-testid nearby-banner) whose text is: locating → t('nearby.locating'); at → t('nearby.at', { title }); near → t('nearby.near', { title, distance: formatDistance(m) }); none → t('nearby.none'); denied → t('nearby.denied'); unavailable → t('nearby.unavailable'). For at and near include a Link t('nearby.open') to the station."
+    - "tests/unit/useNearbyStation.test.ts (jsdom, renderHook): success inside a radius, success far away, error code 1, error code 2, missing API; and the hook does not call geolocation on mount."
+    - "tests/component/NearbyBanner.test.tsx: CT-NEARBY-01."
+  dont:
+    - "No watchPosition. Never store, log or send coordinates."
+  acceptance:
+    - "Hook tests and CT-NEARBY-01 pass."
+  verify:
+    - "npm test -- tests/unit/useNearbyStation.test.ts tests/component/NearbyBanner.test.tsx"
+    - "npm run lint && npm run typecheck"
+
+- id: F-13
+  title: Home page
+  agent: dev
+  model: sonnet
+  wave: 4
+  size: M
+  status: todo
+  depends_on: [F-06, F-07, F-10, F-08, D-04]
+  owns:
+    - src/pages/HomePage.tsx
+    - tests/component/HomePage.test.tsx
+  reads:
+    - design/mockups/home.html
+    - design/mockups/shots/
+    - design/components/primitives.md
+    - docs/02_ARCHITECTURE.md
+  goal: "The home page introduces the tour, its message and safety notes, and lets visitors start or resume."
+  steps:
+    - "Follow design/mockups/home.html. h1 = tour.title; subtitle; t('home.stationsCount', { n }) and t('home.totalDuration', { duration: formatMinutes(totalDurationMin) })."
+    - "Sections: intro (Markdown); t('home.messageTitle') + message (Markdown); t('home.safetyTitle') + safety list; t('home.howToTitle') + howTo list."
+    - "Primary button start-tour → '/station/<first slug>'. If getVisited() is not empty: resume-tour → the first station (by order) after the highest visited order, label t('home.resume', { n }); and reset-progress (t('home.resetProgress')) → resetProgress() and re-render."
+    - "useDocumentTitle(tour.title)."
+    - "Test: intro and message text come from content; with visited [sderot, route-232, observers-hill] the resume button targets order 4; reset removes it."
+  dont:
+    - "No hero photo, no animated counters, no celebratory text."
+  acceptance:
+    - "HomePage test passes; the page matches the mockup at 390 and 1440 px (screenshots in the report)."
+  verify:
+    - "npm test -- tests/component/HomePage.test.tsx"
+    - "npm run lint && npm run typecheck"
+
+- id: F-14
+  title: Tour overview page
+  agent: dev
+  model: sonnet
+  wave: 4
+  size: M
+  status: todo
+  depends_on: [F-10, F-11, F-12, F-06, D-04]
+  owns:
+    - src/pages/TourPage.tsx
+    - tests/component/TourPage.test.tsx
+  reads:
+    - design/mockups/tour.html
+    - design/components/tour.md
+    - docs/02_ARCHITECTURE.md
+  goal: "The tour page shows the route map, every station as a card, the total duration and the 'where am I' tool."
+  steps:
+    - "Follow design/mockups/tour.html. h1 t('tour.title'); NearbyBanner wired to useNearbyStation; RouteMap; the list of StationCards with visited state from getVisited(); total duration."
+    - "If the URL has the query locate=1 (from the bottom navigation), move focus to the where-am-i button and scroll it into view — but do NOT call locate()."
+    - "useDocumentTitle(t('tour.title'))."
+    - "Test: 7 station cards; with ?locate=1 the where-am-i button is focused and navigator.geolocation.getCurrentPosition was not called."
+  dont:
+    - "Never request location without an explicit tap."
+  acceptance:
+    - "TourPage test passes."
+  verify:
+    - "npm test -- tests/component/TourPage.test.tsx"
+    - "npm run lint && npm run typecheck"
+
+- id: F-15
+  title: Station page
+  agent: dev
+  model: opus
+  wave: 4
+  size: L
+  status: todo
+  depends_on: [F-07, F-09, F-10, F-06, F-04, D-04]
+  owns:
+    - src/pages/StationPage.tsx
+    - tests/component/StationPage.test.tsx
+  reads:
+    - design/mockups/station-stop.html
+    - design/mockups/station-drive.html
+    - design/components/
+    - docs/02_ARCHITECTURE.md
+    - src/content/schema.ts
+  goal: "Each station page tells visitors what happened here, what to notice and whose story belongs to this place, with navigation, access notes, a moment of silence and previous/next."
+  steps:
+    - "Resolve :slug with getStationBySlug; unknown → render NotFoundPage."
+    - "Header: t('tour.stationOf', { n: order, total }), h1 title, subtitle, DurationBadge, kind label, ShareButton."
+    - "If driverWarning → DriveBanner at the top."
+    - "Sections in this order: SectionHeading t('station.background') + background (Markdown); t('station.talkingPoints') + list; t('station.people') + PersonCard (primary) for each personIds entry; t('station.companions') + PersonCard (companion) for each companionPersonIds entry (omit the section if empty); SilenceMoment if silenceMoment; t('station.access') + accessNotes and, if lastVerified, t('station.lastVerified', { date }); NavLinks(location); t('station.sources') + SourceList if sources is not empty."
+    - "Mark-visited toggle (data-testid mark-visited) using markVisited / unmarkVisited with labels t('station.markVisited') / t('station.unmarkVisited')."
+    - "Previous/next (data-testid prev-station / next-station) from getPrevStation / getNextStation. On the last station replace 'next' with t('station.end') and render tour.closing (Markdown)."
+    - "On mobile render previous/next in the sticky bar specified in design/components/layout.md."
+    - "useDocumentTitle(station.title)."
+    - "Tests: nova shows the silence moment; route-232 shows the driver warning and two PersonCards; reim-shelter shows 2 primary and 2 companion cards; closing-drive shows the end label and the closing text; an unknown slug shows NotFound."
+  dont:
+    - "Do not render navigation links for unverified locations (NavLinks handles it — do not bypass it)."
+    - "Do not reorder sections or add content that is not in the station data."
+  acceptance:
+    - "StationPage tests pass; screenshots at 390 and 1440 px for a stop and a drive station are in the report."
+  verify:
+    - "npm test -- tests/component/StationPage.test.tsx"
+    - "npm run lint && npm run typecheck"
+
+- id: F-16
+  title: Person page with reading depth and content-warning gate
+  agent: dev
+  model: opus
+  wave: 4
+  size: L
+  status: todo
+  depends_on: [F-07, F-08, F-09, F-06, D-04]
+  owns:
+    - src/pages/PersonPage.tsx
+    - tests/component/PersonPage.test.tsx
+  reads:
+    - design/mockups/person-s30.html
+    - design/mockups/person-m2.html
+    - design/mockups/person-m5.html
+    - docs/02_ARCHITECTURE.md
+    - src/content/schema.ts
+  goal: "Each person page tells one person's story at the depth the visitor chooses, with sensitive passages behind an optional gate."
+  steps:
+    - "Resolve :id with getPersonById; unknown → NotFoundPage."
+    - "Header: h1 name + ' ' + honorific, subtitle, PhotoFrame, ShareButton, and a back link t('person.backToStation', { title }) to the first station in person.stationIds."
+    - "DepthTabs bound to the PrefsProvider depth."
+    - "Render by depth exactly per ADR-007: s30 → guideLevels.s30 in a read-aloud block with the hint t('depth.s30.hint'). m2 → opening; SectionHeading t('person.oct7') + oct7; QuoteBlock(quote). m5 → opening; oct7; SectionHeading t(pronoun === 'she' ? 'person.personality.she' : 'person.personality.he') + personality; t('person.past') + past; t('person.after') + after (if present); QuoteBlock(quote); QuoteBlock(altQuote) if present; t('person.guideNote') + guideNote if present; t('person.sources') + SourceList."
+    - "When oct7Sensitivity is 'graphic', wrap the oct7 section AND the s30 block in ContentWarningGate(personId, sensitivity)."
+    - "useDocumentTitle(name)."
+    - "Tests: switching depth renders the right sections; roni-eshel at m5 shows 'מי היא הייתה'; aner-shapira at m2 hides oct7 behind the gate until 'show'; raz-peretz at m5 shows the guideNote; an unknown id shows NotFound."
+  dont:
+    - "Do not render guideLevels.m2 or guideLevels.m5 (ADR-007)."
+    - "Never render photo.referenceUrl."
+  acceptance:
+    - "PersonPage tests pass; screenshots at 390 px for all three depths in the report."
+  verify:
+    - "npm test -- tests/component/PersonPage.test.tsx"
+    - "npm run lint && npm run typecheck"
+
+- id: F-17
+  title: About and Sources pages
+  agent: dev
+  model: sonnet
+  wave: 4
+  size: M
+  status: todo
+  depends_on: [F-07, F-03, F-06, D-04]
+  owns:
+    - src/pages/AboutPage.tsx
+    - src/pages/SourcesPage.tsx
+    - tests/component/AboutSources.test.tsx
+  reads:
+    - design/mockups/about.html
+    - design/mockups/sources.html
+    - docs/02_ARCHITECTURE.md
+  goal: "Visitors can read who made the tour, the rights statement and the full list of sources by person and by station."
+  steps:
+    - "AboutPage: h1 t('about.title'); tour.about (Markdown); SectionHeading t('about.rights') + tour.rights (Markdown); t('about.lastReview', { date }); if tour.contactEmail, t('about.contact', { email }) with a mailto link."
+    - "SourcesPage: h1 t('sources.title'); t('sources.intro'); t('sources.byPerson') — for each person in order: name and SourceList; t('sources.byStation') — for each station that has sources: title and SourceList."
+    - "useDocumentTitle on both pages."
+    - "Test: all 9 people names appear on Sources; About shows the rights text and the last-review date."
+  dont:
+    - "Do not add text that is not in the tour data or the strings."
+  acceptance:
+    - "AboutSources test passes."
+  verify:
+    - "npm test -- tests/component/AboutSources.test.tsx"
+    - "npm run lint && npm run typecheck"
+
+- id: F-18
+  title: Offline PWA — manifest, service worker, offline indicator, update prompt
+  agent: dev
+  model: opus
+  wave: 5
+  size: L
+  status: todo
+  depends_on: [F-13, F-14, F-15, F-16, F-17, D-08]
+  owns:
+    - vite.config.ts
+    - index.html
+    - src/app/AppLayout.tsx
+    - src/components/layout/OfflineIndicator.tsx
+    - src/components/layout/UpdatePrompt.tsx
+    - src/hooks/useOnlineStatus.ts
+    - src/pwa.ts
+    - public/icons/
+    - public/favicon.svg
+    - public/og-image.png
+    - tests/component/pwa-ui.test.tsx
+  reads:
+    - docs/02_ARCHITECTURE.md
+    - design/brand/
+    - design/components/layout.md
+    - design/tokens.json
+  goal: "After one visit the whole tour works with no signal, the app is installable, and updates never reload the page under the visitor."
+  steps:
+    - "Copy design/brand files into public/: icons into public/icons/, favicon.svg and og-image (renamed og-image.png) to public/."
+    - "vite.config.ts: add VitePWA with registerType 'prompt', injectRegister false, manifest { name 'פנים למספרים — סיור עצמאי בעוטף עזה', short_name 'פנים למספרים', lang 'he', dir 'rtl', start_url './#/', scope './', display 'standalone', background_color and theme_color = the hex values of --color-bg and --color-primary from design/tokens.json, icons 192, 512 and a 512 maskable }, workbox { globPatterns ['**/*.{js,css,html,svg,png,webp,woff2,json,webmanifest}'], navigateFallback 'index.html', cleanupOutdatedCaches true, maximumFileSizeToCacheInBytes 2500000 }. Keep the existing '@content-data' and '@' aliases."
+    - "src/pwa.ts: registerSW from 'virtual:pwa-register' with onNeedRefresh → state for UpdatePrompt, onOfflineReady → state for OfflineIndicator (show the ready message once, hide after 6 seconds). Export a small store/hook the components subscribe to."
+    - "src/hooks/useOnlineStatus.ts: navigator.onLine plus online/offline events."
+    - "OfflineIndicator (data-testid offline-indicator, aria-live polite): offline → t('offline.now'); first offline-ready → t('offline.ready')."
+    - "UpdatePrompt (data-testid update-prompt): t('update.available') and a button t('update.reload') that calls updateSW(true). Never reload automatically."
+    - "AppLayout: render OfflineIndicator and UpdatePrompt directly above <main>. Change nothing else."
+    - "index.html: favicon, apple-touch-icon, og:title, og:description (the tagline), og:image ./og-image.png, og:locale he_IL, theme-color."
+    - "tests/component/pwa-ui.test.tsx: OfflineIndicator reacts to offline/online events; UpdatePrompt calls the update function on click (mock 'virtual:pwa-register')."
+  dont:
+    - "No automatic skipWaiting/clientsClaim reload; no cross-origin caching."
+    - "Do not change any other layout behaviour."
+  acceptance:
+    - "npm run build produces dist/sw.js and dist/manifest.webmanifest; npm run size passes the 2 MB precache budget."
+    - "pwa-ui tests pass. (Offline behaviour is proven end-to-end by T-05.)"
+  verify:
+    - "npm run build && ls dist/sw.js dist/manifest.webmanifest && npm run size"
+    - "npm test -- tests/component/pwa-ui.test.tsx"
+    - "npm run lint && npm run typecheck"
+
+- id: F-19
+  title: Performance pass against the budgets
+  agent: dev
+  model: opus
+  wave: 5
+  size: M
+  status: todo
+  depends_on: [F-18]
+  owns:
+    - src/app/router.tsx
+    - review/F-19-performance.md
+  reads:
+    - docs/02_ARCHITECTURE.md
+    - docs/01_PROJECT_BRIEF.md
+  goal: "The build meets every budget in docs/02_ARCHITECTURE.md §9, measured and recorded."
+  steps:
+    - "Run npm run build and npm run size; record every number."
+    - "If JS exceeds 200 KB gzip: lazy-load AboutPage and SourcesPage through the route 'lazy' property in router.tsx (lazy chunks are still precached, so offline keeps working)."
+    - "Run Lighthouse (mobile) against npm run preview for '/', '/#/station/sderot' and '/#/person/aner-shapira'; record scores."
+    - "Write review/F-19-performance.md: before/after sizes, Lighthouse scores, and any remaining issues outside router.tsx as a list for the orchestrator."
+  dont:
+    - "Do not remove features or content to meet a budget — report instead."
+  acceptance:
+    - "npm run size passes; Lighthouse mobile Performance ≥ 90 and Accessibility ≥ 95 on the three URLs, or the report explains the gap with a concrete fix proposal."
+  verify:
+    - "npm run build && npm run size"
+    - "npx lighthouse http://localhost:4173/ --preset=perf --quiet --chrome-flags='--headless' --output=json --output-path=./lh-home.json   (with npm run preview running)"

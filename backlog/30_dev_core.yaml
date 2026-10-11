@@ -1,0 +1,277 @@
+# Dev lane — core: utilities, content pipeline, styling, app shell, primitives.
+# Each task ships its own unit/component tests (IDs from docs/04_TESTING_STRATEGY.md).
+
+- id: F-01
+  title: Geo and link utilities with 100% test coverage
+  agent: dev
+  model: sonnet
+  wave: 1
+  size: M
+  status: todo
+  depends_on: [P0-02]
+  owns:
+    - src/lib/geo.ts
+    - src/lib/links.ts
+    - tests/unit/geo.test.ts
+    - tests/unit/links.test.ts
+  reads:
+    - docs/02_ARCHITECTURE.md
+    - docs/04_TESTING_STRATEGY.md
+    - src/content/schema.ts
+    - contracts/example-station.json
+  goal: "haversineMeters, findNearbyStation, wazeUrl, googleMapsUrl, stationPath and personPath exist exactly as specified, with tests UT-GEO-01..09 and UT-LINK-01..03 and 100% coverage."
+  steps:
+    - "Implement src/lib/geo.ts exactly per docs/02_ARCHITECTURE.md §6. Import the Station type from '@/content/schema'. Earth radius 6_371_008.8 m. No DOM and no React imports."
+    - "findNearbyStation: keep stations whose location is non-null and verified; compute each distance; among those with distance ≤ radiusM return { kind: 'at' } for the smallest distance; otherwise take the smallest distance overall and return { kind: 'near' } if ≤ maxDistanceM (default 5000), else { kind: 'none' }. Ties at equal distance → lower order wins. Return distanceM rounded with Math.round."
+    - "Implement src/lib/links.ts per §6. Coordinates use toFixed(6)."
+    - "Write tests UT-GEO-01..09 and UT-LINK-01..03 exactly as described in docs/04_TESTING_STRATEGY.md §4. In the test file create makeStation(overrides) that returns a schema-valid Station (start from contracts/example-station.json and override fields)."
+  dont:
+    - "Do not call navigator.geolocation here — the hook in F-12 does that."
+    - "Do not round coordinates anywhere except when formatting links."
+  acceptance:
+    - "All UT-GEO and UT-LINK tests pass with 100% line and branch coverage for both files."
+    - "npm run lint and npm run typecheck exit 0."
+  verify:
+    - "npx vitest run tests/unit/geo.test.ts tests/unit/links.test.ts --coverage --coverage.include=src/lib/geo.ts --coverage.include=src/lib/links.ts"
+    - "npm run lint && npm run typecheck"
+
+- id: F-02
+  title: Content converter — Markdown sources to validated JSON (anti-hallucination core)
+  agent: dev
+  model: fable
+  wave: 1
+  size: L
+  status: todo
+  depends_on: [P0-02]
+  owns:
+    - scripts/content/
+    - src/content/data/
+    - tests/unit/parse.test.ts
+    - tests/unit/to-json.test.ts
+  reads:
+    - content-source/README.md
+    - content-source/people/
+    - content-source/stations/
+    - content-source/tour.md
+    - contracts/example-person.json
+    - contracts/example-station.json
+    - src/content/schema.ts
+    - docs/02_ARCHITECTURE.md
+  goal: "npm run content:build deterministically converts content-source/ into schema-valid JSON in src/content/data/, and npm run content:check detects any drift."
+  context: |
+    No person and no agent ever types content into JSON. The converter copies the text exactly; tests prove it.
+    Your acceptance oracle: converting content-source/people/04_roni-eshel.md and
+    content-source/stations/04_reim-shelter.md must produce objects that deep-equal contracts/example-person.json and
+    contracts/example-station.json.
+  steps:
+    - "scripts/content/parse.ts — export: parseFrontMatter(text, file) using gray-matter (throw Error(`${file}: missing front matter`) if there is none); splitSections(body, file) → Record<string, string> following content-source/README.md rules 1–4 (heading regex /^## (.+) · ([A-Za-z0-9]+)\\s*$/, lines before the first heading ignored, body trimmed, 3+ consecutive newlines collapsed to exactly 2, throw on duplicate key); parseBullets(text, file); parseGuideLevels(text, file) (exactly 3 bullets, strip the leading '**label:** '); parseQuote(text, file) (exactly the two lines '> „…”' and '> — …'); parseSources(text, file) (split each line on the LAST ' — ')."
+    - "scripts/content/to-json.ts — export personFromMd(relPath, text), stationFromMd(relPath, text), tourFromMd(relPath, text) mapping exactly per content-source/README.md: sourceFile = relPath with forward slashes; photo = cleared object when front matter has photo AND consent is 'granted', else { status: 'pending', referenceUrl } (omit referenceUrl if absent); consent = { family: consent ?? 'not_contacted' }; every date (lastVerified, lastContentReview, verifiedAt) written as 'YYYY-MM-DD' even if YAML parsed it as a Date; optional fields omitted when absent; null only for location and silenceMoment."
+    - "scripts/content/build-content.ts (run by tsx) — read content-source/people/*.md, stations/*.md and tour.md; convert; validate each object with PersonSchema, StationSchema, TourSchema — on any error print the file and the zod issues and exit 1; write src/content/data/people/<id>.json (one per person), src/content/data/stations.json (array sorted by order) and src/content/data/tour.json; serialize with JSON.stringify(obj, null, 2) + '\\n' after ordering keys by a fixed KEY_ORDER array per type so output is byte-stable."
+    - "--check flag — build in memory, compare with the files on disk, print the names of differing or missing files and exit 1 if any differ; exit 0 otherwise."
+    - "Run npm run content:build and commit everything it generates under src/content/data/."
+    - "tests/unit/parse.test.ts — UT-PARSE-01..05 using small inline FICTIONAL Markdown strings."
+    - "tests/unit/to-json.test.ts — UT-PARSE-06/07, plus the oracle test: read the two real source files from disk, convert them, expect(result).toEqual(JSON.parse(example file))."
+  dont:
+    - "Never edit content-source/ to make conversion easier — if a file does not match the documented format, stop (BLOCKED) and report the file and line."
+    - "Never change, trim inside, normalize quotation marks in, or 'fix' Hebrew text. Only README rule 2 whitespace handling is allowed."
+    - "Do not hand-edit anything in src/content/data/."
+    - "Do not use a Markdown parsing library to split sections — use the line-based rules."
+  acceptance:
+    - "npm run content:build exits 0 and writes 9 people files, stations.json (7 items) and tour.json."
+    - "npm run content:check exits 0 right after a build, and exits 1 after changing one character in any source file (describe this check in the report, then revert)."
+    - "The oracle test passes for Roni Eshel and the Re'im shelter."
+    - "UT-PARSE-01..07 pass; npm run lint and npm run typecheck exit 0."
+  verify:
+    - "npm run content:build && npm run content:check"
+    - "npm test -- tests/unit/parse.test.ts tests/unit/to-json.test.ts"
+    - "npm run lint && npm run typecheck"
+
+- id: F-04
+  title: Format and storage utilities with 100% test coverage
+  agent: dev
+  model: sonnet
+  wave: 1
+  size: M
+  status: todo
+  depends_on: [P0-02]
+  owns:
+    - src/lib/format.ts
+    - src/lib/storage.ts
+    - tests/unit/format.test.ts
+    - tests/unit/storage.test.ts
+  reads:
+    - docs/02_ARCHITECTURE.md
+    - docs/04_TESTING_STRATEGY.md
+  goal: "formatMinutes, formatDistance and every storage helper exist exactly as specified, never throw on storage failure, and are fully covered by UT-FMT-01..03 and UT-STO-01..06."
+  steps:
+    - "formatMinutes(min): throw RangeError if min is not an integer, is NaN, or is < 1. h = Math.floor(min / 60), m = min % 60. Minutes alone (h = 0): 1 → 'דקה', otherwise `${m} דקות`. Hours part: 1 → 'שעה', 2 → 'שעתיים', ≥ 3 → `${h} שעות`. With hours: m = 0 → hours part; m = 30 → hours part + ' וחצי'; m = 1 → hours part + ' ודקה'; otherwise hours part + ` ו-${m} דקות`. Every row of the table in docs/02_ARCHITECTURE.md §6 must match."
+    - "formatDistance(m) exactly per the doc comment in docs/02_ARCHITECTURE.md §6."
+    - "storage.ts per the table in §6 with a private helper safe<T>(fn: () => T, fallback: T): T using try/catch. Store arrays/booleans as JSON. On read, validate the shape (array of strings; 's30' | 'm2' | 'm5'; boolean); on invalid data return the default AND overwrite the key with the default. Gates use sessionStorage; everything else localStorage."
+    - "tests/unit/format.test.ts: UT-FMT-01..03 (every table row, every error case, every formatDistance case)."
+    - "tests/unit/storage.test.ts: put `// @vitest-environment jsdom` on the first line; UT-STO-01..06; simulate failures with vi.spyOn(Storage.prototype, 'getItem') / 'setItem' throwing."
+  dont:
+    - "Do not use Intl or any locale library — the exact strings are specified."
+    - "No storage function may ever throw."
+  acceptance:
+    - "All UT-FMT and UT-STO tests pass with 100% line and branch coverage for both files."
+  verify:
+    - "npx vitest run tests/unit/format.test.ts tests/unit/storage.test.ts --coverage --coverage.include=src/lib/format.ts --coverage.include=src/lib/storage.ts"
+    - "npm run lint && npm run typecheck"
+
+- id: F-03
+  title: Content loader, cross-reference validation and fictional E2E fixtures
+  agent: dev
+  model: opus
+  wave: 2
+  size: M
+  status: todo
+  depends_on: [F-02, F-01]
+  owns:
+    - src/content/index.ts
+    - src/content/data.real.ts
+    - src/content/data.fixture.ts
+    - src/content/fixtures/
+    - tests/unit/content-loader.test.ts
+    - tests/integrity/schema.test.ts
+  reads:
+    - docs/02_ARCHITECTURE.md
+    - docs/04_TESTING_STRATEGY.md
+    - src/content/schema.ts
+    - src/content/data/
+    - contracts/example-person.json
+    - contracts/example-station.json
+  goal: "Typed getters over validated content exist, a fictional fixture set exists for E2E, and CI-01 and CI-02 pass."
+  steps:
+    - "data.real.ts: export const raw: RawContentSet built from ./data/tour.json, ./data/stations.json and import.meta.glob('./data/people/*.json', { eager: true, import: 'default' })."
+    - "data.fixture.ts: the same shape from ./fixtures/tour.json, ./fixtures/stations.json and ./fixtures/people/*.json."
+    - "Create the fixture set exactly as docs/04_TESTING_STRATEGY.md §3: stations test-a, test-b, test-c and people test-person-1..3, with FICTIONAL text ('דמות בדיקה 1', 'תחנת בדיקה א' …), verified locations for test-a and test-b (verifiedBy 'fixture', verifiedAt '2026-01-01'), sourceFile values 'content-source/people/00_test-person-N.md' / 'content-source/stations/00_test-x.md'. Every fixture object must pass the zod schemas."
+    - "index.ts: import { raw } from '@content-data'; implement validateContent(raw) per docs/02_ARCHITECTURE.md §6 — zod parsing plus every cross-reference rule listed there; collect ALL problems and throw one ContentError whose message lists them all. Validate once at module load, cache the result, and export the getters from §6."
+    - "tests/unit/content-loader.test.ts: on real content — 7 stations, 9 people; getStationBySlug('nova'); getPeopleForStation('reim-shelter') returns 2 primary and 2 companions; next/prev at both ends return undefined. validateContent must fail with a clear message for: duplicate id, unknown referenced person, one-directional reference, non-contiguous order (build bad sets by deep-cloning the real data)."
+    - "tests/integrity/schema.test.ts: CI-01 (every JSON file parses with its schema) and CI-02 (validateContent passes) — for the real set and for the fixture set."
+  dont:
+    - "Do not edit src/content/data/ (generated) or content-source/."
+    - "Never use real people's names in fixtures."
+    - "No runtime fetching of content — static imports only."
+  acceptance:
+    - "content-loader and schema tests pass; validateContent reports all problems at once."
+    - "npm run build succeeds and the production bundle contains no fixture text; npm run build:e2e contains it."
+  verify:
+    - "npm test -- tests/unit/content-loader.test.ts tests/integrity/schema.test.ts"
+    - "npm run build && ! grep -rq 'דמות בדיקה' dist && npm run build:e2e && grep -rq 'דמות בדיקה' dist-e2e && echo bundles-ok"
+
+- id: F-05
+  title: Wire design tokens and self-hosted fonts into Tailwind
+  agent: dev
+  model: haiku
+  wave: 2
+  size: S
+  status: todo
+  depends_on: [D-02, P0-01]
+  owns:
+    - tailwind.config.ts
+    - src/styles/tokens.css
+    - src/styles/index.css
+    - src/styles/fonts.css
+  reads:
+    - design/tokens.json
+    - design/tokens.css
+    - design/02-tokens.md
+    - docs/02_ARCHITECTURE.md
+  goal: "Tailwind's theme is built only from the design tokens, fonts are self-hosted, and read-aloud mode works through a data attribute."
+  steps:
+    - "Copy design/tokens.css to src/styles/tokens.css unchanged."
+    - "tailwind.config.ts: REPLACE (not extend) colors, fontFamily, fontSize, spacing, borderRadius and boxShadow with entries that reference the tokens, e.g. colors: { bg: 'var(--color-bg)', ink: 'var(--color-ink)', … }. Keep breakpoints sm 640, md 768, lg 1024, xl 1280. Add maxWidth.measure = 'var(--measure)' and maxWidth.content = 'var(--content-max)'."
+    - "src/styles/fonts.css: import only the weights listed in design/02-tokens.md from @fontsource/assistant and @fontsource/frank-ruhl-libre (Hebrew and Latin subsets)."
+    - "src/styles/index.css: import fonts.css and tokens.css, then the three @tailwind directives. Base layer: html background var(--color-bg), color var(--color-ink), font-family var(--font-body); body copy size and leading from tokens; :focus-visible outline 3px solid var(--color-focus) with offset; @media (prefers-reduced-motion: reduce) disable transitions and animations; html[data-read-aloud='true'] main uses --text-read and --leading-read."
+  dont:
+    - "No hard-coded colors or sizes outside tokens.css."
+    - "Do not import whole font families (all weights)."
+  acceptance:
+    - "npm run build succeeds and the total size of dist/assets/*.woff2 is ≤ 220 KB."
+    - "npm run lint and npm run typecheck exit 0."
+  verify:
+    - "npm run build && du -cb dist/assets/*.woff2 | tail -1"
+    - "npm run lint && npm run typecheck"
+
+- id: F-06
+  title: App shell — hash routing, responsive layout, skip link, 404 and page stubs
+  agent: dev
+  model: opus
+  wave: 2
+  size: L
+  status: todo
+  depends_on: [F-05, F-04, F-03, D-03, D-06, P0-02]
+  owns:
+    - src/main.tsx
+    - src/app/
+    - src/components/layout/Header.tsx
+    - src/components/layout/BottomNav.tsx
+    - src/components/layout/SideNav.tsx
+    - src/components/layout/Footer.tsx
+    - src/hooks/useDocumentTitle.ts
+    - src/pages/
+    - tests/component/layout.test.tsx
+  reads:
+    - docs/02_ARCHITECTURE.md
+    - design/components/layout.md
+    - design/icons.md
+    - docs/04_TESTING_STRATEGY.md
+  goal: "The full skeleton works: hash router with every route, responsive layout (bottom nav below lg, side nav at lg+), skip link, error boundary, 404 page, document titles and stub pages for wave-4 tasks."
+  steps:
+    - "src/app/router.tsx: createHashRouter with the route table in docs/02_ARCHITECTURE.md §4; AppLayout as the root element with <Outlet/>; errorElement ErrorBoundary. Export the routes array too so tests can use createMemoryRouter."
+    - "src/pages/: stub components HomePage, TourPage, StationPage, PersonPage, AboutPage, SourcesPage that render only an h1 (from strings) and call useDocumentTitle — wave-4 tasks replace them. Build the real NotFoundPage (h1 notFound.title, notFound.body, link to '/' with notFound.home)."
+    - "src/app/AppLayout.tsx: first element a skip link (data-testid skip-link) to #main; Header; SideNav (hidden below lg); <main id='main' tabIndex={-1}> with <Outlet/>; Footer; BottomNav (hidden at lg+). On route change scroll to top and focus <main>."
+    - "src/app/PrefsProvider.tsx: context with depth/setDepth and readAloud/setReadAloud backed by src/lib/storage.ts; when readAloud is true set document.documentElement.dataset.readAloud = 'true', otherwise delete it. Wrap the router in main.tsx."
+    - "src/app/ErrorBoundary.tsx: error element with error.title, error.body and a reload button (error.reload)."
+    - "Header: app name linking home and an empty slot <div data-slot='header-actions'/> (F-08 adds the read-aloud toggle there). BottomNav (data-testid bottom-nav, nav aria-label from nav.label): home '/', tour '/tour', where-am-i '/tour?locate=1', about '/about' — icon + visible label per design. SideNav (data-testid side-nav): ordered list of stations from getStations() — order, title, visited check from getVisited() — plus the same four links. Footer: links to sources and about, and t('about.lastReview', { date }) from the tour."
+    - "src/hooks/useDocumentTitle.ts: sets document.title to `${title}${t('app.titleSuffix')}`."
+    - "tests/component/layout.test.tsx: render with createMemoryRouter at '/', '/station/nova' and '/nope'; assert the skip link is the first focusable element, landmarks exist (banner, navigation with a label, main, contentinfo), '/nope' shows NotFound, document.title is set."
+  dont:
+    - "Do not implement real page content — wave-4 tasks own those files."
+    - "Do not use BrowserRouter (hash routing only, ADR-002)."
+    - "No physical direction classes (ml mr pl pr left right text-left text-right)."
+  acceptance:
+    - "All seven routes render; unknown routes show NotFound; layout tests pass."
+    - "At 390 px the bottom nav is visible and the side nav hidden; at 1440 px the opposite (attach two screenshots to the report)."
+  verify:
+    - "npm test -- tests/component/layout.test.tsx"
+    - "npm run build && npm run lint && npm run typecheck"
+
+- id: F-07
+  title: Primitive components — Button, headings, Markdown, quote, photo frame, sources, share
+  agent: dev
+  model: sonnet
+  wave: 2
+  size: M
+  status: todo
+  depends_on: [F-05, D-03, D-06, F-04]
+  owns:
+    - src/components/primitives/
+    - tests/component/primitives.test.tsx
+  reads:
+    - design/components/primitives.md
+    - design/icons.md
+    - docs/02_ARCHITECTURE.md
+    - docs/04_TESTING_STRATEGY.md
+    - src/content/schema.ts
+    - src/i18n/he.ts
+  goal: "Button, SectionHeading, DurationBadge, Markdown, QuoteBlock, PhotoFrame, SourceList and ShareButton exist per spec with component tests."
+  steps:
+    - "Button: variants primary | secondary | quiet | link; renders <a> when href is given, otherwise <button type='button'>; minimum size var(--tap-min); visible focus ring; external prop adds target _blank and rel 'noopener noreferrer'."
+    - "SectionHeading: props level (2 | 3), id?, children."
+    - "DurationBadge: props minutes; text from formatMinutes; clock icon from design/icons.md."
+    - "Markdown: react-markdown WITHOUT rehype-raw; component overrides for p, strong, ul, ol, li, a (external links get target _blank, rel 'noopener noreferrer' and a visually hidden t('common.externalLink')); the wrapper element has the attribute data-inline-text."
+    - "QuoteBlock: props quote { text, by }; markup <figure><blockquote>„{text}”</blockquote><figcaption>— {by}</figcaption></figure> styled per spec."
+    - "PhotoFrame: props photo (Photo), name. status pending → a placeholder box with t('photo.pending') and data-testid photo-placeholder and NO <img>. status cleared → <img src={photo.src} alt={photo.alt} loading='lazy'> and t('photo.credit', { credit }). Never read photo.referenceUrl."
+    - "SourceList: props sources (Source[]); each item: the title as an external link plus the host name inside <bdi dir='ltr'>."
+    - "ShareButton (data-testid share-button): if navigator.share exists call it with { title: document.title, url: location.href }; otherwise await navigator.clipboard.writeText(location.href) and show t('share.copied') in an aria-live='polite' region for 3 seconds; on any error show t('share.failed')."
+    - "tests/component/primitives.test.tsx: CT-MD-01, CT-QUOTE-01, CT-PHOTO-01, CT-SRC-01, and both ShareButton branches with a mocked navigator."
+  dont:
+    - "Do not enable raw HTML in Markdown."
+    - "Do not use photo.referenceUrl anywhere."
+    - "Do not hard-code Hebrew strings — use t()."
+  acceptance:
+    - "All listed component tests pass; components use only token-based classes."
+  verify:
+    - "npm test -- tests/component/primitives.test.tsx"
+    - "npm run lint && npm run typecheck"

@@ -1,0 +1,279 @@
+# Content lane (agents) and human tasks (Shuki). Content agents NEVER edit content-source/ — they report.
+
+- id: C-02
+  title: Verify every quote and key fact against the original articles
+  agent: content
+  model: fable
+  wave: 1
+  size: L
+  status: todo
+  depends_on: []
+  owns:
+    - review/C-02-verification.md
+  reads:
+    - content-source/VERIFICATION.md
+    - content-source/CORRECTIONS.md
+    - content-source/people/
+    - content-source/stations/
+  goal: "Every 🔶 item in content-source/VERIFICATION.md is checked word-for-word against the original Hebrew article, with an exact proposed correction wherever it differs."
+  context: |
+    The content was first researched from article summaries. Several quotes then turned out to be paraphrased or
+    misattributed (see CORRECTIONS.md). This is the only content task allowed to browse the web — and it still must not
+    edit content-source/. It produces a report; Shuki approves; the orchestrator applies the approved changes.
+  steps:
+    - "For every 🔶 row (Q*, F*, S*) open the listed source. If the link is dead, find the same article on the same outlet and record the working URL."
+    - "Copy the exact original sentence(s) into the report next to our text."
+    - "Classify each row: MATCH (identical apart from punctuation or quotation marks), MINOR (wording differs, meaning the same — propose a verbatim replacement), MISMATCH (meaning or attribution differs — propose a correction), NOT FOUND (cannot confirm — propose removal)."
+    - "F11 (Raz Peretz's six fallen comrades): find each on izkor.gov.il; record the exact Hebrew full name with rank and the Izkor URL."
+    - "S7 (Tkuma hours): find the most recent official or news information and its date."
+    - "Write review/C-02-verification.md: one table per section (quotes, people facts, station facts) with columns ID, our text, original text, source URL + date accessed, classification, proposed replacement (exact Hebrew)."
+  dont:
+    - "Do not edit content-source/ or src/ — report only."
+    - "Do not use AI summaries, translations or search-result snippets as evidence — only the article text itself."
+    - "Do not translate: if the original is English, quote the English and say so."
+    - "Do not propose facts that are not in the original sources."
+  acceptance:
+    - "Every 🔶 row in content-source/VERIFICATION.md appears in the report with a classification."
+    - "Every MINOR or MISMATCH row has the original text and an exact proposed replacement."
+    - "F11 lists six names with Izkor URLs, or explains exactly why not."
+  verify:
+    - "Orchestrator opens 5 random source URLs and compares."
+
+- id: C-03
+  title: Candidate coordinates for every station (for Shuki to verify)
+  agent: content
+  model: sonnet
+  wave: 1
+  size: M
+  status: todo
+  depends_on: []
+  owns:
+    - review/C-03-coordinates.md
+  reads:
+    - content-source/stations/
+    - content-source/README.md
+  goal: "Shuki has a table of sourced candidate coordinates for every station so he can verify them quickly."
+  steps:
+    - "For each station id (sderot, route-232, observers-hill, reim-shelter, nova, tkuma, closing-drive) find a candidate point for the practical ARRIVAL spot (parking or safe stopping place), not only the landmark. For drive segments give the start point."
+    - "Use official sites, OpenStreetMap or Google Maps place pages, and amudanan.co.il. Record the source URL for every row."
+    - "Write lat and lng with 6 decimals, latitude first. Check that every point lies inside lat 31.2–31.7 and lng 34.3–34.8."
+    - "Add a clickable link https://www.google.com/maps?q=<lat>,<lng> per row."
+    - "Write review/C-03-coordinates.md with columns: station id, place description, lat, lng, maps link, source, confidence (high/medium/low), notes (parking, access, closures)."
+  dont:
+    - "Do not edit content-source/. Do not mark anything as verified — only Shuki verifies (H-02)."
+    - "Do not swap latitude and longitude (latitude ≈ 31.x comes first)."
+  acceptance:
+    - "7 rows, each inside the bounding box, with a working maps link and a source."
+  verify:
+    - "Orchestrator opens three of the map links."
+
+- id: H-03
+  title: Inform the families and record their consent (runs in parallel; blocks public launch)
+  agent: human
+  model: human
+  wave: 1
+  size: L
+  status: todo
+  depends_on: []
+  owns:
+    - review/H-03-consent-tracker.md
+  reads:
+    - content-source/people/
+    - docs/07_DECISIONS_FOR_SHUKI.md
+  goal: "Each of the nine families has been told about the project, has seen the text about their loved one, and their response is recorded."
+  context: |
+    This runs alongside the whole build and blocks only the PUBLIC launch (L-01). It is the most important protection
+    for the families and for the project. A request to change or remove a story is a valid and respected outcome.
+  steps:
+    - "Create review/H-03-consent-tracker.md with one row per person: how the family can be reached (organization, memorial page, mutual acquaintance), date contacted, response, requested changes, photo permission (yes/no, which photo, exact credit text)."
+    - "Personalize the letter in the appendix and attach that person's text (print of content-source/people/NN_<id>.md or of the person page)."
+    - "Pass every requested text change to the orchestrator as a correction to apply (it is logged in content-source/CORRECTIONS.md)."
+    - "Follow up at most twice."
+  dont:
+    - "Do not publish publicly before every family has responded or had a reasonable attempt."
+    - "Do not pressure anyone."
+  acceptance:
+    - "The tracker has 9 rows with dates and outcomes; photo permissions include credit text."
+  verify:
+    - "Orchestrator reviews the tracker before L-01."
+  appendix: |
+    **Letter template (Hebrew) — personalize before sending**
+
+    שלום [שם],
+
+    שמי שוקי, ואני גר בנתיבות. אני בונה בהתנדבות, בלי שום מטרה מסחרית, אתר שמלווה מבקרים בעוטף עזה בסיור עצמאי
+    בעקבות 7 באוקטובר. בכל תחנה בסיור מספרים על אדם אחד, כדי שהמספרים יקבלו פנים.
+
+    בתחנה [שם התחנה] אני מבקש לספר על [שם]. מצורף הטקסט שכתבתי על בסיס כתבות ודפי הנצחה שפורסמו. חשוב לי
+    שתקראו אותו לפני שהוא מתפרסם, ותגידו לי אם יש משהו לתקן, להוסיף או להוריד — או אם אתם מעדיפים שלא אספר
+    עליו בכלל.
+
+    אם תרצו, אשמח גם לתמונה שאתם בוחרים, עם שם הצלם לקרדיט. בלי אישורכם לא תופיע תמונה.
+
+    תודה, ומשתתף בצערכם,
+    שוקי
+
+- id: C-01
+  title: Proofread the generated JSON against the Markdown sources
+  agent: content
+  model: sonnet
+  wave: 2
+  size: M
+  status: todo
+  depends_on: [F-02]
+  owns:
+    - review/C-01-conversion-proofread.md
+  reads:
+    - content-source/README.md
+    - content-source/people/
+    - content-source/stations/
+    - content-source/tour.md
+    - src/content/data/
+  goal: "A human-readable confirmation exists that the generated JSON says exactly what the Markdown says, field by field, for all 9 people, 7 stations and the tour."
+  steps:
+    - "For each source file open the matching JSON and compare every field listed in content-source/README.md: front matter → fields, sections → fields, guideLevels, quote/altQuote, sources."
+    - "Check especially: Hebrew punctuation (״ ׳ „ ” – —) preserved; ** bold markers preserved; paragraph breaks preserved; nothing truncated; URLs identical."
+    - "Write review/C-01-conversion-proofread.md: one section per file with 'OK' or a list of differences (field, expected, actual)."
+  dont:
+    - "Do not edit JSON or Markdown — report only."
+  acceptance:
+    - "The report covers 17 files (9 people, 7 stations, tour) with an explicit OK or diff for each."
+  verify:
+    - "Orchestrator checks that 17 files are listed."
+
+- id: H-02
+  title: Verify station coordinates and set them in the content source
+  agent: human
+  model: human
+  wave: 2
+  size: M
+  status: todo
+  depends_on: [C-03, F-02]
+  owns:
+    - content-source/stations/
+    - src/content/data/stations.json
+  reads:
+    - review/C-03-coordinates.md
+    - content-source/README.md
+  goal: "Every station location is either verified by Shuki and set in content-source, or stays null."
+  steps:
+    - "Open review/C-03-coordinates.md. For each row check on a satellite map, or on site, that the point is a safe and legal place to arrive and park."
+    - "For each verified station replace the location line in content-source/stations/NN_<id>.md exactly as shown in content-source/README.md (verified: true, verifiedBy, verifiedAt, note)."
+    - "Leave location: null for anything you are not sure about — the app then shows 'location being verified' and no navigation buttons."
+    - "Run npm run content:build (or ask the orchestrator) and commit the regenerated src/content/data/stations.json."
+  dont:
+    - "Do not mark a point verified unless you personally checked it."
+  acceptance:
+    - "Every station has a verified location or null, and npm run content:check passes."
+  verify:
+    - "npm run content:build && npm run content:check"
+
+- id: C-04
+  title: Proofread every page on the deployed site at phone size
+  agent: content
+  model: sonnet
+  wave: 6
+  size: M
+  status: todo
+  depends_on: [O-03]
+  owns:
+    - review/C-04-rendered-proofread.md
+    - review/C-04-shots/
+  reads:
+    - content-source/people/
+    - content-source/stations/
+    - content-source/tour.md
+    - docs/03_CONVENTIONS.md
+  goal: "Every visitor-facing text on the deployed site has been checked on screen against the source, at phone size."
+  steps:
+    - "Open the live URL (from the latest O-03 deploy report) at a 390-px width (real phone or browser emulation)."
+    - "Visit every route. On every person page read all three depths and open every warning gate."
+    - "Compare with content-source/ and the UI strings. Note: missing or reordered paragraphs, broken Markdown (stray ** or #), wrong gendered heading (Roni Eshel must show 'מי היא הייתה'), mixed-direction glitches (numbers, Latin text, URLs), truncated text."
+    - "Save a screenshot per issue in review/C-04-shots/ and write review/C-04-rendered-proofread.md (route, screenshot, issue, severity)."
+  dont:
+    - "Report only; do not edit anything."
+  acceptance:
+    - "All routes and all people at all three depths are covered."
+  verify:
+    - "Orchestrator reviews the report."
+
+- id: H-05
+  title: Field test the whole route with the deployed app on two phones
+  agent: human
+  model: human
+  wave: 6
+  size: M
+  status: todo
+  depends_on: [O-03]
+  owns:
+    - review/H-05-field-test.md
+  reads:
+    - content-source/stations/
+  goal: "The whole route has been completed using only the deployed app, on a real iPhone and a real Android phone, including offline."
+  steps:
+    - "Before leaving, with signal: open the live URL on both phones once and add it to the home screen. Then turn on airplane mode and confirm every page still opens."
+    - "At every segment check: is 'איפה אני' correct? Are the access notes still true (Tkuma hours, Black Arrow, parking)? Is the text readable in the sun? Does read-aloud work for the passenger? Is the duration realistic?"
+    - "Record every issue in review/H-05-field-test.md: segment, phone, screenshot, description. Record the actual time per segment."
+  dont:
+    - "The driver must never use the phone while driving — a passenger runs the test during drive segments."
+  acceptance:
+    - "The report covers all 7 segments on both phones and includes the airplane-mode check."
+  verify:
+    - "Orchestrator reviews the report; every blocker becomes a fix task before L-01."
+
+- id: H-06
+  title: Final content and sensitivity sign-off
+  agent: human
+  model: human
+  wave: 6
+  size: S
+  status: todo
+  depends_on: [C-01, C-02, C-04, H-02, H-05, D-09]
+  owns:
+    - review/H-06-signoff.md
+    - content-source/
+  reads:
+    - review/C-02-verification.md
+    - review/C-01-conversion-proofread.md
+    - review/C-04-rendered-proofread.md
+    - review/H-05-field-test.md
+    - content-source/VERIFICATION.md
+  goal: "Shuki confirms that the content is accurate and the tone is right; all approved corrections are applied."
+  steps:
+    - "Read review/C-02-verification.md and mark each proposed correction approve or reject."
+    - "The orchestrator applies approved corrections to content-source/ with a line each in CORRECTIONS.md, updates VERIFICATION.md (every 🔶 becomes ✅ or is removed), runs npm run content:build, and deploys."
+    - "Read the C-01, C-04, D-09 and H-05 reports and confirm every blocker is resolved."
+    - "Write review/H-06-signoff.md: 'I approve publication' (or not), the date, and any conditions."
+  dont:
+    - "Do not approve while any 🔶 remains in content-source/VERIFICATION.md."
+  acceptance:
+    - "content-source/VERIFICATION.md contains no 🔶."
+    - "The sign-off file is written and dated."
+  verify:
+    - "grep -c '🔶' content-source/VERIFICATION.md   (expect 0)"
+
+- id: H-04
+  title: Add family-approved photos (after launch is fine)
+  agent: human
+  model: human
+  wave: 7
+  size: M
+  status: todo
+  depends_on: [H-03, F-02]
+  owns:
+    - public/photos/
+    - content-source/people/
+  reads:
+    - review/H-03-consent-tracker.md
+    - content-source/README.md
+  goal: "Photos that families explicitly approved appear on the site with credit and alt text."
+  steps:
+    - "Only for people whose tracker row says photo permission yes: take the original file from the family, crop to portrait 4:5, export WebP ≤ 120 KB to public/photos/<person-id>.webp."
+    - "In that person's front matter add photo: { src: /photos/<person-id>.webp, alt: <short Hebrew description>, credit: <photographer or family> } and set consent: granted (see content-source/README.md)."
+    - "Run npm run content:build and commit."
+  dont:
+    - "Never use a press or news photo. Never use a photo without written permission."
+  acceptance:
+    - "Every cleared photo has a tracker row with written permission and a file in public/photos/, and the integrity tests pass."
+  verify:
+    - "npm run content:check && npm test -- tests/integrity"

@@ -1,0 +1,309 @@
+# Design lane — for design agents. All outputs go under design/ (D-07 alone may edit src/i18n/he.ts VALUES).
+
+- id: D-01
+  title: Design principles and tone
+  agent: design
+  model: opus
+  wave: 1
+  size: S
+  status: todo
+  depends_on: []
+  owns:
+    - design/01-principles.md
+  reads:
+    - docs/05_DESIGN_BRIEF.md
+    - docs/01_PROJECT_BRIEF.md
+    - content-source/people/05_aner-shapira.md
+    - content-source/people/04_roni-eshel.md
+    - content-source/stations/05_nova.md
+  goal: "A short principles document exists that every design and UI task follows."
+  context: |
+    This is a memorial companion used on site, sometimes in a moving car, by people standing where others were
+    murdered. Read the three content files completely before writing — design for that material, not for a
+    generic tourism app.
+  steps:
+    - "Read the brief and the three content files in full."
+    - "Write design/01-principles.md with these sections: Purpose (2 sentences); Emotional tone (5 adjectives we ARE, 5 we are NOT); 6–8 principles, each a one-line rule plus a do/don't example tied to a real screen of this app (home, station, person, drive segment, silence moment); Pacing and silence; Typography attitude; Color attitude (exactly when memorial red is allowed); Motion rules (≤ 200 ms, reduced motion); Imagery rules (no photos until cleared, anemone mark usage); Words (pointer to Conventions §1.8)."
+    - "End with a 'Red flags' checklist of 10 items that a reviewer can use to reject a screen."
+  dont:
+    - "Do not propose gamification, badges, celebrations, dramatic dark themes or illustrations of the events."
+    - "Do not change scope or content."
+  acceptance:
+    - "design/01-principles.md has every section listed and the 10-item red-flags checklist."
+    - "Every principle has a concrete do/don't example tied to a named screen."
+    - "The document is at most about two printed pages."
+  verify:
+    - "Orchestrator reads it against docs/05_DESIGN_BRIEF.md §3 and the red flags."
+
+- id: D-02
+  title: Design tokens with a contrast table
+  agent: design
+  model: sonnet
+  wave: 1
+  size: M
+  status: todo
+  depends_on: [D-01]
+  owns:
+    - design/tokens.json
+    - design/tokens.css
+    - design/02-tokens.md
+  reads:
+    - docs/05_DESIGN_BRIEF.md
+    - design/01-principles.md
+    - docs/02_ARCHITECTURE.md
+  goal: "A complete, contrast-checked token set (color, type, space, radius, shadow, motion, layout) exists as JSON and as CSS custom properties."
+  steps:
+    - "Start from the palette in docs/05_DESIGN_BRIEF.md §4. Change values only to meet contrast: body text on background ≥ 7:1; secondary text and UI ≥ 4.5:1; focus ring ≥ 3:1 against adjacent colors."
+    - "Color tokens, exactly these names: --color-bg, --color-surface, --color-border, --color-ink, --color-ink-muted, --color-primary, --color-primary-ink, --color-accent, --color-accent-soft, --color-gold, --color-gold-soft, --color-warning-bg, --color-focus."
+    - "Fonts: only the installed @fontsource families — Assistant (UI/body) and Frank Ruhl Libre (headings/quotes). Choose at most 4 weights in total and list them. Tokens --font-body and --font-display with Hebrew-capable fallbacks."
+    - "Type scale --text-xs … --text-3xl with matching --leading-* for base and for md+ (body ≥ 18px at base). Read-aloud tokens: --text-read ≥ 22px, --leading-read ≥ 1.7."
+    - "Space --space-1 … --space-12 (4px base); --radius-sm, --radius-md, --radius-lg; one subtle --shadow-card; motion --duration-fast 150ms, --duration-base 200ms, --ease-standard; layout --measure (about 68ch), --content-max 720px, --tap-min 44px."
+    - "Write design/tokens.json (same names and values) and design/tokens.css (a :root block plus an html[data-read-aloud='true'] block overriding body text size and leading)."
+    - "design/02-tokens.md: the chosen font weights, and a contrast table of every text/background pair you intend to use, with the computed WCAG ratio and pass/fail. Show how you computed it (formula or script)."
+  dont:
+    - "Do not use pure #000 on pure #FFF; keep the warm paper look."
+    - "Do not add a dark theme in MVP."
+    - "Do not reference fonts that are not installed."
+  acceptance:
+    - "Every token name listed above exists in both tokens.json and tokens.css."
+    - "The contrast table shows body text ≥ 7:1 and all other text ≥ 4.5:1, all marked pass."
+    - "The read-aloud override block exists."
+  verify:
+    - "node -e \"const t=require('./design/tokens.json');console.log(Object.keys(t).length+' tokens')\""
+    - "Orchestrator re-checks three contrast ratios with an online WCAG checker."
+
+- id: D-03
+  title: Component specifications for every component
+  agent: design
+  model: opus
+  wave: 1
+  size: L
+  status: todo
+  depends_on: [D-02]
+  owns:
+    - design/components/
+  reads:
+    - docs/05_DESIGN_BRIEF.md
+    - design/01-principles.md
+    - design/tokens.json
+    - docs/04_TESTING_STRATEGY.md
+    - docs/02_ARCHITECTURE.md
+    - contracts/strings.he.ts
+    - contracts/example-person.json
+    - contracts/example-station.json
+  goal: "Developers can build every component without making a single visual decision."
+  steps:
+    - "Create four files: design/components/layout.md (Header, BottomNav, SideNav, Footer, OfflineIndicator, UpdatePrompt, sticky prev/next bar), primitives.md (Button primary/secondary/quiet/link, SectionHeading, DurationBadge, QuoteBlock, PhotoFrame pending/cleared, SourceList, Markdown typography, ShareButton), tour.md (StationCard, PersonCard primary/companion, ProgressStepper, RouteMap container, NearbyBanner in all 7 states, NavLinks verified/unverified, DriveBanner), reading.md (DepthTabs, ContentWarningGate closed/opened/skipped, SilenceMoment idle/running/ended, ReadAloudToggle)."
+    - "For each component write: purpose; anatomy as an ASCII sketch drawn RTL (start = right); the props it needs (names and types from contracts); every state; sizes at base, md and lg; the token name for every color, font, space and radius; the Lucide icon name if any; the exact string keys from contracts/strings.he.ts it shows; accessibility (element/role, aria attributes, focus order, live region); its data-testid from docs/04_TESTING_STRATEGY.md §6; and 'Don't' notes."
+    - "BottomNav: 4 items (בית, המסלול, איפה אני, אודות) with icon + visible label, fixed bottom with safe-area inset, shown below lg. SideNav: ordered station list + the same links, shown at lg and up."
+    - "Sticky prev/next bar for station pages on mobile, sitting above the BottomNav without covering content."
+    - "If a needed string key is missing from contracts/strings.he.ts, list it under 'Missing strings' at the end of the file — do not invent new keys in specs."
+  dont:
+    - "Do not use raw hex colors or px values in specs — token names only."
+    - "Do not specify motion longer than 200 ms."
+    - "Do not design icon-only actions."
+  acceptance:
+    - "Every component named in docs/05_DESIGN_BRIEF.md §6 has a spec with all fields from step 2."
+    - "No raw hex color appears in design/components/*.md."
+    - "Every component that has a data-testid in Testing Strategy §6 lists it."
+  verify:
+    - "grep -c '#[0-9A-Fa-f]\\{6\\}' design/components/*.md   (expect 0 for every file)"
+
+- id: D-05
+  title: Route schematic map as an offline SVG
+  agent: design
+  model: sonnet
+  wave: 1
+  size: M
+  status: todo
+  depends_on: [D-02]
+  owns:
+    - design/route-map.svg
+    - design/route-map.md
+    - design/route-map-preview.png
+  reads:
+    - docs/05_DESIGN_BRIEF.md
+    - content-source/tour.md
+    - content-source/stations/
+    - design/tokens.json
+  goal: "A calm, legible SVG schematic of the 7-segment route exists that a developer can turn into a component."
+  context: |
+    Not a geographic map — a schematic showing sequence and rough relative position. North is up. The Gaza border runs
+    along the west (left). Sequence: Sderot (north) → route 232 south past Mefalsim and Kfar Aza → observers' hill near
+    Nahal Oz / Sa'ad → Re'im junction shelter → Nova site (Re'im parking) → Tkuma (east, near Netivot) → the drive home.
+  steps:
+    - "viewBox 0 0 360 640 (portrait). A thin dashed line on the west labelled 'גבול רצועת עזה'."
+    - "Draw the route as one continuous path. Drive segments dashed, stops solid. Numbered circle markers 1–7; the closing drive can be an arrow toward the east edge labelled 'הדרך הביתה'."
+    - "Each marker is a <g id=\"marker-<station-id>\"> using exactly these ids: sderot, route-232, observers-hill, reim-shelter, nova, tkuma, closing-drive — containing the circle and a Hebrew <text> label with the station title from its file."
+    - "Use only token colors (write hex in the SVG, list the token name per color in route-map.md). No gradients, shadows, imagery, weapons or flames."
+    - "Optimize (no editor metadata). Include <title> and <desc> in Hebrew."
+    - "design/route-map.md: the marker id list, how 'current' and 'visited' look (stroke/fill change only), and the text alternative (the ordered station list)."
+    - "Render a preview: npx playwright screenshot --viewport-size=390,700 file://$PWD/design/route-map.svg design/route-map-preview.png"
+  dont:
+    - "Do not trace real map data or tiles (licensing) — schematic only."
+    - "Do not suggest exact coordinates."
+  acceptance:
+    - "design/route-map.svg is valid SVG under 20 KB with exactly 7 elements id='marker-<id>' as listed."
+    - "Labels are Hebrew and readable in the 390-px preview."
+  verify:
+    - "grep -o 'id=\"marker-[a-z0-9-]*\"' design/route-map.svg | sort -u | wc -l   (expect 7)"
+    - "ls -la design/route-map.svg design/route-map-preview.png"
+
+- id: D-06
+  title: Icon list (Lucide) with RTL rules
+  agent: design
+  model: haiku
+  wave: 1
+  size: S
+  status: todo
+  depends_on: [D-01]
+  owns:
+    - design/icons.md
+  reads:
+    - docs/05_DESIGN_BRIEF.md
+    - design/01-principles.md
+  goal: "A short, consistent icon table exists so developers never choose icons themselves."
+  steps:
+    - "List every icon the app needs: home, route/map, where-am-i/location, about/info, sources, next, previous, external navigation, visited/check, warning, silence, read-aloud, share, offline, update/refresh, duration/clock, drive/car."
+    - "For each give: the lucide-react component name (verify it exists in the installed package), where it is used, size token, stroke width, and whether it must mirror in RTL (all directional arrows and chevrons)."
+    - "State the rule: every action icon appears with a visible text label."
+  dont:
+    - "No brand logos (Waze, Google) — use a neutral navigation icon plus text."
+    - "No icons depicting weapons, fire, blood or violence."
+  acceptance:
+    - "design/icons.md has a row for every need above, each with an existing lucide-react name and a mirror yes/no column."
+  verify:
+    - "node -e \"const l=require('lucide-react');const names=['MapPin','ChevronLeft'];for(const n of names){if(!l[n])throw new Error(n)}console.log('ok')\"   (extend names with every icon in the table)"
+
+- id: D-04
+  title: Responsive page mockups with real content (gate G2)
+  agent: design
+  model: fable
+  wave: 2
+  size: L
+  status: todo
+  depends_on: [D-03, D-05, D-06]
+  owns:
+    - design/mockups/
+  reads:
+    - docs/05_DESIGN_BRIEF.md
+    - design/01-principles.md
+    - design/tokens.css
+    - design/components/
+    - design/route-map.svg
+    - design/icons.md
+    - content-source/tour.md
+    - content-source/stations/02_route-232.md
+    - content-source/stations/04_reim-shelter.md
+    - content-source/people/04_roni-eshel.md
+    - content-source/people/05_aner-shapira.md
+    - contracts/strings.he.ts
+  goal: "Responsive HTML mockups of every page and key state exist, using real Hebrew content, and Shuki approves them at gate G2."
+  steps:
+    - "Create self-contained HTML files in design/mockups/ that link ../tokens.css and contain any extra CSS inline (no external requests; system Hebrew fonts are acceptable fallbacks in mockups): home.html, tour.html, station-stop.html (reim-shelter), station-drive.html (route-232), person-s30.html, person-m2.html (aner-shapira, warning gate closed), person-m5.html (roni-eshel), about.html, sources.html, not-found.html, states.html (offline banner, update prompt, NearbyBanner 7 states, silence running, read-aloud mode)."
+    - "Copy real text exactly from the listed content files and UI strings from contracts/strings.he.ts. No new content, no lorem ipsum."
+    - "Each mockup is responsive for base (360–767), md (768–1023) and lg (≥ 1024) as in docs/05_DESIGN_BRIEF.md §5, using only tokens."
+    - "Screenshot every file at 390×844, 820×1180 and 1440×900 into design/mockups/shots/<page>-<width>.png (command in docs/05_DESIGN_BRIEF.md §8)."
+    - "Write design/mockups/README.md: the list of pages and states, what to look at, open questions for Shuki, and an 'Approved by Shuki on: ____' line."
+  dont:
+    - "No photos — PhotoFrame placeholder only."
+    - "No frameworks; plain HTML and CSS (minimal inline JS only to toggle states)."
+    - "Do not change or shorten content to make layouts fit."
+  acceptance:
+    - "All 11 HTML files exist and show no horizontal scroll at 360, 820 and 1440 px."
+    - "33 screenshots exist (11 × 3)."
+    - "No raw hex colors in design/mockups/*.html."
+    - "Gate G2: the approval line in design/mockups/README.md is filled by the orchestrator after Shuki approves."
+  verify:
+    - "ls design/mockups/shots | wc -l   (expect 33)"
+    - "grep -c '#[0-9A-Fa-f]\\{6\\}' design/mockups/*.html   (expect 0)"
+
+- id: D-07
+  title: Microcopy review of all UI strings (values only)
+  agent: design
+  model: opus
+  wave: 2
+  size: M
+  status: todo
+  depends_on: [D-01, P0-02]
+  owns:
+    - design/microcopy.md
+    - src/i18n/he.ts
+  reads:
+    - contracts/strings.he.ts
+    - design/01-principles.md
+    - docs/03_CONVENTIONS.md
+    - content-source/tour.md
+  goal: "Every UI string is calm, clear and consistent — changed by value only, never by key."
+  steps:
+    - "Review every value in src/i18n/he.ts against Conventions §1.4 and §1.8 and design/01-principles.md. Focus on warning.*, silence.*, nearby.*, drive.warning, offline.*, update.*, error.*, notFound.*."
+    - "Improve wording where needed: clarity, plural address, gender-neutral phrasing, consistent infinitive verbs on buttons (להציג, לדלג, לעדכן)."
+    - "Keep every {placeholder} that exists in the original value."
+    - "Write design/microcopy.md: a table of every changed key (old value, new value, reason) and a 10-rule style guide."
+  dont:
+    - "Do not add, remove or rename keys."
+    - "No '!', no emoji, no celebratory words, no slang."
+    - "Do not touch content about people or stations."
+  acceptance:
+    - "The key set of src/i18n/he.ts is identical to contracts/strings.he.ts."
+    - "No value contains '!' or an emoji; every original placeholder is still present."
+    - "npm run typecheck and tests/unit/i18n.test.ts pass."
+  verify:
+    - "npx tsx -e \"import {he as a} from './contracts/strings.he.ts'; import {he as b} from './src/i18n/he.ts'; if (Object.keys(a).sort().join() !== Object.keys(b).sort().join()) throw new Error('keys differ'); console.log('keys identical')\""
+    - "npm run typecheck && npm test -- tests/unit/i18n.test.ts"
+
+- id: D-08
+  title: Brand mark, app icons and social image
+  agent: design
+  model: sonnet
+  wave: 2
+  size: M
+  status: todo
+  depends_on: [D-02]
+  owns:
+    - design/brand/
+  reads:
+    - docs/05_DESIGN_BRIEF.md
+    - design/01-principles.md
+    - design/tokens.json
+  goal: "A restrained mark and every icon and social-image file the PWA needs exist."
+  steps:
+    - "Design a simple single-color mark: an abstract anemone (כלנית), or a road line with a small anemone, on the paper background. SVG that still reads at 16 px."
+    - "Export: design/brand/mark.svg, favicon.svg, icon-192.png, icon-512.png, icon-maskable-512.png (content within the central 80% safe zone), apple-touch-icon-180.png, og-image-1200x630.png (mark + 'פנים למספרים' + the app tagline from contracts/strings.he.ts, on paper background)."
+    - "design/brand/README.md: usage rules and the exact file list with pixel sizes."
+  dont:
+    - "No photos of people, no event imagery, no flag-only design, no large red fills."
+  acceptance:
+    - "All listed files exist with the exact pixel sizes."
+  verify:
+    - "file design/brand/*.png"
+
+- id: D-09
+  title: Design QA of the built app and approval of visual baselines
+  agent: design
+  model: opus
+  wave: 6
+  size: M
+  status: todo
+  depends_on: [T-07, F-13, F-14, F-15, F-16, F-17, F-18]
+  owns:
+    - design/qa/
+  reads:
+    - docs/05_DESIGN_BRIEF.md
+    - design/01-principles.md
+    - design/components/
+    - design/mockups/
+    - tests/e2e/layout.spec.ts-snapshots/
+  goal: "The built UI is checked against the approved design at all three breakpoints; visual baselines are approved or issues are filed."
+  steps:
+    - "Run the app (npm run build && npm run preview) and review every route at 390, 820 and 1440 px, plus read-aloud mode. Use the fixture build (npm run build:e2e && npm run preview:e2e) to see the NearbyBanner states and the warning gate."
+    - "Compare with design/mockups/shots and the component specs. Apply the checklist in docs/05_DESIGN_BRIEF.md §9 and the red flags in design/01-principles.md."
+    - "Review the Playwright visual baselines produced by T-07."
+    - "Save screenshots to design/qa/shots/ and write design/qa/<YYYY-MM-DD>.md: a table of issues (route, width, screenshot, expected, actual, severity blocker/major/minor) with blockers first, and the line 'Baselines approved: yes/no'."
+  dont:
+    - "Do not edit source code or tests — file issues only."
+  acceptance:
+    - "Every route is covered at three widths, with screenshots in design/qa/shots/ (at least 21 files)."
+    - "Every issue has a severity; blockers are listed first."
+  verify:
+    - "ls design/qa/shots | wc -l   (expect ≥ 21)"
