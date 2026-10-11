@@ -320,7 +320,7 @@
   model: opus
   wave: 3
   size: M
-  status: todo
+  status: done
   depends_on: [C-05, F-02, T-01]
   owns:
     - content-source/

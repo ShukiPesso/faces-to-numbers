@@ -165,7 +165,7 @@
   model: haiku
   wave: 2
   size: S
-  status: todo
+  status: done
   depends_on: [D-02, P0-01]
   owns:
     - tailwind.config.ts
