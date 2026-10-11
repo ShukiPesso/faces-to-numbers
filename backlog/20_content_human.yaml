@@ -228,7 +228,7 @@
   wave: 6
   size: S
   status: todo
-  depends_on: [C-01, C-02, C-04, H-02, H-05, D-09]
+  depends_on: [C-01, C-02, C-04, H-02, H-05, D-09, C-05]
   owns:
     - review/H-06-signoff.md
     - content-source/
@@ -277,3 +277,39 @@
     - "Every cleared photo has a tracker row with written permission and a file in public/photos/, and the integrity tests pass."
   verify:
     - "npm run content:check && npm test -- tests/integrity"
+
+- id: C-05
+  title: Second verification pass on open items using the official "Le'ad" memorial site
+  agent: content
+  model: fable
+  wave: 2
+  size: M
+  status: todo
+  depends_on: [C-02]
+  owns:
+    - review/C-05-laad.md
+  reads:
+    - review/C-02-verification.md
+    - content-source/VERIFICATION.md
+    - content-source/CORRECTIONS.md
+    - content-source/people/
+  goal: "Every item that C-02 left as MISMATCH, NOT FOUND or COULD NOT ACCESS for a civilian victim is checked against the official National Insurance memorial site and a second independent source, so Shuki can decide each correction with evidence."
+  context: |
+    Shuki pointed us to https://laad.btl.gov.il/Web/He/Default.aspx ("לעד" — the National Insurance Institute's
+    memorial site for civilian victims of hostile acts; one profile page per person). Use it for people who were
+    NOT soldiers: Awad Darawshe, Aviel Rahamim, Hersh Goldberg-Polin, Ofir Libstein, Nitzan Libstein. Police and
+    soldiers are not there (Eliyahu Harosh → police memorial; Raz Peretz, Aner Shapira, Roni Eshel → Izkor).
+  steps:
+    - "From review/C-02-verification.md list every item with status MISMATCH, NOT FOUND, COULD NOT ACCESS or MINOR. One row per item: ID, person, claim as it stands in content-source/, C-02's finding."
+    - "For each civilian, open their Le'ad profile (search on the site; if the search needs JavaScript and the tool cannot use it, try a web search for 'site:laad.btl.gov.il <name>'). Record the profile URL and quote, verbatim, only the sentences relevant to an open item (date and place of death, age, place of burial, family names, what happened)."
+    - "Retry the sources C-02 could not access (Makor Rishon 775176; he.wikipedia הירש_גולדברג-פולין). Same rule as C-02: if a domain is refused, do not work around it — mark it."
+    - "For each open item give a verdict: CONFIRMED (two independent sources agree, with quotes), CORRECTION PROPOSED (exact replacement Hebrew text + sources), STILL OPEN (what would settle it), or REMOVE (no source supports it; propose removing the sentence)."
+    - "Write review/C-05-laad.md: summary counts, the table, and at the end a ready-to-approve list of proposed edits per content-source file (file, section key, old text, new text, source)."
+  dont:
+    - "Do not edit content-source/ — Shuki approves every change."
+    - "Never mark anything confirmed from memory or from a search snippet alone. Near-matches are not matches."
+    - "Do not copy long passages; quote only the sentences needed as evidence."
+  acceptance:
+    - "Every open C-02 item for a civilian has a verdict with sources; every proposed correction has exact old/new text."
+  verify:
+    - "test -f review/C-05-laad.md"
