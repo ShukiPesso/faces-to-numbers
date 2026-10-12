@@ -180,6 +180,7 @@ describe('StationPage', () => {
     expect(screen.getByTestId('location-unverified')).toBeInTheDocument();
     expect(screen.queryByTestId('nav-waze')).not.toBeInTheDocument();
     expect(screen.queryByTestId('nav-google')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('nav-apple')).not.toBeInTheDocument();
   });
 
   it('renders every talking point and every source of the station', () => {

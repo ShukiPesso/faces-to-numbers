@@ -74,6 +74,7 @@ Fixture JSON is written by hand (it is fictional, so no converter is needed) and
 | UT-LINK-01 | `wazeUrl` exact string, 6 decimals (e.g. 31.5 → `31.500000`) |
 | UT-LINK-02 | `googleMapsUrl` exact string |
 | UT-LINK-03 | `stationPath`, `personPath` |
+| UT-LINK-04 | `appleMapsUrl` exact string (`daddr`, `dirflg=d`) |
 | UT-FMT-01 | every row of the `formatMinutes` table in Architecture §6 |
 | UT-FMT-02 | `formatMinutes` throws `RangeError` for 0, -1, 1.5, NaN |
 | UT-FMT-03 | `formatDistance`: 0→"10 מטר", 4→"10 מטר", 345→"350 מטר", 994→"990 מטר", 995→"1 ק״מ", 1000→"1 ק״מ", 1234→"1.2 ק״מ", 1250→"1.3 ק״מ", 2950→"3 ק״מ" (rule: m < 995 → `max(10, round to 10)` + " מטר"; else `Math.round(m/100)/10` + " ק״מ", no trailing ".0") |
@@ -105,7 +106,7 @@ Fixture JSON is written by hand (it is fictional, so no converter is needed) and
 | CT-NEARBY-01 | `NearbyBanner` | renders each state (idle/locating/denied/unavailable/at/near/none) with correct text, `aria-live="polite"`, link to station when at/near |
 | CT-CARD-01 | `StationCard` | order badge, title, subtitle, duration text, kind label, visited mark, link to `#/station/<slug>` |
 | CT-PCARD-01 | `PersonCard` | name + honorific, subtitle, opening line, link to `#/person/<id>`; "סיפור נלווה" label only when rendered with `variant="companion"` |
-| CT-NAVL-01 | `NavLinks` | verified → Waze + Google links (exact hrefs, external); unverified or null → "location being verified" text, **no links** |
+| CT-NAVL-01 | `NavLinks` | verified → Waze + Google + Apple Maps links (exact hrefs, external); unverified or null → "location being verified" text, **no links** |
 | CT-DRIVE-01 | `DriveBanner` | visible warning text, `role="note"` |
 | CT-STEP-01 | `ProgressStepper` | one item per station, visited/current states, accessible names |
 | CT-RA-01 | `ReadAloudToggle` | toggles `aria-pressed`, persists, adds `data-read-aloud="true"` on `<html>` |
@@ -150,7 +151,7 @@ The Markdown format is specified in `content-source/README.md`. CI-04 is deliber
 | E2E-LAYOUT-04 | real ×4 | screenshots of `/`, `/tour`, first station, first person (`maxDiffPixelRatio: 0.01`) |
 | E2E-A11Y-01 | real ×4 | axe on every route: zero serious/critical |
 | E2E-A11Y-02 | desktop | keyboard: first Tab = skip link; depth tabs operable; focus always visible |
-| E2E-LINK-01 | fixture | station A shows exact Waze/Google hrefs; station C shows "being verified", no nav links |
+| E2E-LINK-01 | fixture | station A shows exact Waze/Google/Apple hrefs; station C shows "being verified", no nav links |
 | E2E-READ-01 | real ×4 | read-aloud on → body text ≥ 22 px; persists after reload |
 | E2E-SHARE-01 | mobile-chrome | `navigator.share` stub called with current URL; without it → link copied + "copied" message |
 | E2E-PWA-01 | mobile-chrome (`@sw`) | manifest has name, `lang: he`, `dir: rtl`, icons 192/512 (+ maskable), `start_url`; SW registered |

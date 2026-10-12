@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { googleMapsUrl, personPath, stationPath, wazeUrl } from '@/lib/links';
+import { appleMapsUrl, googleMapsUrl, personPath, stationPath, wazeUrl } from '@/lib/links';
 
 describe('links', () => {
   it('UT-LINK-01 wazeUrl exact string with 6 decimals', () => {
@@ -14,6 +14,12 @@ describe('links', () => {
   it('UT-LINK-02 googleMapsUrl exact string', () => {
     expect(googleMapsUrl({ lat: 31.5, lng: 34.25 })).toBe(
       'https://www.google.com/maps/dir/?api=1&destination=31.500000,34.250000',
+    );
+  });
+
+  it('UT-LINK-04 appleMapsUrl exact string', () => {
+    expect(appleMapsUrl({ lat: 31.5, lng: 34.25 })).toBe(
+      'https://maps.apple.com/?daddr=31.500000,34.250000&dirflg=d',
     );
   });
 

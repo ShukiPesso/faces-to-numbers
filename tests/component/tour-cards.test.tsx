@@ -10,7 +10,7 @@ import { StationCard } from '@/components/tour/StationCard';
 import { getTour } from '@/content';
 import type { GeoPoint, Person, Station } from '@/content/schema';
 import { t } from '@/lib/i18n';
-import { googleMapsUrl, wazeUrl } from '@/lib/links';
+import { appleMapsUrl, googleMapsUrl, wazeUrl } from '@/lib/links';
 
 afterEach(cleanup);
 
@@ -137,18 +137,21 @@ describe('CT-NAVL-01 NavLinks', () => {
     verifiedAt: '2026-01-01',
   };
 
-  it('renders Waze and Google external links for a verified location', () => {
+  it('renders Waze, Google and Apple external links for a verified location', () => {
     render(<NavLinks location={verified} />);
     const waze = screen.getByTestId('nav-waze');
     const google = screen.getByTestId('nav-google');
+    const apple = screen.getByTestId('nav-apple');
     expect(waze).toHaveAttribute('href', wazeUrl(verified));
     expect(google).toHaveAttribute('href', googleMapsUrl(verified));
-    for (const a of [waze, google]) {
+    expect(apple).toHaveAttribute('href', appleMapsUrl(verified));
+    for (const a of [waze, google, apple]) {
       expect(a).toHaveAttribute('target', '_blank');
       expect(a).toHaveAttribute('rel', 'noopener noreferrer');
     }
     expect(waze).toHaveTextContent(t('station.navigateWaze'));
     expect(google).toHaveTextContent(t('station.navigateGoogle'));
+    expect(apple).toHaveTextContent(t('station.navigateApple'));
     expect(screen.queryByTestId('location-unverified')).toBeNull();
   });
 
@@ -160,6 +163,7 @@ describe('CT-NAVL-01 NavLinks', () => {
     expect(screen.queryAllByRole('link')).toHaveLength(0);
     expect(screen.queryByTestId('nav-waze')).toBeNull();
     expect(screen.queryByTestId('nav-google')).toBeNull();
+    expect(screen.queryByTestId('nav-apple')).toBeNull();
   });
 
   it('renders text and no links for a null location', () => {
