@@ -178,7 +178,7 @@
 - id: D-04
   title: Responsive page mockups with real content (gate G2)
   agent: design
-  model: fable
+  model: opus
   wave: 2
   size: L
   status: todo

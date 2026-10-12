@@ -199,7 +199,7 @@
   model: opus
   wave: 2
   size: L
-  status: todo
+  status: done
   depends_on: [F-05, F-04, F-03, D-03, D-06, P0-02]
   owns:
     - src/main.tsx
@@ -244,7 +244,7 @@
   model: sonnet
   wave: 2
   size: M
-  status: todo
+  status: done
   depends_on: [F-05, D-03, D-06, F-04]
   owns:
     - src/components/primitives/
