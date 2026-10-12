@@ -26,6 +26,7 @@ type JsonObject = Record<string, unknown>;
 // ---------------------------------------------------------------------------------------------
 const TEXT_KEYS = new Set([
   'opening',
+  'gentleOpening',
   'oct7',
   'personality',
   'past',
@@ -45,6 +46,7 @@ const QUOTE_KEYS = new Set(['quote', 'altQuote']);
 const SECTION_KEYS: Record<FileType, readonly string[]> = {
   person: [
     'opening',
+    'gentleOpening',
     'oct7',
     'personality',
     'past',
@@ -508,6 +510,23 @@ describe('CI-04 self-check: the comparison can fail', () => {
       j.name = 'דמות בדיקה 2';
     });
     expect(allProblems(FICTIONAL_MARKDOWN, broken).join('\n')).toContain('front matter name');
+  });
+
+  it('CI-04 self-check · gentleOpening is compared as a text section (F-22)', () => {
+    const md = FICTIONAL_MARKDOWN.replace(
+      '## ציטוט · quote',
+      '## פתיחה עדינה · gentleOpening\nפתיחה עדינה של בדיקה.\n\n## ציטוט · quote',
+    );
+    const faithful = cloneWith((j) => {
+      j.gentleOpening = 'פתיחה עדינה של בדיקה.';
+    });
+    expect(allProblems(md, faithful)).toEqual([]);
+    const changed = cloneWith((j) => {
+      j.gentleOpening = 'פתיחה עדינה שונה של בדיקה.';
+    });
+    expect(allProblems(md, changed).join('\n')).toContain('gentleOpening: JSON text differs');
+    // A gentleOpening in JSON with no Markdown section is reported too.
+    expect(allProblems(FICTIONAL_MARKDOWN, faithful).join('\n')).toContain('"gentleOpening"');
   });
 
   it('CI-04 self-check · a reordered bullet list is reported', () => {

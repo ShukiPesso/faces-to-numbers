@@ -130,6 +130,44 @@ describe('UT-PARSE-06 personFromMd', () => {
     expect(result.guideNote).toBe('הערה למדריך על דמות בדיקה 1.');
   });
 
+  it('maps the gentleOpening section (F-22) for a graphic person; omitted when absent', () => {
+    expect(personFromMd('content-source/people/99_test-person-1.md', PERSON_MD)).not.toHaveProperty(
+      'gentleOpening',
+    );
+    const graphic = PERSON_MD.replace(
+      'oct7Sensitivity: standard',
+      'oct7Sensitivity: graphic',
+    ).replace(
+      '## ב-7 באוקטובר · oct7',
+      '## פתיחה עדינה · gentleOpening\nפתיחה עדינה של דמות בדיקה 1, עם ״מירכאות״.\n\n## ב-7 באוקטובר · oct7',
+    );
+    const result = personFromMd('content-source/people/99_test-person-1.md', graphic);
+    expect(result.gentleOpening).toBe('פתיחה עדינה של דמות בדיקה 1, עם ״מירכאות״.');
+    expect(result).toEqual({
+      ...PERSON_EXPECTED,
+      oct7Sensitivity: 'graphic',
+      gentleOpening: 'פתיחה עדינה של דמות בדיקה 1, עם ״מירכאות״.',
+    });
+    // Converter order: gentleOpening right after opening.
+    const keys = Object.keys(result);
+    expect(keys.indexOf('gentleOpening')).toBe(keys.indexOf('opening') + 1);
+    expect(PersonSchema.safeParse(result).success).toBe(true);
+  });
+
+  it('schema rejects gentleOpening unless oct7Sensitivity is graphic (F-22 refinement)', () => {
+    const md = PERSON_MD.replace(
+      '## ב-7 באוקטובר · oct7',
+      '## פתיחה עדינה · gentleOpening\nפתיחה עדינה של דמות בדיקה 1.\n\n## ב-7 באוקטובר · oct7',
+    );
+    const result = personFromMd('content-source/people/99_test-person-1.md', md);
+    expect(result.oct7Sensitivity).toBe('standard');
+    const parsed = PersonSchema.safeParse(result);
+    expect(parsed.success).toBe(false);
+    expect(parsed.error?.issues.map((i) => [i.path.join('.'), i.message])).toEqual([
+      ['gentleOpening', "gentleOpening is allowed only when oct7Sensitivity is 'graphic'"],
+    ]);
+  });
+
   it('throws on an unknown section key or unknown front matter key', () => {
     expect(() =>
       personFromMd(

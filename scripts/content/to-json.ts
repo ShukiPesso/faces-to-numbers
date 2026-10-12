@@ -21,6 +21,7 @@ type Json = Record<string, unknown>;
 /** Section keys allowed per file type (README "Sections:" lines). */
 const PERSON_SECTIONS = new Set([
   'opening',
+  'gentleOpening',
   'oct7',
   'personality',
   'past',
@@ -164,6 +165,7 @@ export function personFromMd(relPath: string, text: string): Json {
     subtitle: data.subtitle,
     stationIds: data.stationIds,
     opening: section('opening'),
+    gentleOpening: section('gentleOpening'),
     oct7: section('oct7'),
     oct7Sensitivity: data.oct7Sensitivity,
     personality: section('personality'),

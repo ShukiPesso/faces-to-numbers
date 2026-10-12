@@ -43,9 +43,10 @@ interface DepthContentProps {
 }
 
 /**
- * The story at one reading depth (ADR-007). For `graphic` people the s30 text, and the oct7
- * passage together with `quote` / `altQuote` (Gate G2 decision), sit inside one
- * ContentWarningGate.
+ * The story at one reading depth (ADR-007). For `graphic` people the s30 text, and the `opening`
+ * (F-22) and oct7 passage together with `quote` / `altQuote` (Gate G2 decision), sit inside one
+ * ContentWarningGate. Outside the gate a graphic person shows only `gentleOpening` (when the
+ * approved text exists in content-source), otherwise nothing.
  */
 function DepthContent({ person, depth }: DepthContentProps) {
   const graphic = person.oct7Sensitivity === 'graphic';
@@ -72,11 +73,15 @@ function DepthContent({ person, depth }: DepthContentProps) {
     </>
   );
 
+  let lead: ReactNode = <Markdown>{person.opening}</Markdown>;
+  if (graphic) lead = person.gentleOpening ? <Markdown>{person.gentleOpening}</Markdown> : null;
+
   return (
     <>
-      <Markdown>{person.opening}</Markdown>
+      {lead}
       <StorySection id={`person-oct7-${depth}`} title={t('person.oct7')}>
         <ContentWarningGate personId={person.id} sensitivity={person.oct7Sensitivity}>
+          {graphic ? <Markdown>{person.opening}</Markdown> : null}
           <Markdown>{person.oct7}</Markdown>
           {graphic ? quotes : null}
         </ContentWarningGate>
@@ -104,6 +109,18 @@ function DepthContent({ person, depth }: DepthContentProps) {
         <StorySection id="person-guide-note" title={t('person.guideNote')}>
           <Markdown>{person.guideNote}</Markdown>
         </StorySection>
+      ) : null}
+      {full ? (
+        <div className="mt-9 flex justify-center">
+          <img
+            src="./icons/mark.svg"
+            alt=""
+            aria-hidden="true"
+            className="size-6"
+            width={24}
+            height={24}
+          />
+        </div>
       ) : null}
       {full ? (
         <section aria-labelledby="person-sources">

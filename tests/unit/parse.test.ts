@@ -86,6 +86,26 @@ describe('UT-PARSE-02 splitSections', () => {
     );
   });
 
+  it('reads the gentleOpening section (F-22) verbatim under its Hebrew label', () => {
+    const body = [
+      '## משפט פתיחה · opening',
+      'פתיחה של דמות בדיקה 1.',
+      '',
+      '## פתיחה עדינה · gentleOpening',
+      'פתיחה עדינה של דמות בדיקה 1, עם ״מירכאות״ – וקו מפריד.',
+      '',
+      'פסקה שנייה עדינה.',
+      '',
+      '## ב-7 באוקטובר · oct7',
+      'טקסט בדיקה.',
+    ].join('\n');
+    const sections = splitSections(body, FILE);
+    expect(Object.keys(sections)).toEqual(['opening', 'gentleOpening', 'oct7']);
+    expect(sections.gentleOpening).toBe(
+      'פתיחה עדינה של דמות בדיקה 1, עם ״מירכאות״ – וקו מפריד.\n\nפסקה שנייה עדינה.',
+    );
+  });
+
   it('returns an empty record when there are no headings', () => {
     expect(splitSections('# רק כותרת\nטקסט', FILE)).toEqual({});
   });

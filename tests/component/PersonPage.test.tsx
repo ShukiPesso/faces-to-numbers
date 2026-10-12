@@ -1,13 +1,50 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { PrefsProvider } from '@/app/PrefsProvider';
 import { getPeople, getPersonById, getStations } from '@/content';
+import type * as ContentModule from '@/content';
 import type { Depth, Person } from '@/content/schema';
 import { t } from '@/lib/i18n';
 import { setDepth } from '@/lib/storage';
 import { PersonPage } from '@/pages/PersonPage';
+
+// F-22: one FICTIONAL graphic person with a gentleOpening (Conventions §1.11). No real person has
+// the section yet, so the page is tested with this extra id; every other id is the real content.
+const gentle = vi.hoisted(() => ({
+  id: 'test-gentle-1',
+  order: 99,
+  sourceFile: 'content-source/people/99_test-gentle-1.md',
+  name: 'דמות בדיקה 1',
+  pronoun: 'she' as const,
+  subtitle: 'תיאור בדיוני של דמות בדיקה 1',
+  stationIds: ['test-a'],
+  opening: 'משפט פתיחה בדיוני של דמות בדיקה 1.',
+  gentleOpening: 'פתיחה עדינה בדיונית של דמות בדיקה 1.',
+  oct7: 'טקסט בדיוני של דמות בדיקה 1 בסעיף המוסתר.',
+  oct7Sensitivity: 'graphic' as const,
+  personality: 'טקסט אופי בדיוני של דמות בדיקה 1.',
+  past: 'טקסט עבר בדיוני של דמות בדיקה 1.',
+  quote: { text: 'ציטוט בדיוני של דמות בדיקה 1', by: 'דוברת בדיונית 1' },
+  altQuote: { text: 'ציטוט נוסף בדיוני של דמות בדיקה 1', by: 'דוברת בדיונית 1' },
+  guideLevels: {
+    s30: 'טקסט בדיוני של חצי דקה עבור דמות בדיקה 1.',
+    m2: 'טקסט בדיוני של שתי דקות עבור דמות בדיקה 1.',
+    m5: 'טקסט בדיוני של חמש דקות עבור דמות בדיקה 1.',
+  },
+  photo: { status: 'pending' as const },
+  consent: { family: 'not_contacted' as const },
+  sources: [{ title: 'מקור בדיוני 1', url: 'https://example.com/test-gentle-1' }],
+}));
+
+vi.mock('@/content', async (importOriginal) => {
+  const actual = await importOriginal<typeof ContentModule>();
+  return {
+    ...actual,
+    getPersonById: (id: string) => (id === gentle.id ? gentle : actual.getPersonById(id)),
+  };
+});
 
 const suffix = t('app.titleSuffix');
 
@@ -90,7 +127,11 @@ describe('PersonPage — header', () => {
           expect(el.getAttribute('srcset') ?? '').not.toContain(ref);
         }
       }
-      expect(container.querySelector('img')).toBeNull();
+      // The only image is the decorative end-of-story anemone at m5 (D-09 #9, F-22).
+      const imgs = Array.from(container.querySelectorAll('img'));
+      expect(imgs.map((img) => [img.getAttribute('src'), img.getAttribute('alt')])).toEqual([
+        ['./icons/mark.svg', ''],
+      ]);
       unmount();
     }
   });
@@ -226,16 +267,18 @@ describe('PersonPage — guideNote and altQuote', () => {
 });
 
 describe('PersonPage — content-warning gate', () => {
-  it('aner-shapira at m2 hides oct7 behind the gate until "show"', async () => {
+  it('aner-shapira at m2 hides opening and oct7 behind the gate until "show"', async () => {
     const p = person('aner-shapira');
     expect(p.oct7Sensitivity).toBe('graphic');
     renderPerson(p.id, 'm2');
-    expectShown(p.opening);
+    // F-22: a graphic person's opening sits behind the gate with oct7.
+    expectHidden(p.opening);
     expect(screen.getByRole('heading', { level: 2, name: t('person.oct7') })).toBeInTheDocument();
     expect(screen.getByTestId('warning-gate')).toBeInTheDocument();
     expectHidden(p.oct7);
     await userEvent.setup().click(screen.getByTestId('warning-show'));
     expect(screen.queryByTestId('warning-gate')).toBeNull();
+    expectShown(p.opening);
     expectShown(p.oct7);
   });
 
@@ -321,5 +364,114 @@ describe('PersonPage — Gate G2: graphic quotes inside the oct7 gate', () => {
       expect(screen.getByText(quoteText(p))).toBeInTheDocument();
       unmount();
     }
+  });
+});
+
+/** Visible text of the whole rendered page, whitespace-normalised. */
+function pageText(): string {
+  return (document.body.textContent ?? '').replace(/\s+/g, ' ');
+}
+
+describe('PersonPage — F-22 gentle opening for graphic people', () => {
+  it.each(['m2', 'm5'] as const)(
+    'every graphic person at %s: no opening, oct7, quote or altQuote in the DOM before "show"',
+    async (depth) => {
+      for (const p of graphic) {
+        const { unmount } = renderPerson(p.id, depth);
+        const before = pageText();
+        expect(before, `${p.id} opening`).not.toContain(plain(p.opening));
+        expect(before, `${p.id} oct7`).not.toContain(plain(p.oct7));
+        // quote / altQuote: no QuoteBlock at all. (Their words may also appear in the story text
+        // outside the gate, e.g. in `after`, so the blocks are checked, as in the G2 tests.)
+        expect(blockquotes(), `${p.id} quote/altQuote`).toEqual([]);
+        expect(before, `${p.id} quote`).not.toContain(quoteText(p));
+        // No real person has a gentleOpening yet: the panel starts with the oct7 section.
+        expect(p.gentleOpening).toBeUndefined();
+        expect(screen.getByRole('tabpanel').firstElementChild?.tagName).toBe('SECTION');
+
+        await userEvent.setup().click(screen.getByTestId('warning-show'));
+        const after = pageText();
+        expect(after).toContain(plain(p.opening));
+        expect(after).toContain(plain(p.oct7));
+        expect(blockquotes()[0]).toBe(quoteText(p));
+        // The opening comes before oct7 inside the revealed region.
+        expect(after.indexOf(plain(p.opening))).toBeLessThan(after.indexOf(plain(p.oct7)));
+        unmount();
+        sessionStorage.clear();
+      }
+    },
+  );
+
+  it('every graphic person at s30: guideLevels.s30 not in the DOM before "show"', () => {
+    for (const p of graphic) {
+      const { unmount } = renderPerson(p.id, 's30');
+      expect(pageText()).not.toContain(plain(p.guideLevels.s30));
+      expect(pageText()).not.toContain(plain(p.opening));
+      unmount();
+    }
+  });
+
+  it.each(['m2', 'm5'] as const)(
+    'fictional graphic person with gentleOpening at %s: gentleOpening shown outside the gate',
+    async (depth) => {
+      renderPerson(gentle.id, depth);
+      expect(screen.getByTestId('warning-gate')).toBeInTheDocument();
+      expectShown(gentle.gentleOpening);
+      const before = pageText();
+      expect(before).not.toContain(gentle.opening);
+      expect(before).not.toContain(gentle.oct7);
+      expect(before).not.toContain(gentle.quote.text);
+      expect(before).not.toContain(gentle.altQuote.text);
+      // gentleOpening comes before the gate.
+      expect(before.indexOf(gentle.gentleOpening)).toBeLessThan(before.indexOf(t('warning.title')));
+
+      await userEvent.setup().click(screen.getByTestId('warning-show'));
+      expectShown(gentle.gentleOpening);
+      expectShown(gentle.opening);
+      expectShown(gentle.oct7);
+      expect(screen.getByText(`„${gentle.quote.text}”`)).toBeInTheDocument();
+      sessionStorage.clear();
+    },
+  );
+
+  it('fictional graphic person at s30: gentleOpening is not shown (s30 renders guideLevels.s30 only)', () => {
+    renderPerson(gentle.id, 's30');
+    expect(pageText()).not.toContain(gentle.gentleOpening);
+    expect(pageText()).not.toContain(gentle.guideLevels.s30);
+  });
+
+  it.each(['m2', 'm5'] as const)(
+    'standard people at %s: opening shown before the oct7 section, no gate',
+    (depth) => {
+      for (const p of standard) {
+        const { unmount } = renderPerson(p.id, depth);
+        expect(screen.queryByTestId('warning-gate')).toBeNull();
+        expectShown(p.opening);
+        expect(screen.getByRole('tabpanel').firstElementChild?.tagName).not.toBe('SECTION');
+        unmount();
+      }
+    },
+  );
+});
+
+describe('PersonPage — end-of-story anemone (D-09 #9)', () => {
+  const marks = () => Array.from(document.querySelectorAll('img[src="./icons/mark.svg"]'));
+
+  it('m5: one decorative mark, after the story and before the sources heading', () => {
+    renderPerson('roni-eshel', 'm5');
+    const all = marks();
+    expect(all).toHaveLength(1);
+    const mark = all[0]!;
+    expect(mark).toHaveAttribute('alt', '');
+    expect(mark).toHaveAttribute('aria-hidden', 'true');
+    const sources = screen.getByRole('heading', { level: 2, name: t('person.sources') });
+    expect(mark.compareDocumentPosition(sources) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    const quote = document.querySelector('blockquote')!;
+    expect(quote.compareDocumentPosition(mark) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it.each(['s30', 'm2'] as const)('%s: no end mark', (depth) => {
+    renderPerson('roni-eshel', depth);
+    expect(marks()).toHaveLength(0);
   });
 });

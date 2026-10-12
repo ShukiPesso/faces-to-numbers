@@ -50,6 +50,14 @@ The source pages contain guide-oriented scripts ("30 sec / 2 min / 5 min"). The 
 
 **Gate G2 decision (Shuki, 2026-10-12):** for a person with `oct7Sensitivity: graphic`, the `quote` (and `altQuote`) is rendered **inside** the ContentWarningGate together with `oct7`, at every depth where it appears. For `standard` people nothing changes.
 
+**Gentle opening (Shuki, 2026-10-12, after D-09 finding #3; task F-22):** for a `graphic` person, nothing the gate hides is in the DOM before the visitor taps "show":
+- at `m2` / `m5` the regular `opening` is rendered **inside** the same ContentWarningGate, before `oct7` and the quotes. Outside the gate the page renders the optional `gentleOpening` text section when present, otherwise **nothing** (only name, subtitle, photo strip, depth tabs and the gate);
+- at `s30`, `guideLevels.s30` stays inside the gate (unchanged); `gentleOpening` is not rendered at `s30`;
+- the station's `PersonCard` shows `gentleOpening` when present, otherwise no excerpt (name, subtitle and the link only);
+- `gentleOpening` is written / approved by Shuki in `content-source/` only (`## פתיחה עדינה · gentleOpening`); the schema refuses it unless `oct7Sensitivity` is `graphic`. Code never generates or shortens text to fill it.
+
+For `standard` people nothing changes. At `m5` the story ends with the small decorative anemone (`./icons/mark.svg`, `alt=""`) before the sources (D-09 finding #9).
+
 ### ADR-008 — Tailwind CSS v3 with logical properties for RTL
 Use Tailwind's logical utilities (`ms-*`, `me-*`, `ps-*`, `pe-*`, `start-*`, `end-*`, `text-start`, `text-end`). Never `ml-*`, `mr-*`, `pl-*`, `pr-*`, `left-*`, `right-*`, `text-left`, `text-right` (lint rule enforces this). Design tokens are CSS custom properties in `src/styles/tokens.css`, mapped into the Tailwind theme.
 
