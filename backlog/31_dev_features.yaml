@@ -460,3 +460,36 @@
     - "git diff main -- src/i18n/he.ts contracts/strings.he.ts"
     - "npm test -- tests/component/RouteMap.test.tsx"
     - "npm run lint && npm run typecheck"
+
+- id: F-20
+  title: Remove layout shift — offline-ready message and font swap (from F-19 review)
+  agent: dev
+  model: sonnet
+  wave: 5
+  size: S
+  status: todo
+  depends_on: [F-19, F-18]
+  owns:
+    - src/components/layout/OfflineIndicator.tsx
+    - src/styles/fonts.css
+    - tests/component/pwa-ui.test.tsx
+  reads:
+    - review/F-19-performance.md
+    - reports/F-18.md
+    - design/components/layout.md
+    - docs/03_CONVENTIONS.md
+  goal: "Nothing on the page moves after it has loaded, so Lighthouse mobile Performance reaches 90 and visitors don't lose their place while reading."
+  steps:
+    - "OfflineIndicator: render the offline-ready message and the offline banner without pushing content — a fixed panel above the bottom navigation on mobile/tablet (respect env(safe-area-inset-bottom) and the bottom-nav height) and at the bottom of the reading column on desktop. Keep the same text keys, data-testid values (offline-indicator), the existing live region, the close button and the 6-second hide. It must not cover the sticky previous/next bar ([data-sticky-bar]) — place it above it when present."
+    - "fonts.css: reduce the font-swap reflow — add metric-matched local fallback @font-face rules (size-adjust / ascent-override / descent-override) for the Assistant and Frank Ruhl Libre families, using system Hebrew fonts (e.g. Arial/Noto Sans Hebrew for Assistant, David/Noto Serif Hebrew for Frank Ruhl Libre), and make sure the font-family stacks use them. Do not change which @fontsource files are imported."
+    - "Update tests/component/pwa-ui.test.tsx for the new placement only as needed."
+    - "Measure: build, serve on port 4191 (not 4173/4174) and run Lighthouse mobile 3 times on '/', '#/station/sderot' and '#/person/aner-shapira'; record median Performance and CLS before/after in your report. Stop the server afterwards."
+  dont:
+    - "Do not change wording, the update prompt, the service worker or any other component."
+  acceptance:
+    - "CLS median < 0.05 on all three URLs; Lighthouse mobile Performance median ≥ 90 on all three, or the report explains the remaining gap with numbers."
+    - "Unit, component and the Chromium E2E suites still pass."
+  verify:
+    - "npm test -- tests/component/pwa-ui.test.tsx"
+    - "npm run lint && npm run typecheck"
+    - "flock /tmp/pw-e2e.lock npx playwright test --project=mobile-chrome --project=desktop --project=fixture-chrome"
