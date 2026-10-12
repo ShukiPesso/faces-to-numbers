@@ -360,7 +360,7 @@
   model: sonnet
   wave: 6
   size: S
-  status: todo
+  status: done
   depends_on: [F-21, F-22, T-07]
   owns:
     - tests/e2e/layout.spec.ts
