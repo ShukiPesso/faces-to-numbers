@@ -3,7 +3,9 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { BottomNav } from '@/components/layout/BottomNav';
 import { Footer } from '@/components/layout/Footer';
 import { Header } from '@/components/layout/Header';
+import { OfflineIndicator } from '@/components/layout/OfflineIndicator';
 import { SideNav } from '@/components/layout/SideNav';
+import { UpdatePrompt } from '@/components/layout/UpdatePrompt';
 import { t } from '@/lib/i18n';
 import { useReservedBottomSpace } from './useReservedBottomSpace';
 
@@ -57,7 +59,10 @@ export function AppLayout() {
       <div className="flex flex-1 flex-col lg:flex-row">
         <SideNav />
         <div className="flex min-w-0 flex-1 flex-col">
-          <div data-slot="banners" />
+          <div data-slot="banners">
+            <OfflineIndicator />
+            <UpdatePrompt />
+          </div>
           <main id="main" ref={mainRef} tabIndex={-1} className="w-full flex-1 px-4 py-6 md:px-7">
             <div className="mx-auto max-w-content">
               <Outlet />
