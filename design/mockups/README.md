@@ -5,7 +5,7 @@ whole site. Open any `.html` file in a browser (no network needed). Every page h
 **מצב הקראה** button in the header, so you can see read-aloud mode anywhere. The depth tabs, the
 content-warning buttons, the moment-of-silence buttons and the "mark visited" button also work.
 
-**Approved by Shuki on: ____**
+**Approved by Shuki on: 2026-10-12 (see "Gate G2 — approval" below)**
 
 ## Pages
 

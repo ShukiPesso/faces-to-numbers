@@ -6,7 +6,7 @@
   model: sonnet
   wave: 3
   size: M
-  status: todo
+  status: done
   depends_on: [F-06, F-07, F-04]
   owns:
     - src/components/reading/DepthTabs.tsx
@@ -40,7 +40,7 @@
   model: sonnet
   wave: 3
   size: M
-  status: todo
+  status: done
   depends_on: [F-07, F-04, D-07]
   owns:
     - src/components/reading/ContentWarningGate.tsx
@@ -72,7 +72,7 @@
   model: sonnet
   wave: 3
   size: M
-  status: todo
+  status: done
   depends_on: [F-01, F-03, F-04, F-07, D-03]
   owns:
     - src/components/tour/StationCard.tsx
@@ -108,7 +108,7 @@
   model: sonnet
   wave: 3
   size: M
-  status: todo
+  status: done
   depends_on: [D-05, F-03, F-07]
   owns:
     - src/components/tour/RouteMap.tsx
@@ -138,7 +138,7 @@
   model: sonnet
   wave: 3
   size: M
-  status: todo
+  status: done
   depends_on: [F-01, F-03, F-07, F-04]
   owns:
     - src/hooks/useNearbyStation.ts
@@ -303,7 +303,7 @@
   model: sonnet
   wave: 4
   size: M
-  status: todo
+  status: done
   depends_on: [F-07, F-03, F-06, D-04]
   owns:
     - src/pages/AboutPage.tsx
@@ -408,7 +408,7 @@
   model: haiku
   wave: 3
   size: S
-  status: todo
+  status: done
   depends_on: [F-07, D-04]
   owns:
     - src/components/primitives/PhotoFrame.tsx
@@ -428,4 +428,35 @@
     - "Pending photo renders a strip with data-testid photo-placeholder and no img; cleared photo unchanged; all primitives tests pass."
   verify:
     - "npm test -- tests/component/primitives.test.tsx"
+    - "npm run lint && npm run typecheck"
+
+- id: F-11b
+  title: Restore the three route-map labels with new UI string keys
+  agent: dev
+  model: haiku
+  wave: 4
+  size: S
+  status: todo
+  depends_on: [F-11]
+  owns:
+    - src/i18n/he.ts
+    - contracts/strings.he.ts
+    - src/components/tour/RouteMap.tsx
+    - tests/component/RouteMap.test.tsx
+  reads:
+    - design/route-map.md
+    - reports/F-11.md
+    - docs/03_CONVENTIONS.md
+  goal: "The schematic map again shows the border label, the north arrow label and the 'schematic, not to scale' note that the designed SVG had."
+  steps:
+    - "Orchestrator-approved addition of exactly three keys, with these exact values, to BOTH src/i18n/he.ts and contracts/strings.he.ts (same position, keep the files identical): 'map.border': 'גבול רצועת עזה', 'map.north': 'צפון', 'map.schematicNote': 'תרשים סכמטי, לא מפה ולא בקנה מידה'."
+    - "In RouteMap.tsx render these three texts with t() at the positions the designed SVG had them (see design/route-map.md and reports/F-11.md deviation 1)."
+    - "Extend tests/component/RouteMap.test.tsx: the three texts are present."
+  dont:
+    - "Do not change any other key or value in the string files."
+  acceptance:
+    - "The three labels render; diff of src/i18n/he.ts vs contracts/strings.he.ts is empty; all tests pass."
+  verify:
+    - "diff src/i18n/he.ts contracts/strings.he.ts"
+    - "npm test -- tests/component/RouteMap.test.tsx"
     - "npm run lint && npm run typecheck"
