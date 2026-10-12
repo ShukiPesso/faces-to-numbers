@@ -58,7 +58,11 @@ const normHe = (s) =>
     .replace(/\s+/g, ' ')
     .trim();
 
-const OVERPASS = 'https://overpass-api.de/api/interpreter';
+const OVERPASS = [
+  'https://overpass-api.de/api/interpreter',
+  'https://overpass.private.coffee/api/interpreter',
+  'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
+];
 const OSRM = 'https://router.project-osrm.org/route/v1/driving';
 const UA = 'faces-to-numbers map-data build (github.com/ShukiPesso/faces-to-numbers)';
 
@@ -73,13 +77,24 @@ node["place"~"^(city|town|village|hamlet)$"](${b});
 out;
 rel["type"="boundary"]["name:en"="Gaza Strip"];
 out geom;`;
-  const res = await fetch(OVERPASS, {
-    method: 'POST',
-    headers: { 'User-Agent': UA, 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `data=${encodeURIComponent(q)}`,
-  });
-  if (!res.ok) throw new Error(`Overpass HTTP ${res.status}: ${(await res.text()).slice(0, 300)}`);
-  return res.json();
+  let last = '';
+  for (let attempt = 0; attempt < 6; attempt++) {
+    const server = OVERPASS[attempt % OVERPASS.length];
+    try {
+      const res = await fetch(server, {
+        method: 'POST',
+        headers: { 'User-Agent': UA, 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `data=${encodeURIComponent(q)}`,
+      });
+      if (res.ok) return await res.json();
+      last = `${server} HTTP ${res.status}`;
+    } catch (e) {
+      last = `${server} ${e.message}`;
+    }
+    log(`Overpass attempt ${attempt + 1} failed (${last}), retrying…`);
+    await new Promise((r) => setTimeout(r, 10000 * (attempt + 1)));
+  }
+  throw new Error(`Overpass unavailable: ${last}`);
 }
 
 async function osrmLeg(points) {
