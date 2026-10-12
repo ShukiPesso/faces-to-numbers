@@ -88,16 +88,16 @@ P0-01 → P0-02 → F-02 → F-03 → F-06 → F-08 → F-16 → F-18 → T-10 �
 | ID | Title | Agent | Model | Size | Depends on | Status |
 |---|---|---|---|---|---|---|
 | [F-18](tasks/F-18.md) | Offline PWA — manifest, service worker, offline indicator, update prompt | dev | opus | L | F-13, F-14, F-15, F-16, F-17, D-08 | done |
-| [F-19](tasks/F-19.md) | Performance pass against the budgets | dev | opus | M | F-18 | todo |
+| [F-19](tasks/F-19.md) | Performance pass against the budgets | dev | opus | M | F-18 | done |
 | [O-03](tasks/O-03.md) | Deploy pipeline to Base44 with post-deploy smoke tests | devops | opus | M | O-01, O-02, F-18, T-10 | todo |
 | [T-03](tasks/T-03.md) | End-to-end — navigation, deep links, progress (E2E-NAV-01..03) | test | sonnet | M | F-13, F-14, F-15, F-16, F-17, P0-03 | done |
 | [T-04](tasks/T-04.md) | End-to-end — geolocation and navigation links on fixture content (E2E-GEO-01..05, E2E-LINK-01) | test | sonnet | M | F-12, F-14, F-15, F-03, P0-03 | done |
-| [T-05](tasks/T-05.md) | End-to-end — offline and installable PWA (E2E-OFF-01..02, E2E-PWA-01) | test | opus | M | F-18, T-03, P0-03 | todo |
+| [T-05](tasks/T-05.md) | End-to-end — offline and installable PWA (E2E-OFF-01..02, E2E-PWA-01) | test | opus | M | F-18, T-03, P0-03 | done |
 | [T-06](tasks/T-06.md) | End-to-end — safety rules, reading modes, share (E2E-SAFE-01..05, E2E-READ-01, E2E-SHARE-01) | test | sonnet | M | F-13, F-14, F-15, F-16, F-17, P0-03 | done |
 | [T-07](tasks/T-07.md) | End-to-end — responsive layout and visual baselines (E2E-LAYOUT-01..04) | test | sonnet | M | F-13, F-14, F-15, F-16, F-17, P0-03 | done |
 | [T-08](tasks/T-08.md) | Accessibility — axe on every route and keyboard walk (E2E-A11Y-01..02) | test | sonnet | S | F-13, F-14, F-15, F-16, F-17, P0-03 | done |
 | [T-09](tasks/T-09.md) | Lighthouse CI — performance, accessibility, best practices (LH-01) | test | haiku | S | F-18, F-19, O-02 | todo |
-| [T-10](tasks/T-10.md) | Post-deploy smoke tests against the live URL (E2E-SMOKE-01..03) | test | haiku | S | F-18, P0-03 | todo |
+| [T-10](tasks/T-10.md) | Post-deploy smoke tests against the live URL (E2E-SMOKE-01..03) | test | haiku | S | F-18, P0-03 | done |
 
 ## Wave 6 — QA & launch
 

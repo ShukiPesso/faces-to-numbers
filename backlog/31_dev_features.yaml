@@ -380,7 +380,7 @@
   model: opus
   wave: 5
   size: M
-  status: todo
+  status: done
   depends_on: [F-18]
   owns:
     - src/app/router.tsx

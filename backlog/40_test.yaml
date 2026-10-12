@@ -148,7 +148,7 @@
   model: opus
   wave: 5
   size: M
-  status: todo
+  status: done
   depends_on: [F-18, T-03, P0-03]
   owns:
     - tests/e2e/offline.spec.ts
@@ -301,7 +301,7 @@
   model: haiku
   wave: 5
   size: S
-  status: todo
+  status: done
   depends_on: [F-18, P0-03]
   owns:
     - tests/e2e/smoke.spec.ts
