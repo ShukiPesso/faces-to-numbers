@@ -139,9 +139,15 @@ export function RouteMap({ stations, visitedIds, currentId }: RouteMapProps) {
           className="block h-auto w-full font-body"
         >
           <rect width="360" height="640" className="fill-bg" />
-          <g className="fill-ink-muted stroke-ink-muted" strokeWidth="2">
+          <g className="fill-ink-muted stroke-ink-muted" strokeWidth="2" fontSize="14">
             <line x1="30" y1="50" x2="30" y2="560" strokeDasharray="3 6" />
+            <text transform="translate(18 305) rotate(-90)" textAnchor="middle" stroke="none">
+              {t('map.border')}
+            </text>
             <path d="M334 40V68M334 40l-5 8M334 40l5 8" className="fill-none" />
+            <text x="326" y="60" textAnchor="end" stroke="none">
+              {t('map.north')}
+            </text>
           </g>
           <g
             className="fill-none stroke-primary"
@@ -204,6 +210,9 @@ export function RouteMap({ stations, visitedIds, currentId }: RouteMapProps) {
             />
             <text x="230" y="595">
               {t('tour.kind.stop')}
+            </text>
+            <text x="180" y="620" textAnchor="middle">
+              {t('map.schematicNote')}
             </text>
           </g>
         </svg>
