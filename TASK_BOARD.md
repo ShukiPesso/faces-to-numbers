@@ -89,7 +89,7 @@ P0-01 → P0-02 → F-02 → F-03 → F-06 → F-08 → F-16 → F-18 → F-19 �
 |---|---|---|---|---|---|---|
 | [F-18](tasks/F-18.md) | Offline PWA — manifest, service worker, offline indicator, update prompt | dev | opus | L | F-13, F-14, F-15, F-16, F-17, D-08 | done |
 | [F-19](tasks/F-19.md) | Performance pass against the budgets | dev | opus | M | F-18 | done |
-| [O-03](tasks/O-03.md) | Deploy pipeline to Base44 with post-deploy smoke tests | devops | opus | M | O-01, O-02, F-18, T-10 | todo |
+| [O-03](tasks/O-03.md) | Deploy pipeline to Base44 with post-deploy smoke tests | devops | opus | M | O-01, O-02, F-18, T-10 | review |
 | [T-03](tasks/T-03.md) | End-to-end — navigation, deep links, progress (E2E-NAV-01..03) | test | sonnet | M | F-13, F-14, F-15, F-16, F-17, P0-03 | done |
 | [T-04](tasks/T-04.md) | End-to-end — geolocation and navigation links on fixture content (E2E-GEO-01..05, E2E-LINK-01) | test | sonnet | M | F-12, F-14, F-15, F-03, P0-03 | done |
 | [T-05](tasks/T-05.md) | End-to-end — offline and installable PWA (E2E-OFF-01..02, E2E-PWA-01) | test | opus | M | F-18, T-03, P0-03 | done |
@@ -113,8 +113,8 @@ P0-01 → P0-02 → F-02 → F-03 → F-06 → F-08 → F-16 → F-18 → F-19 �
 | [H-06](tasks/H-06.md) | Final content and sensitivity sign-off | human | human | S | C-01, C-02, C-04, H-02, H-05, D-09, C-05, C-06 | todo |
 | [L-01](tasks/L-01.md) | Soft launch — final checklist, go/no-go, first users | devops | opus | S | H-06, T-11, D-09, T-09, H-03, O-03, H-05 | todo |
 | [T-07b](tasks/T-07b.md) | Regenerate and harden the visual baselines (D-09 finding | test | sonnet | S | F-21, F-22, T-07 | done |
-| [T-11](tasks/T-11.md) | Test audit — coverage, gaps, flakiness | test | opus | M | T-01, T-02, T-03, T-04, T-05, T-06, T-07, T-08, T-09, T-10, F-19 | review |
-| [T-12](tasks/T-12.md) | Close the test gaps found by the audit (T-11 H1–H3, M1–M2) | test | sonnet | M | T-11 | todo |
+| [T-11](tasks/T-11.md) | Test audit — coverage, gaps, flakiness | test | opus | M | T-01, T-02, T-03, T-04, T-05, T-06, T-07, T-08, T-09, T-10, F-19 | done |
+| [T-12](tasks/T-12.md) | Close the test gaps found by the audit (T-11 H1–H3, M1–M2) | test | sonnet | M | T-11 | done |
 
 **Gate G3 — Launch** (Shuki): field test H-05 passed and sign-off H-06 before L-01.
 
