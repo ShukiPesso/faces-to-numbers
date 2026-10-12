@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom/vitest';
 import { afterEach } from 'vitest';
+import { cleanup } from '@testing-library/react';
 
 // Component tests run in jsdom; mirror index.html (<html lang="he" dir="rtl">).
 if (typeof document !== 'undefined') {
@@ -8,6 +9,10 @@ if (typeof document !== 'undefined') {
 }
 
 afterEach(() => {
+  // Vitest globals are off, so RTL does not auto-cleanup; unmount rendered trees here for every test.
+  if (typeof document !== 'undefined') {
+    cleanup();
+  }
   if (typeof localStorage !== 'undefined') {
     localStorage.clear();
   }
