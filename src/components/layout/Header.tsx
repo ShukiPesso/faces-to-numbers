@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
+import { ReadAloudToggle } from '@/components/reading/ReadAloudToggle';
 import { t } from '@/lib/i18n';
 
 /** App name linking home, plus the header-actions slot (F-08 adds ReadAloudToggle there). */
@@ -13,7 +14,9 @@ export function Header() {
       >
         {t('app.name')}
       </Link>
-      <div data-slot="header-actions" className="flex items-center gap-2" />
+      <div data-slot="header-actions" className="flex items-center gap-2">
+        <ReadAloudToggle />
+      </div>
     </header>
   );
 }
