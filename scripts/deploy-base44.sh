@@ -30,7 +30,23 @@ set -euo pipefail
 umask 077
 
 log() { printf '[deploy-base44] %s\n' "$*"; }
-err() { printf '[deploy-base44] ERROR: %s\n' "$*" >&2; }
+ERR_LINES=''
+err() {
+  printf '[deploy-base44] ERROR: %s\n' "$*" >&2
+  ERR_LINES+="$*"$'\n'
+}
+# In GitHub Actions, repeat the (already redacted) ERROR lines as one annotation on exit, so a
+# failure is readable from the run page and the Actions API without opening the job log.
+gh_annotate() {
+  local rc="${1:-$?}"
+  if ((rc != 0)) && [[ -n "${GITHUB_ACTIONS:-}" && -n "$ERR_LINES" ]]; then
+    local msg="${ERR_LINES//'%'/'%25'}"
+    msg="${msg//$'\r'/'%0D'}"
+    msg="${msg//$'\n'/'%0A'}"
+    printf '::error title=deploy-base44 failed::%s\n' "$msg"
+  fi
+}
+trap gh_annotate EXIT
 die() {
   err "$*"
   exit 1
@@ -115,7 +131,11 @@ log "dist folder: ${DIST_DIR} | files: ${file_count} (limit ${MAX_FILES}) | unpa
 
 # ---------------------------------------------------------------- pack
 WORK_DIR="$(mktemp -d)"
-cleanup() { rm -rf "$WORK_DIR"; }
+cleanup() {
+  local rc=$?
+  rm -rf "$WORK_DIR"
+  gh_annotate "$rc"
+}
 trap cleanup EXIT
 
 ARCHIVE="$WORK_DIR/site.tar.gz" # file name must end in .tar.gz (documented)
@@ -123,7 +143,10 @@ tar -czf "$ARCHIVE" -C "$DIST_DIR" .
 packed_bytes="$(wc -c <"$ARCHIVE" | tr -d ' ')"
 log "archive: site.tar.gz | packed bytes: ${packed_bytes} (limit ${MAX_BYTES})"
 ((packed_bytes <= MAX_BYTES)) || die "Archive too large: ${packed_bytes} > ${MAX_BYTES} bytes."
-tar -tzf "$ARCHIVE" | grep -qxE '(\./)?index\.html' || die "index.html is not at the archive root."
+# List first, then search: `tar | grep -q` fails under pipefail when grep exits early and tar
+# gets SIGPIPE (this broke the first real deploy run).
+archive_list="$(tar -tzf "$ARCHIVE")" || die "Could not list the archive."
+grep -qxE '(\./)?index\.html' <<<"$archive_list" || die "index.html is not at the archive root."
 
 ENDPOINT_PATH="/api/apps/${APP_ID}/deploy-dist"
 log "request: POST ${API_BASE}${ENDPOINT_PATH}"
