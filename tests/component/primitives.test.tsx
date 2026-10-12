@@ -156,9 +156,13 @@ describe('CT-PHOTO-01 PhotoFrame', () => {
         photo={{ status: 'pending', referenceUrl: 'https://example.org/ref.jpg' }}
       />,
     );
-    expect(screen.getByTestId('photo-placeholder')).toHaveTextContent(t('photo.pending'));
+    const strip = screen.getByTestId('photo-placeholder');
+    expect(strip).toHaveTextContent(t('photo.pending'));
+    expect(strip).toHaveClass('min-h-14');
+    expect(strip).not.toHaveClass('aspect-[4/3]');
     expect(container.querySelector('img')).toBeNull();
     expect(container.innerHTML).not.toContain('example.org');
+    expect(container.innerHTML).not.toContain('referenceUrl');
   });
 
   it('cleared shows local image with alt and credit, ignoring referenceUrl', () => {

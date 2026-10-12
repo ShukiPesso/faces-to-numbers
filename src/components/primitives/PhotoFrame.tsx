@@ -9,6 +9,8 @@ export interface PhotoFrameProps {
 
 const BOX = 'aspect-[4/3] w-full rounded-lg';
 const PLACEHOLDER = `${BOX} flex items-center justify-center border-hairline border-border bg-bg p-5 text-center font-body text-sm text-ink-muted`;
+const STRIP =
+  'flex min-h-14 w-full items-center justify-start rounded-lg border-hairline border-border bg-bg px-5 py-3 text-start font-body text-sm text-ink-muted';
 const OUTER = 'my-6 md:my-7 md:max-w-[calc(var(--content-max)/2)]';
 
 export function PhotoFrame({ photo, name }: PhotoFrameProps) {
@@ -17,7 +19,7 @@ export function PhotoFrame({ photo, name }: PhotoFrameProps) {
   if (photo.status !== 'cleared') {
     return (
       <div className={OUTER}>
-        <div className={PLACEHOLDER} data-testid="photo-placeholder">
+        <div className={STRIP} data-testid="photo-placeholder">
           {t('photo.pending')}
         </div>
       </div>
