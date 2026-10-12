@@ -189,22 +189,20 @@ lines in `.github/workflows/deploy.yml`:
 variable `BASE44_AUTH_HEADER` is set to `bearer`. A workspace key would return 401
 `InvalidAccessTokenError` the other way round.
 
-## 9. Hosting observations — open until the first successful run
+## 9. Hosting observations — answered 2026-10-12 (O-01)
 
-The smoke job's **Hosting observations** step answers #1–#5 automatically (a `Hosting observations` notice on the run).
+Source: the smoke job's **Hosting observations** notice on Deploy runs 38300062796 and 38300077641
+(both on `4fb6153`, started 8 s apart). Live URL: **https://app-ffbef220.base44.app**
 
-O-01 asked for these from a real deploy. They cannot be answered from the docs. After the first
-green run, check them from any computer (replace `<APP_URL>` with the `app_url` from the Summary):
-
-| # | Question | Command | Result |
-|---|---|---|---|
-| 1 | `index.html` status and content-type | `curl -sI <APP_URL>/` | pending |
-| 2 | `sw.js` content-type, and does it register | `curl -sI <APP_URL>/sw.js` + E2E-SMOKE-03 | pending (smoke checks registration) |
-| 3 | does `/#/…` load | E2E-SMOKE-02 | pending |
-| 4 | what `/does-not-exist` returns | `curl -sI <APP_URL>/does-not-exist` | pending |
-| 5 | cache-control for `index.html` and for `/assets/*` | `curl -sI` on both | pending |
-| 6 | HTTPS | the `app_url` scheme | pending (S1 example is https) |
-| 7 | second deploy within one minute | run the workflow twice | pending |
+| # | Question | Result |
+|---|---|---|
+| 1 | `index.html` status and content-type | `200`, `text/html; charset=utf-8`. **No `cache-control` header** (browser heuristics apply; acceptable because the service worker controls updates) |
+| 2 | `sw.js` content-type, and does it register | `200`, `application/javascript; charset=utf-8`, no `cache-control`. Registers (E2E-SMOKE-03 green). Browsers bypass the HTTP cache for SW update checks by default, so no stale-SW risk |
+| 3 | does `/#/…` load | Yes (E2E-SMOKE-02 green) |
+| 4 | what `/does-not-exist` returns | `200` with `index.html` (SPA fallback, not a 404). Harmless: the app uses hash routing |
+| 5 | cache-control | `/assets/*.js`: `public, max-age=604800` (7 days; file names are hashed, so safe). `manifest.webmanifest`: `public, max-age=3600`. `index.html`, `sw.js`: none |
+| 6 | HTTPS | Yes, plus HSTS `max-age=31536000` |
+| 7 | second deploy within one minute | Both runs succeeded (8 s apart, under the 5 requests/minute limit), smoke green on both |
 
 ## 10. Moving to another static host — מעבר לאחסון אחר (R-01)
 

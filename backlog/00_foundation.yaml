@@ -187,7 +187,7 @@
   model: opus
   wave: 0
   size: M
-  status: review
+  status: done
   depends_on: [P0-01, H-01]
   owns:
     - docs/DEPLOY_BASE44.md
