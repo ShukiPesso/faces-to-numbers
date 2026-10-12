@@ -465,7 +465,7 @@
   title: Remove layout shift — offline-ready message and font swap (from F-19 review)
   agent: dev
   model: sonnet
-  wave: 5
+  wave: 6
   size: S
   status: todo
   depends_on: [F-19, F-18]
