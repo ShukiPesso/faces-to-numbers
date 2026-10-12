@@ -42,6 +42,9 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium webkit
       - run: npx playwright test
+      - name: Summarize failed E2E tests
+        if: ${{ failure() }}
+        run: node scripts/ci-e2e-failures.mjs test-results/e2e-report.json
       - name: Upload Playwright report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
