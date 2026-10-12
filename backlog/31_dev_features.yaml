@@ -449,14 +449,14 @@
     - docs/03_CONVENTIONS.md
   goal: "The schematic map again shows the border label, the north arrow label and the 'schematic, not to scale' note that the designed SVG had."
   steps:
-    - "Orchestrator-approved addition of exactly three keys, with these exact values, to BOTH src/i18n/he.ts and contracts/strings.he.ts (same position, keep the files identical): 'map.border': 'גבול רצועת עזה', 'map.north': 'צפון', 'map.schematicNote': 'תרשים סכמטי, לא מפה ולא בקנה מידה'."
+    - "Orchestrator-approved addition of exactly three keys, with these exact values, to BOTH src/i18n/he.ts and contracts/strings.he.ts (he.ts already differs from the contract because D-07 revised wording; add the three keys to each file without changing anything else): 'map.border': 'גבול רצועת עזה', 'map.north': 'צפון', 'map.schematicNote': 'תרשים סכמטי, לא מפה ולא בקנה מידה'."
     - "In RouteMap.tsx render these three texts with t() at the positions the designed SVG had them (see design/route-map.md and reports/F-11.md deviation 1)."
     - "Extend tests/component/RouteMap.test.tsx: the three texts are present."
   dont:
     - "Do not change any other key or value in the string files."
   acceptance:
-    - "The three labels render; diff of src/i18n/he.ts vs contracts/strings.he.ts is empty; all tests pass."
+    - "The three labels render; both string files contain the three new keys with the exact values; git diff shows no other line changed in either file; all tests pass."
   verify:
-    - "diff src/i18n/he.ts contracts/strings.he.ts"
+    - "git diff main -- src/i18n/he.ts contracts/strings.he.ts"
     - "npm test -- tests/component/RouteMap.test.tsx"
     - "npm run lint && npm run typecheck"
