@@ -5,7 +5,7 @@ import { readFileSync, existsSync } from 'node:fs';
 
 const file = process.argv[2] ?? 'test-results/e2e-report.json';
 if (!existsSync(file)) {
-  console.log(`::error title=E2E summary::No JSON report at ${file} (run may have crashed before tests).`);
+  console.error(`::error title=E2E summary::No JSON report at ${file} (run may have crashed before tests).`);
   process.exit(0);
 }
 const report = JSON.parse(readFileSync(file, 'utf8'));
@@ -26,5 +26,5 @@ const st = report.stats ?? {};
 const head = `expected=${st.expected ?? '?'} unexpected=${st.unexpected ?? '?'} flaky=${st.flaky ?? '?'} skipped=${st.skipped ?? '?'}`;
 const body = [head, ...failed.slice(0, 150)].join('\n');
 const esc = (x) => x.replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A');
-console.log(`::error title=E2E failures (${failed.length})::${esc(body)}`);
-console.log(body);
+console.error(`::error title=E2E failures (${failed.length})::${esc(body)}`);
+console.error(body);
