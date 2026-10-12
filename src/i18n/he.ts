@@ -33,6 +33,9 @@ export const he = {
   'tour.visited': 'ביקרתם כאן',
   'tour.mapTitle': 'מפת המסלול',
   'tour.mapAlt': 'מפה סכמטית של המסלול. רשימת התחנות המלאה מופיעה מתחת למפה.',
+  'map.border': 'גבול רצועת עזה',
+  'map.north': 'צפון',
+  'map.schematicNote': 'תרשים סכמטי, לא מפה ולא בקנה מידה',
 
   'station.background': 'מה קרה כאן',
   'station.talkingPoints': 'כדאי לשים לב',

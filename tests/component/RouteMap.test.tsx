@@ -71,6 +71,16 @@ describe('RouteMap', () => {
     expect(svg.querySelectorAll('.is-current')).toHaveLength(1);
   });
 
+  it('renders the border label, the north label and the schematic note', () => {
+    renderMap();
+    const texts = Array.from(screen.getByTestId('route-map').querySelectorAll('text')).map(
+      (node) => node.textContent,
+    );
+    expect(texts).toContain(t('map.border'));
+    expect(texts).toContain(t('map.north'));
+    expect(texts).toContain(t('map.schematicNote'));
+  });
+
   it('makes no network request', () => {
     const fetchSpy = vi.fn();
     vi.stubGlobal('fetch', fetchSpy);
