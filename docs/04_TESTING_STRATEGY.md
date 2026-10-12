@@ -167,6 +167,7 @@ The Markdown format is specified in `content-source/README.md`. CI-04 is deliber
 - Web-first assertions (`await expect(locator).toBeVisible()`), never `waitForTimeout`.
 - Real-content E2E iterate over routes from `helpers/routes.ts` — never hard-code a list of people.
 - Visual baselines (E2E-LAYOUT-04) are created once by task T-07 and approved by design task D-09. Updating them later requires a PR labelled `visual-change`.
+- Baselines are only valid on the machine that rendered them. Always (re)generate them on GitHub's runner with the manual workflow **Visual baselines** (`.github/workflows/visual-baselines.yml`); it pushes the images to a `visual-baselines/<run id>` branch, from which the `visual-change` PR is opened. Never commit baselines rendered in the cloud container (CI-01 finding).
 - Never `test.skip`/`test.fixme` without an orchestrator-approved reason in the report.
 
 ## 6. `data-testid` registry (use exactly these)
