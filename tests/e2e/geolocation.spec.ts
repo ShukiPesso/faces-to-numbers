@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { he } from '../../src/i18n/he';
+import { allRoutes } from './helpers/routes';
 import { denyGeo, FIXTURE_POINTS, grantGeo, spyGeolocation } from './helpers/geo';
 
 /** Fills the `{name}` placeholders of a strings-contract template. */
@@ -98,7 +99,30 @@ test('E2E-GEO-05 no route reads the location on load @fixture', async ({ page, c
   for (const route of FIXTURE_ROUTES) {
     await page.goto(`/#${route}`);
     await expect(page.locator('h1').first()).toBeVisible();
-    expect(await calls(), `getCurrentPosition calls on ${route}`).toBe(0);
+    expect(
+      await calls(),
+      `location reads (getCurrentPosition/watchPosition/permissions.query) on ${route}`,
+    ).toBe(0);
+  }
+});
+
+test('E2E-GEO-05 no REAL route reads the location before any press (mobile-chrome)', async ({
+  page,
+  context,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile-chrome', 'real routes: mobile-chrome only');
+  await grantGeo(context, FIXTURE_POINTS.atA);
+  const calls = await spyGeolocation(page);
+
+  const routes = allRoutes();
+  expect(routes.length, 'routes come from the real content').toBeGreaterThan(4);
+  for (const route of routes) {
+    await page.goto(`/#${route}`);
+    await expect(page.locator('h1').first()).toBeVisible();
+    expect(
+      await calls(),
+      `location reads (getCurrentPosition/watchPosition/permissions.query) on ${route}`,
+    ).toBe(0);
   }
 });
 
