@@ -379,3 +379,41 @@
     - "10 baselines committed, stable on two re-runs; LAYOUT-01..03 still pass."
   verify:
     - "flock /tmp/pw-e2e.lock npx playwright test tests/e2e/layout.spec.ts --project=mobile-chrome --project=desktop"
+
+- id: T-12
+  title: Close the test gaps found by the audit (T-11 H1–H3, M1–M2)
+  agent: test
+  model: sonnet
+  wave: 6
+  size: M
+  status: todo
+  depends_on: [T-11]
+  owns:
+    - tests/integrity/safety-strings.test.ts
+    - tests/e2e/helpers/geo.ts
+    - tests/e2e/geolocation.spec.ts
+    - tests/e2e/safety.spec.ts
+    - tests/e2e/stability.spec.ts
+    - tests/component/offline-indicator-flow.test.tsx
+    - .github/workflows/ci.yml
+  reads:
+    - review/T-11-test-audit.md
+    - docs/04_TESTING_STRATEGY.md
+    - contracts/strings.he.ts
+    - src/i18n/he.ts
+    - docs/03_CONVENTIONS.md
+  goal: "Every mistake the audit planted that slipped through is now caught by a test, and the CI enforces coverage."
+  steps:
+    - "H1 — tests/integrity/safety-strings.test.ts: pin the exact current values of the safety-critical strings in src/i18n/he.ts (the driver warning key(s), the content-warning gate keys, the location/privacy line keys — find them by reading he.ts and the components that use them) in a reviewed allow-list inside the test, with a comment that changing any of them requires Shuki's approval. Fail with a clear message naming the key. In safety.spec.ts E2E-SAFE-05 assert the visible driver warning text equals the he.ts value (read via the source file, not via t())."
+    - "H2 — helpers/geo.ts spyGeolocation counts getCurrentPosition, watchPosition and navigator.permissions.query({name:'geolocation'}); keep the existing return shape. geolocation.spec.ts E2E-GEO-05 also visits every REAL route (via the mobile-chrome project, using helpers/routes.ts) and expects 0 calls of all three before any press."
+    - "H3 — tests/e2e/stability.spec.ts (@sw, mobile-chrome): load '/', wait for the service worker to be ready and the offline-ready message to appear, and assert the bounding box of <main> did not move (record top before/after, tolerance 1px). tests/component/offline-indicator-flow.test.tsx: assert the indicator panel uses a fixed-position class (out of flow)."
+    - "M1 — safety.spec.ts E2E-SAFE-02: before 'show', for the fixture graphic person assert opening, oct7, quote, altQuote and guideLevels.s30 text are absent and gentleOpening is visible; after 'show' they are present."
+    - "M2 — .github/workflows/ci.yml: in the check job run `npx vitest run --coverage` (thresholds already in vitest.config.ts) instead of relying on npm test inside npm run check; keep everything else."
+    - "Prove each new check can fail: re-apply audit mutations #9, #10, #11 from review/T-11-test-audit.md one at a time in your worktree, confirm the new test fails, then revert with git checkout. Record the results in your report. Never commit a mutation."
+  dont:
+    - "Do not change app code or he.ts values. Do not loosen any existing assertion."
+  acceptance:
+    - "Mutations #9, #10 and #11 are each caught; all suites pass on clean code."
+  verify:
+    - "npx vitest run --coverage"
+    - "flock /tmp/pw-e2e.lock npx playwright test --project=mobile-chrome --project=desktop --project=fixture-chrome"
