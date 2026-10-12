@@ -40,7 +40,7 @@ export async function denyGeo(context: BrowserContext): Promise<void> {
   }
 }
 
-/** Reads the current number of `getCurrentPosition` calls recorded on the page. */
+/** Reads the current number of location reads (all three kinds) recorded on the page. */
 export type GeoCallCount = () => Promise<number>;
 
 interface GeoSpyWindow {
@@ -48,23 +48,43 @@ interface GeoSpyWindow {
 }
 
 /**
- * Wraps `navigator.geolocation.getCurrentPosition` (via `addInitScript`, so it applies to every
- * document the page loads) and counts the calls in `window.__geoCalls`.
+ * Counts every way a page can read the location, in `window.__geoCalls` (via `addInitScript`, so it
+ * applies to every document the page loads): `getCurrentPosition`, `watchPosition` and
+ * `navigator.permissions.query({ name: 'geolocation' })`.
  * Call it **before** `page.goto`. Returns a function that reads the current count.
  */
 export async function spyGeolocation(page: Page): Promise<GeoCallCount> {
   await page.addInitScript(() => {
     const spyWindow = window as unknown as GeoSpyWindow;
     spyWindow.__geoCalls = 0;
-    const geolocation = navigator.geolocation as Geolocation | undefined;
-    if (!geolocation) {
-      return;
-    }
-    const original = geolocation.getCurrentPosition.bind(geolocation);
-    geolocation.getCurrentPosition = (...args: Parameters<Geolocation['getCurrentPosition']>) => {
+    const count = (): void => {
       spyWindow.__geoCalls = (spyWindow.__geoCalls ?? 0) + 1;
-      original(...args);
     };
+
+    const geolocation = navigator.geolocation as Geolocation | undefined;
+    if (geolocation) {
+      const originalGet = geolocation.getCurrentPosition.bind(geolocation);
+      geolocation.getCurrentPosition = (...args: Parameters<Geolocation['getCurrentPosition']>) => {
+        count();
+        originalGet(...args);
+      };
+      const originalWatch = geolocation.watchPosition.bind(geolocation);
+      geolocation.watchPosition = (...args: Parameters<Geolocation['watchPosition']>) => {
+        count();
+        return originalWatch(...args);
+      };
+    }
+
+    const permissions = navigator.permissions as Permissions | undefined;
+    if (permissions) {
+      const originalQuery = permissions.query.bind(permissions);
+      permissions.query = (descriptor: PermissionDescriptor) => {
+        if (descriptor.name === 'geolocation') {
+          count();
+        }
+        return originalQuery(descriptor);
+      };
+    }
   });
   return () => page.evaluate(() => (window as unknown as GeoSpyWindow).__geoCalls ?? 0);
 }
