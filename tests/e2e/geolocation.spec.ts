@@ -138,9 +138,14 @@ test('E2E-LINK-01 navigation links use the exact verified coordinates @fixture',
     'href',
     'https://www.google.com/maps/dir/?api=1&destination=31.400000,34.500000',
   );
+  await expect(page.getByTestId('nav-apple')).toHaveAttribute(
+    'href',
+    'https://maps.apple.com/?daddr=31.400000,34.500000&dirflg=d',
+  );
 
   await page.goto('/#/station/test-c');
   await expect(page.getByTestId('location-unverified')).toBeVisible();
   await expect(page.getByTestId('nav-waze')).toHaveCount(0);
   await expect(page.getByTestId('nav-google')).toHaveCount(0);
+  await expect(page.getByTestId('nav-apple')).toHaveCount(0);
 });

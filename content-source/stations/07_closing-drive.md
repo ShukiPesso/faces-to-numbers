@@ -7,7 +7,7 @@ subtitle: נסיעת סיום מצומת סעד
 kind: drive
 durationMin: 25
 radiusM: 1000
-location: null
+location: { lat: 31.470278, lng: 34.535, verified: false, note: "מועמד בביטחון נמוך: מרכז קיבוץ סעד לפי ויקיפדיה, לא הצומת עצמו – שוקי יסמן את הצומת" }
 personIds: []
 companionPersonIds: []
 sensitivity: standard

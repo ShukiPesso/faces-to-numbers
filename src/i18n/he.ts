@@ -46,6 +46,7 @@ export const he = {
   'station.navigate': 'ניווט לתחנה',
   'station.navigateWaze': 'לנווט ב-Waze',
   'station.navigateGoogle': 'לנווט ב-Google Maps',
+  'station.navigateApple': 'לנווט ב-Apple Maps',
   'station.locationUnverified':
     'המיקום בבדיקה, ולכן אין כאן קישורי ניווט. אפשר להיעזר בתיאור התחנה.',
   'station.markVisited': 'לסמן שביקרתם כאן',

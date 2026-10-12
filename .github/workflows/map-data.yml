@@ -1,0 +1,47 @@
+name: Map data
+
+# Regenerates src/content/data/map-base.json (route-map background from OpenStreetMap + driving route
+# from OSRM). Needs internet, so it runs here and not in the cloud container. Manual only. Pushes the
+# result to a branch `map-data/<run id>`; merge it via a PR. Re-run after any station coordinate change.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: map-data
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Build map data
+        run: node scripts/map/build-map-data.mjs 2> map-data.log || { cat map-data.log; echo "::error title=Map data::$(tr '\n' ' ' < map-data.log | cut -c1-900)"; exit 1; }
+      - name: Report
+        run: |
+          cat map-data.log
+          msg="$(cat map-data.log)"; msg="${msg//'%'/'%25'}"; msg="${msg//$'\n'/'%0A'}"
+          echo "::notice title=Map data::${msg}"
+      - name: Push to a review branch
+        run: |
+          if git diff --quiet -- src/content/data/map-base.json && git ls-files --error-unmatch src/content/data/map-base.json >/dev/null 2>&1; then
+            echo "::notice title=Map data branch::No change."
+            exit 0
+          fi
+          branch="map-data/${GITHUB_RUN_ID}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add src/content/data/map-base.json
+          git commit -m "data(map): regenerate map-base.json from OpenStreetMap + OSRM (run ${GITHUB_RUN_ID})"
+          git push origin "$branch"
+          echo "::notice title=Map data branch::Pushed ${branch}"

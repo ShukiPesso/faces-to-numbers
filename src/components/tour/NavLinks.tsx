@@ -2,7 +2,7 @@ import { Navigation } from 'lucide-react';
 import { Button } from '@/components/primitives';
 import type { GeoPoint } from '@/content/schema';
 import { t } from '@/lib/i18n';
-import { googleMapsUrl, wazeUrl } from '@/lib/links';
+import { appleMapsUrl, googleMapsUrl, wazeUrl } from '@/lib/links';
 
 export interface NavLinksProps {
   location: GeoPoint | null;
@@ -39,6 +39,15 @@ export function NavLinks({ location }: NavLinksProps) {
           data-testid="nav-google"
         >
           {t('station.navigateGoogle')}
+        </Button>
+        <Button
+          variant="secondary"
+          href={appleMapsUrl(location)}
+          external
+          icon={Navigation}
+          data-testid="nav-apple"
+        >
+          {t('station.navigateApple')}
         </Button>
       </div>
     </div>
