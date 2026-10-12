@@ -467,7 +467,7 @@
   model: sonnet
   wave: 6
   size: S
-  status: todo
+  status: done
   depends_on: [F-19, F-18]
   owns:
     - src/components/layout/OfflineIndicator.tsx
