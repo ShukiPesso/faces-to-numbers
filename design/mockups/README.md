@@ -68,3 +68,11 @@ bundled in `fonts/`. Icons are the Lucide shapes from `design/icons.md`, inlined
 node design/mockups/_build/build.mjs      # regenerate the 11 HTML files
 node design/mockups/_build/shoot.mjs      # 33 screenshots + no-horizontal-scroll check at 320–1440 px
 ```
+
+
+## Gate G2 — approval (Shuki, 2026-10-12)
+**Approved.** The visual direction is accepted, with these decisions:
+1. **Quotes of `graphic` people go behind the content warning** (ADR-007 updated). → F-16.
+2. **Photo placeholder is small and quiet**: a low strip with the line "תמונה תתווסף רק באישור המשפחה"; a cleared photo keeps the full frame. → F-07b.
+3. **Start button stays above "לפני שיוצאים לדרך"** on the home page, as in the mockup. → F-13.
+4. Route map: the map SVG gets `direction: ltr` (labels flip inside RTL pages), and "visited" uses colour **plus** a shape cue (D-03 wins over D-05 for accessibility). → F-11.

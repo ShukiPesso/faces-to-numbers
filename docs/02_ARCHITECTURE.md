@@ -48,6 +48,8 @@ The source pages contain guide-oriented scripts ("30 sec / 2 min / 5 min"). The 
 
 `guideLevels.m2` / `guideLevels.m5` are stored in content but **not rendered** in MVP (reserved for a future "guide mode").
 
+**Gate G2 decision (Shuki, 2026-10-12):** for a person with `oct7Sensitivity: graphic`, the `quote` (and `altQuote`) is rendered **inside** the ContentWarningGate together with `oct7`, at every depth where it appears. For `standard` people nothing changes.
+
 ### ADR-008 — Tailwind CSS v3 with logical properties for RTL
 Use Tailwind's logical utilities (`ms-*`, `me-*`, `ps-*`, `pe-*`, `start-*`, `end-*`, `text-start`, `text-end`). Never `ml-*`, `mr-*`, `pl-*`, `pr-*`, `left-*`, `right-*`, `text-left`, `text-right` (lint rule enforces this). Design tokens are CSS custom properties in `src/styles/tokens.css`, mapped into the Tailwind theme.
 

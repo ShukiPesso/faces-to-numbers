@@ -119,6 +119,7 @@
     - docs/04_TESTING_STRATEGY.md
   goal: "The schematic route map renders inline (offline), with every station marker linking to its station and showing visited/current state."
   steps:
+    - "G2 decisions (design/mockups/README.md): put `direction: ltr` on the map SVG wrapper so station labels do not flip inside the RTL page (the D-04 mockup shows the fix); show 'visited' with colour AND a shape cue (e.g. a filled vs. hollow marker) — D-03 wins over D-05 here. Check it in the browser at 390 and 1440 px."
     - "Convert design/route-map.svg into inline JSX in RouteMap.tsx (no external file fetch). Keep every <g id='marker-<station-id>'> and the geometry exactly."
     - "Props stations, visitedIds, currentId?. Wrap each marker group in a Link to its station; apply visited and current styling only through the classes described in design/route-map.md."
     - "The <svg> has role='img', aria-label t('tour.mapAlt') and data-testid route-map."
@@ -180,6 +181,7 @@
     - docs/02_ARCHITECTURE.md
   goal: "The home page introduces the tour, its message and safety notes, and lets visitors start or resume."
   steps:
+    - "G2 decision: keep the start button where the D-04 home mockup has it — after the intro and before 'לפני שיוצאים לדרך'."
     - "Follow design/mockups/home.html. h1 = tour.title; subtitle; t('home.stationsCount', { n }) and t('home.totalDuration', { duration: formatMinutes(totalDurationMin) })."
     - "Sections: intro (Markdown); t('home.messageTitle') + message (Markdown); t('home.safetyTitle') + safety list; t('home.howToTitle') + howTo list."
     - "Primary button start-tour → '/station/<first slug>'. If getVisited() is not empty: resume-tour → the first station (by order) after the highest visited order, label t('home.resume', { n }); and reset-progress (t('home.resetProgress')) → resetProgress() and re-render."
@@ -278,6 +280,7 @@
     - src/content/schema.ts
   goal: "Each person page tells one person's story at the depth the visitor chooses, with sensitive passages behind an optional gate."
   steps:
+    - "G2 decision (ADR-007 update): when the person's oct7Sensitivity is 'graphic', render quote and altQuote INSIDE the same ContentWarningGate as oct7 (hidden until 'show', at m2 and m5). Add a component test: graphic person → quote text absent before 'show', present after; standard person → quote always visible."
     - "Resolve :id with getPersonById; unknown → NotFoundPage."
     - "Header: h1 name + ' ' + honorific, subtitle, PhotoFrame, ShareButton, and a back link t('person.backToStation', { title }) to the first station in person.stationIds."
     - "DepthTabs bound to the PrefsProvider depth."
@@ -398,3 +401,31 @@
   verify:
     - "npm run build && npm run size"
     - "npx lighthouse http://localhost:4173/ --preset=perf --quiet --chrome-flags='--headless' --output=json --output-path=./lh-home.json   (with npm run preview running)"
+
+- id: F-07b
+  title: Small, quiet photo placeholder (gate G2 decision)
+  agent: dev
+  model: haiku
+  wave: 3
+  size: S
+  status: todo
+  depends_on: [F-07, D-04]
+  owns:
+    - src/components/primitives/PhotoFrame.tsx
+    - tests/component/primitives.test.tsx
+  reads:
+    - design/mockups/README.md
+    - design/components/primitives.md
+    - docs/03_CONVENTIONS.md
+  goal: "Until a family approves a photo, the person page shows only a low, quiet strip instead of a near full-screen empty frame."
+  steps:
+    - "In PhotoFrame.tsx, change ONLY the pending state: render a low strip (min-height 3.5rem, full width, hairline border, muted background token, text-start) containing the existing placeholder text from t(), keeping data-testid 'photo-placeholder'. Remove the fixed aspect ratio for the pending state only. The cleared state stays exactly as it is."
+    - "Update CT-PHOTO-01 in tests/component/primitives.test.tsx only as needed: pending → placeholder strip visible, no <img>, no referenceUrl anywhere in the output; cleared → unchanged assertions."
+  dont:
+    - "Do not touch any other component or any other test in the file."
+    - "Never render referenceUrl or any external image."
+  acceptance:
+    - "Pending photo renders a strip with data-testid photo-placeholder and no img; cleared photo unchanged; all primitives tests pass."
+  verify:
+    - "npm test -- tests/component/primitives.test.tsx"
+    - "npm run lint && npm run typecheck"
