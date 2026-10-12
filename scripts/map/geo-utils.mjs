@@ -182,3 +182,64 @@ export function nearestOnLines(p, lines, refLat) {
   }
   return best;
 }
+
+/** Ray-casting point-in-polygon test (ring of [lng, lat]). */
+export function pointInPolygon([x, y], ring) {
+  let inside = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const [xi, yi] = ring[i];
+    const [xj, yj] = ring[j];
+    if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
+}
+
+/** Position of a boundary point along the box perimeter, clockwise from the north-west corner. */
+function perimeterPos([x, y], b) {
+  const w = b.east - b.west;
+  const h = b.north - b.south;
+  const eps = 1e-7;
+  if (Math.abs(y - b.north) < eps) return x - b.west;
+  if (Math.abs(x - b.east) < eps) return w + (b.north - y);
+  if (Math.abs(y - b.south) < eps) return w + h + (b.east - x);
+  if (Math.abs(x - b.west) < eps) return 2 * w + h + (y - b.south);
+  return null;
+}
+
+/**
+ * Closes a line whose two ends lie on the box edge into a polygon, walking the box boundary on the
+ * side that does NOT contain `landPoint`. Used to turn a clipped coastline into a sea polygon.
+ * Returns [] if an end is not on the boundary.
+ */
+export function closeAlongBox(line, b, landPoint) {
+  const start = line[0];
+  const end = line[line.length - 1];
+  const ps = perimeterPos(start, b);
+  const pe = perimeterPos(end, b);
+  if (ps === null || pe === null) return [];
+  const w = b.east - b.west;
+  const h = b.north - b.south;
+  const total = 2 * (w + h);
+  const corners = [
+    [w, [b.east, b.north]],
+    [w + h, [b.east, b.south]],
+    [2 * w + h, [b.west, b.south]],
+    [total, [b.west, b.north]],
+  ];
+  const walk = (from, to, clockwise) => {
+    const out = [];
+    const dist = (p) => (clockwise ? (p - from + total) % total : (from - p + total) % total);
+    const span = dist(to);
+    const cs = corners
+      .map(([p, c]) => [dist(p % total), c])
+      .filter(([d]) => d > 0 && d < span)
+      .sort((a, z) => a[0] - z[0]);
+    for (const [, c] of cs) out.push(c);
+    return out;
+  };
+  for (const clockwise of [true, false]) {
+    const poly = [...line, ...walk(pe, ps, clockwise), start];
+    if (!pointInPolygon(landPoint, poly)) return poly;
+  }
+  return [];
+}

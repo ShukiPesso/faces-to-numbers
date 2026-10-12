@@ -12,6 +12,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import {
   clipLine,
+  closeAlongBox,
   clipPolygon,
   nearestOnLines,
   roundCoords,
@@ -44,9 +45,6 @@ const PLACES = [
   { he: 'ניר עם', en: 'niram' },
   { he: 'עלומים', en: 'alumim' },
   { he: 'תקומה', en: 'tkuma' },
-  { he: 'כיסופים', en: 'kissufim' },
-  { he: 'עין השלושה', en: 'einhashlosha' },
-  { he: 'אור הנר', en: 'orhaner' },
   { he: 'איבים', en: 'ibim' },
   { he: 'שובה', en: 'shuva' },
   { he: 'כפר מימון', en: 'kfarmaimon' },
@@ -76,6 +74,8 @@ out geom tags;
 node["place"~"^(city|town|village|hamlet)$"](${b});
 out;
 rel["type"="boundary"]["name:en"="Gaza Strip"];
+out geom;
+way["natural"="coastline"](${b});
 out geom;`;
   let last = '';
   for (let attempt = 0; attempt < 6; attempt++) {
@@ -116,7 +116,7 @@ const ll = (g) => [g.lon, g.lat];
 function buildRoads(elements) {
   const groups = new Map();
   for (const el of elements) {
-    if (el.type !== 'way' || !el.geometry) continue;
+    if (el.type !== 'way' || !el.geometry || !el.tags?.highway) continue;
     const cls = el.tags.highway;
     const ref = (el.tags.ref ?? '').split(';')[0].trim();
     if (cls === 'secondary' && ref === '') continue; // unnumbered local roads: clutter
@@ -174,6 +174,24 @@ function buildGaza(elements) {
   }
   if (polys.length === 0) throw new Error('Gaza Strip polygon does not intersect the map window');
   return polys;
+}
+
+/** Sea polygon(s): the coastline clipped to the window, closed along the window edge on the sea side. */
+function buildSea(elements, places) {
+  const coast = elements
+    .filter((e) => e.type === 'way' && e.tags?.natural === 'coastline' && e.geometry)
+    .map((e) => e.geometry.map(ll));
+  const sderot = places.find((p) => p.id === 'sderot');
+  const land = sderot ? [sderot.lng, sderot.lat] : [BBOX.east, BBOX.south];
+  const out = [];
+  for (const line of stitch(coast)) {
+    for (const piece of clipLine(line, BBOX)) {
+      const poly = closeAlongBox(piece, BBOX, land);
+      if (poly.length > 0) out.push(roundCoords(simplify(poly, 20, REF_LAT)));
+    }
+  }
+  if (out.length === 0) log('no coastline in the window (no sea drawn)');
+  return out;
 }
 
 async function buildRoute(stations, places, roads) {
@@ -249,7 +267,10 @@ async function main() {
   const roads = buildRoads(osm.elements);
   const places = buildPlaces(osm.elements);
   const gaza = buildGaza(osm.elements);
-  log(`roads: ${roads.length} lines, places: ${places.length}, gaza rings: ${gaza.length}`);
+  const sea = buildSea(osm.elements, places);
+  log(
+    `roads: ${roads.length} lines, places: ${places.length}, gaza rings: ${gaza.length}, sea: ${sea.length}`,
+  );
   log('routing with OSRM…');
   const route = await buildRoute(list, places, roads);
   const data = {
@@ -263,6 +284,7 @@ async function main() {
       list.filter((s) => s.location).map((s) => [s.id, [s.location.lng, s.location.lat]]),
     ),
     gaza,
+    sea,
     roads,
     places,
     route,

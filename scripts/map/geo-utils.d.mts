@@ -13,3 +13,5 @@ export function stitch(ways: Pt[][]): Pt[][];
 export function clipPolygon(ring: Pt[], box: Box): Pt[];
 export function clipLine(coords: Pt[], box: Box): Pt[][];
 export function nearestOnLines(p: Pt, lines: Pt[][], refLat: number): Pt | null;
+export function pointInPolygon(p: Pt, ring: Pt[]): boolean;
+export function closeAlongBox(line: Pt[], box: Box, landPoint: Pt): Pt[];

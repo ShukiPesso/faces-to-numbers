@@ -3,7 +3,9 @@ import { describe, expect, it } from 'vitest';
 import {
   clipLine,
   clipPolygon,
+  closeAlongBox,
   nearestOnLines,
+  pointInPolygon,
   roundCoords,
   simplify,
   stitch,
@@ -109,5 +111,27 @@ describe('map geo utils', () => {
     expect(p?.[0]).toBeCloseTo(34.5, 6);
     expect(p?.[1]).toBeCloseTo(31.5, 6);
     expect(roundCoords([[34.1234567, 31.7654321]])).toEqual([[34.12346, 31.76543]]);
+  });
+
+  it('UT-MAP-06 closeAlongBox closes a coastline on the sea side', () => {
+    // Coast from the top edge (34.4, 32) to the left edge (34, 31.6): sea is the NW corner.
+    const coast = [
+      [34.4, 32],
+      [34.2, 31.8],
+      [34, 31.6],
+    ];
+    const sea = closeAlongBox(coast, BOX, [34.8, 31.2]);
+    expect(pointInPolygon([34.05, 31.95], sea)).toBe(true);
+    expect(pointInPolygon([34.8, 31.2], sea)).toBe(false);
+    expect(
+      closeAlongBox(
+        [
+          [34.5, 31.5],
+          [34.6, 31.6],
+        ],
+        BOX,
+        [34.8, 31.2],
+      ),
+    ).toEqual([]);
   });
 });
