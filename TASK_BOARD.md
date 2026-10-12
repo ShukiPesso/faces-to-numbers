@@ -108,7 +108,7 @@ P0-01 → P0-02 → F-02 → F-03 → F-06 → F-08 → F-16 → F-18 → F-19 �
 | [D-09](tasks/D-09.md) | Design QA of the built app and approval of visual baselines | design | opus | M | T-07, F-13, F-14, F-15, F-16, F-17, F-18 | done |
 | [F-20](tasks/F-20.md) | Remove layout shift — offline-ready message and font swap (from F-19 review) | dev | sonnet | S | F-19, F-18 | done |
 | [F-21](tasks/F-21.md) | Design QA fixes (D-09 findings 1, 2, 5–8, 10–13) | dev | sonnet | M | D-09, F-20 | done |
-| [F-22](tasks/F-22.md) | Gentle opening for graphic people — schema, converter and pages (Shuki's G2 follow-up) | dev | opus | M | F-21 | todo |
+| [F-22](tasks/F-22.md) | Gentle opening for graphic people — schema, converter and pages (Shuki's G2 follow-up) | dev | opus | M | F-21 | done |
 | [H-05](tasks/H-05.md) | Field test the whole route with the deployed app on two phones | human | human | M | O-03 | todo |
 | [H-06](tasks/H-06.md) | Final content and sensitivity sign-off | human | human | S | C-01, C-02, C-04, H-02, H-05, D-09, C-05, C-06 | todo |
 | [L-01](tasks/L-01.md) | Soft launch — final checklist, go/no-go, first users | devops | opus | S | H-06, T-11, D-09, T-09, H-03, O-03, H-05 | todo |

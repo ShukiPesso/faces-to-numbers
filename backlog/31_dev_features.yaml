@@ -546,7 +546,7 @@
   model: opus
   wave: 6
   size: M
-  status: todo
+  status: done
   depends_on: [F-21]
   owns:
     - contracts/content.schema.ts
