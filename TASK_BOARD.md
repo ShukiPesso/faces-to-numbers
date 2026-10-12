@@ -17,7 +17,7 @@ P0-01 → P0-02 → F-02 → F-03 → F-06 → F-08 → F-16 → F-18 → F-19 �
 | ID | Title | Agent | Model | Size | Depends on | Status |
 |---|---|---|---|---|---|---|
 | [H-01](tasks/H-01.md) | Answer open decisions; create Base44 app, deploy key and GitHub repo | human | human | S | — | todo |
-| [O-01](tasks/O-01.md) | Spike — verify Base44 deploy-dist end to end and document it | devops | opus | M | P0-01, H-01 | review |
+| [O-01](tasks/O-01.md) | Spike — verify Base44 deploy-dist end to end and document it | devops | opus | M | P0-01, H-01 | done |
 | [P0-01](tasks/P0-01.md) | Scaffold the repository with every dependency and npm script | dev | opus | M | — | done |
 | [P0-02](tasks/P0-02.md) | Copy the frozen contracts into src and implement t() | dev | sonnet | S | P0-01 | done |
 | [P0-03](tasks/P0-03.md) | Test infrastructure — Vitest, Playwright projects and shared helpers | test | opus | M | P0-01 | done |
