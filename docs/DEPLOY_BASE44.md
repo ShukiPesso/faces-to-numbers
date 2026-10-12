@@ -185,7 +185,13 @@ lines in `.github/workflows/deploy.yml`:
 הערות: העותקים נשמרים 90 יום. Base44 מזהה ארכיון זהה שכבר הועלה ומפרסם את העותק השמור (S1).
 אחרי חזרה לאחור, `main` עדיין מכיל את הקוד החדש — תקנו או בטלו (revert) אותו לפני ההעלאה הבאה.
 
+**Auth in this repo (verified 2026-10-12):** `BASE44_API_KEY` holds a personal access token, so the repository
+variable `BASE44_AUTH_HEADER` is set to `bearer`. A workspace key would return 401
+`InvalidAccessTokenError` the other way round.
+
 ## 9. Hosting observations — open until the first successful run
+
+The smoke job's **Hosting observations** step answers #1–#5 automatically (a `Hosting observations` notice on the run).
 
 O-01 asked for these from a real deploy. They cannot be answered from the docs. After the first
 green run, check them from any computer (replace `<APP_URL>` with the `app_url` from the Summary):

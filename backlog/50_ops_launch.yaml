@@ -42,7 +42,7 @@
   model: opus
   wave: 5
   size: M
-  status: review
+  status: done
   depends_on: [O-01, O-02, F-18, T-10]
   owns:
     - .github/workflows/deploy.yml
