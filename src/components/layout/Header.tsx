@@ -10,8 +10,16 @@ export function Header() {
       <Link
         to="/"
         aria-current={pathname === '/' ? 'page' : undefined}
-        className="inline-flex min-h-[var(--tap-min)] items-center font-display text-lg font-display-bold text-primary no-underline hover:underline lg:text-xl"
+        className="inline-flex min-h-[var(--tap-min)] items-center gap-2 font-display text-lg font-display-bold text-primary no-underline hover:underline lg:text-xl"
       >
+        <img
+          src="./icons/mark.svg"
+          alt=""
+          aria-hidden="true"
+          className="size-[1.25em] shrink-0"
+          width={20}
+          height={20}
+        />
         {t('app.name')}
       </Link>
       <div data-slot="header-actions" className="flex items-center gap-2">

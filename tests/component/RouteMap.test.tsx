@@ -33,24 +33,14 @@ describe('RouteMap', () => {
     expect(screen.getByTestId('route-map').parentElement?.className).toContain('[direction:ltr]');
   });
 
-  it('renders 7 marker links with the station hrefs', () => {
+  it('renders one marker per station and no interactive elements inside the image', () => {
     const stations = renderMap();
     const svg = screen.getByTestId('route-map');
-    const links = markerLinks(svg);
-    expect(links).toHaveLength(7);
     for (const station of stations) {
-      const group = svg.querySelector(`g#marker-${station.id}`);
-      expect(group).not.toBeNull();
-      expect(group?.closest('a')).toHaveAttribute('href', `/station/${station.slug}`);
+      expect(svg.querySelector(`g#marker-${station.id}`)).not.toBeNull();
     }
-  });
-
-  it('keeps marker links out of the keyboard and accessibility tree', () => {
-    renderMap();
-    for (const a of markerLinks(screen.getByTestId('route-map'))) {
-      expect(a).toHaveAttribute('tabindex', '-1');
-      expect(a).toHaveAttribute('aria-hidden', 'true');
-    }
+    expect(markerLinks(svg)).toHaveLength(0);
+    expect(svg.querySelectorAll('[tabindex]')).toHaveLength(0);
   });
 
   it('applies the visited class and a check badge only for visited ids', () => {
@@ -62,12 +52,11 @@ describe('RouteMap', () => {
     expect(svg.querySelector('#marker-route-232')).not.toHaveClass('is-visited');
   });
 
-  it('marks the current station with the class and aria-current', () => {
+  it('marks the current station with the class', () => {
     renderMap([], 'observers-hill');
     const svg = screen.getByTestId('route-map');
     const group = svg.querySelector('#marker-observers-hill');
     expect(group).toHaveClass('is-current');
-    expect(group?.closest('a')).toHaveAttribute('aria-current', 'step');
     expect(svg.querySelectorAll('.is-current')).toHaveLength(1);
   });
 

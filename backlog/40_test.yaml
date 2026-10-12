@@ -85,7 +85,7 @@
   model: sonnet
   wave: 5
   size: M
-  status: todo
+  status: done
   depends_on: [F-13, F-14, F-15, F-16, F-17, P0-03]
   owns:
     - tests/e2e/navigation.spec.ts
@@ -114,7 +114,7 @@
   model: sonnet
   wave: 5
   size: M
-  status: todo
+  status: done
   depends_on: [F-12, F-14, F-15, F-03, P0-03]
   owns:
     - tests/e2e/geolocation.spec.ts
@@ -182,7 +182,7 @@
   model: sonnet
   wave: 5
   size: M
-  status: todo
+  status: done
   depends_on: [F-13, F-14, F-15, F-16, F-17, P0-03]
   owns:
     - tests/e2e/safety.spec.ts
@@ -215,7 +215,7 @@
   model: sonnet
   wave: 5
   size: M
-  status: todo
+  status: done
   depends_on: [F-13, F-14, F-15, F-16, F-17, P0-03]
   owns:
     - tests/e2e/layout.spec.ts
@@ -245,7 +245,7 @@
   model: sonnet
   wave: 5
   size: S
-  status: todo
+  status: done
   depends_on: [F-13, F-14, F-15, F-16, F-17, P0-03]
   owns:
     - tests/e2e/a11y.spec.ts

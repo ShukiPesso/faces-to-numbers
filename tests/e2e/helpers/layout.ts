@@ -51,7 +51,7 @@ export async function expectTapTargets(page: Page, min = 44): Promise<void> {
         }
         if (rect.width < minSize || rect.height < minSize) {
           const label =
-            element.innerText.trim() ||
+            (element.textContent ?? '').trim() ||
             element.getAttribute('aria-label') ||
             element.getAttribute('title') ||
             element.getAttribute('name') ||

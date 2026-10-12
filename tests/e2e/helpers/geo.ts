@@ -27,6 +27,17 @@ export async function grantGeo(context: BrowserContext, point: FixturePoint): Pr
 /** Removes every granted permission, so a geolocation request is not allowed. */
 export async function denyGeo(context: BrowserContext): Promise<void> {
   await context.clearPermissions();
+  // Clearing alone leaves Chromium at "prompt", which headless never answers. Deny explicitly
+  // (Chromium only; WebKit/Firefox keep the cleared state). Raised by T-04.
+  const browser = context.browser();
+  if (browser && browser.browserType().name() === 'chromium') {
+    const session = await browser.newBrowserCDPSession();
+    await session.send('Browser.setPermission', {
+      permission: { name: 'geolocation' },
+      setting: 'denied',
+    });
+    await session.detach();
+  }
 }
 
 /** Reads the current number of `getCurrentPosition` calls recorded on the page. */

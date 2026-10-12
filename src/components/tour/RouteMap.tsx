@@ -1,10 +1,8 @@
 import { Route as RouteIcon } from 'lucide-react';
 import { useId } from 'react';
-import { Link } from 'react-router-dom';
 import { SectionHeading } from '@/components/primitives';
 import type { Station } from '@/content/schema';
 import { t } from '@/lib/i18n';
-import { stationPath } from '@/lib/links';
 
 export interface RouteMapProps {
   stations: Station[];
@@ -39,7 +37,6 @@ const MARKERS: readonly MarkerSpec[] = [
 ];
 
 /** Half the side of the invisible hit area: 44 map units across (≥ the tap minimum at 360 px). */
-const HIT_RADIUS = 22;
 
 /** Splits a title at its last space, for the one label the design draws on two lines. */
 function splitTitle(title: string): [string, string] {
@@ -65,20 +62,15 @@ function Marker({ spec, station, visited, current }: MarkerProps) {
   const groupClass = ['marker', visited ? 'is-visited' : '', current ? 'is-current' : '']
     .filter(Boolean)
     .join(' ');
-  const labelClass = 'fill-ink group-hover:underline';
+  const labelClass = 'fill-ink';
   const lines = label.twoLines ? splitTitle(station.title) : [station.title];
   return (
-    <Link
-      to={stationPath(station.slug)}
-      tabIndex={-1}
-      aria-hidden="true"
-      aria-current={current ? 'step' : undefined}
-      className="group"
-    >
+    // Markers are a picture only (orchestrator fix after T-07/T-08): links inside role="img" fail axe
+    // nested-interactive and are under 44px on phones. Stations are reached through the card list.
+    <g>
       <g id={`marker-${spec.id}`} className={groupClass}>
         {visited ? <title>{`${station.title} — ${t('tour.visited')}`}</title> : null}
-        <circle cx={cx} cy={cy} r={HIT_RADIUS} fill="none" stroke="none" pointerEvents="all" />
-        <circle cx={cx} cy={cy} r="15" strokeWidth={current ? 5 : 3} className={circleClass} />
+                <circle cx={cx} cy={cy} r="15" strokeWidth={current ? 5 : 3} className={circleClass} />
         <text x={cx} y={cy + 6} textAnchor="middle" className={numberClass}>
           {spec.n}
         </text>
@@ -113,7 +105,7 @@ function Marker({ spec, station, visited, current }: MarkerProps) {
           </g>
         ) : null}
       </g>
-    </Link>
+    </g>
   );
 }
 
