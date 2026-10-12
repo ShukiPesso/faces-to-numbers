@@ -14,6 +14,9 @@ export function PersonCard({ person, variant }: PersonCardProps) {
   const frame = companion ? 'bg-bg' : 'border-s-accent-line border-s-gold bg-surface shadow-card';
   const nameSize = companion ? 'text-lg' : 'text-xl';
   const fullName = person.honorific ? `${person.name} ${person.honorific}` : person.name;
+  // F-22: a graphic person's `opening` stays behind the content warning on the person page, so
+  // the card shows only the approved `gentleOpening`, or no excerpt at all.
+  const excerpt = person.oct7Sensitivity === 'graphic' ? person.gentleOpening : person.opening;
   return (
     <article
       aria-labelledby={headingId}
@@ -27,9 +30,11 @@ export function PersonCard({ person, variant }: PersonCardProps) {
         {fullName}
       </h3>
       <p className="mt-1 font-body text-sm text-ink-muted">{person.subtitle}</p>
-      <div className="mt-4">
-        <Markdown>{person.opening}</Markdown>
-      </div>
+      {excerpt ? (
+        <div className="mt-4">
+          <Markdown>{excerpt}</Markdown>
+        </div>
+      ) : null}
       <div className="mt-5">
         <Button variant="secondary" href={`#${personPath(person.id)}`}>
           {t('person.toStory', { name: person.name })}

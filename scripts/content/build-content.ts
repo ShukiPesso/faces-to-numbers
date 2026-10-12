@@ -38,6 +38,7 @@ const PERSON_KEY_ORDER = [
   'subtitle',
   'stationIds',
   'opening',
+  'gentleOpening',
   'oct7',
   'oct7Sensitivity',
   'personality',

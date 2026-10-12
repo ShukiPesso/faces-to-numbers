@@ -73,6 +73,8 @@ export const PersonSchema = z
     subtitle: z.string().min(2),
     stationIds: z.array(IdSchema).min(1),
     opening: z.string().min(10),
+    /** Gentle opening without the hard detail (F-22). Only for `graphic` people; see refine below. */
+    gentleOpening: z.string().min(10).optional(),
     oct7: z.string().min(10),
     oct7Sensitivity: SensitivitySchema,
     personality: z.string().min(10),
@@ -86,7 +88,11 @@ export const PersonSchema = z
     consent: ConsentSchema,
     sources: z.array(SourceSchema).min(1),
   })
-  .strict();
+  .strict()
+  .refine((p) => p.gentleOpening === undefined || p.oct7Sensitivity === 'graphic', {
+    message: "gentleOpening is allowed only when oct7Sensitivity is 'graphic'",
+    path: ['gentleOpening'],
+  });
 
 /** Gaza-envelope bounding box — catches swapped lat/lng and typos. */
 export const GeoPointSchema = z
