@@ -1,0 +1,169 @@
+name: Deploy
+
+# Publishes dist/ to Base44 ("Deploy a prebuilt site", deploy-dist), then smoke-tests the live URL.
+# How to run it, roll back and troubleshoot: docs/DEPLOY_BASE44.md
+#
+# For now this runs ONLY when started by hand (Actions -> Deploy -> Run workflow).
+# After the first successful run has been checked by Shuki, uncomment the `push` block below
+# so that every merge to main deploys automatically.
+on:
+  workflow_dispatch:
+    inputs:
+      rollback_run_id:
+        description: 'Rollback: run ID of an earlier successful Deploy run (number from its URL). Leave empty for a normal deploy.'
+        required: false
+        default: ''
+        type: string
+  # push:
+  #   branches: [main]
+
+permissions:
+  contents: read
+  actions: read # needed to download a previous run's artifact for a rollback
+
+# Never two deploys at once, and never cancel a deploy half-way.
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: deploy
+    # Deploy only from main (also blocks "Run workflow" on another branch).
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    # Optional (see docs/DEPLOY_BASE44.md): add a protected environment with a required reviewer.
+    # environment: production
+    outputs:
+      app_url: ${{ steps.deploy.outputs.app_url }}
+      deployed_at: ${{ steps.deploy.outputs.deployed_at }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # ---------- normal deploy: test, build, keep a rollback copy
+      - name: Install
+        if: ${{ inputs.rollback_run_id == '' }}
+        run: npm ci
+
+      - name: Check (lint, typecheck, content, unit tests, build, size)
+        if: ${{ inputs.rollback_run_id == '' }}
+        run: npm run check
+
+      - name: Build
+        if: ${{ inputs.rollback_run_id == '' }}
+        run: npm run build
+
+      - name: Name the rollback copy
+        if: ${{ inputs.rollback_run_id == '' }}
+        id: meta
+        run: echo "artifact=site-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload dist as rollback copy (kept 90 days)
+        if: ${{ inputs.rollback_run_id == '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.meta.outputs.artifact }}
+          path: dist/
+          retention-days: 90
+          if-no-files-found: error
+
+      # ---------- rollback: take dist from an earlier run instead of building
+      - name: Download dist from the earlier run (rollback)
+        if: ${{ inputs.rollback_run_id != '' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ROLLBACK_RUN_ID: ${{ inputs.rollback_run_id }}
+        run: |
+          set -euo pipefail
+          if [[ ! "$ROLLBACK_RUN_ID" =~ ^[0-9]{1,20}$ ]]; then
+            echo "rollback_run_id must be digits only (the number from the run's URL)." >&2
+            exit 1
+          fi
+          info="$(gh run view "$ROLLBACK_RUN_ID" --repo "$GITHUB_REPOSITORY" \
+            --json workflowName,headBranch --jq '.workflowName + " " + .headBranch')"
+          echo "rollback source run: ${ROLLBACK_RUN_ID} (${info})"
+          if [[ "$info" != "Deploy main" ]]; then
+            echo "Run ${ROLLBACK_RUN_ID} is not a Deploy run on main. Refusing." >&2
+            exit 1
+          fi
+          rm -rf dist rollback
+          gh run download "$ROLLBACK_RUN_ID" --repo "$GITHUB_REPOSITORY" --pattern 'site-*' --dir rollback
+          mapfile -t dirs < <(find rollback -mindepth 1 -maxdepth 1 -type d)
+          if [[ "${#dirs[@]}" -ne 1 ]]; then
+            echo "Expected exactly one site-* artifact in run ${ROLLBACK_RUN_ID}, found ${#dirs[@]}." >&2
+            exit 1
+          fi
+          echo "using artifact: $(basename "${dirs[0]}")"
+          mv "${dirs[0]}" dist
+
+      # ---------- publish
+      - name: Deploy to Base44
+        id: deploy
+        env:
+          DIST_DIR: dist
+          BASE44_APP_ID: ${{ secrets.BASE44_APP_ID }}
+          BASE44_API_KEY: ${{ secrets.BASE44_API_KEY }}
+          # Optional overrides, set as repository VARIABLES (not secrets) only if the docs change.
+          # Empty = the documented defaults inside the script.
+          BASE44_API_BASE: ${{ vars.BASE44_API_BASE }}
+          BASE44_AUTH_HEADER: ${{ vars.BASE44_AUTH_HEADER }}
+          BASE44_UPLOAD_MODE: ${{ vars.BASE44_UPLOAD_MODE }}
+        run: bash scripts/deploy-base44.sh
+
+      - name: Summary
+        env:
+          APP_URL: ${{ steps.deploy.outputs.app_url }}
+          DEPLOYED_AT: ${{ steps.deploy.outputs.deployed_at }}
+          ROLLBACK_RUN_ID: ${{ inputs.rollback_run_id }}
+        run: |
+          {
+            echo "### Deployed to Base44"
+            echo ""
+            echo "- app_url: ${APP_URL}"
+            echo "- deployed_at (UTC): ${DEPLOYED_AT}"
+            if [[ -n "$ROLLBACK_RUN_ID" ]]; then echo "- rollback from run: ${ROLLBACK_RUN_ID}"; fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  smoke:
+    name: smoke
+    needs: deploy
+    if: ${{ needs.deploy.outputs.app_url != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - run: npx playwright install --with-deps chromium
+
+      - name: Smoke tests against the live site
+        env:
+          LIVE_URL: ${{ needs.deploy.outputs.app_url }}
+        run: npx playwright test --project=smoke
+
+      - name: Upload smoke report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 30
+          if-no-files-found: ignore
