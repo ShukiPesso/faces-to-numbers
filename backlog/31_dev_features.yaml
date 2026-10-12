@@ -500,7 +500,7 @@
   model: sonnet
   wave: 6
   size: M
-  status: todo
+  status: done
   depends_on: [D-09, F-20]
   owns:
     - src/components/tour/RouteMap.tsx

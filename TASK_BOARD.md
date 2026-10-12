@@ -96,7 +96,7 @@ P0-01 → P0-02 → F-02 → F-03 → F-06 → F-08 → F-16 → F-18 → F-19 �
 | [T-06](tasks/T-06.md) | End-to-end — safety rules, reading modes, share (E2E-SAFE-01..05, E2E-READ-01, E2E-SHARE-01) | test | sonnet | M | F-13, F-14, F-15, F-16, F-17, P0-03 | done |
 | [T-07](tasks/T-07.md) | End-to-end — responsive layout and visual baselines (E2E-LAYOUT-01..04) | test | sonnet | M | F-13, F-14, F-15, F-16, F-17, P0-03 | done |
 | [T-08](tasks/T-08.md) | Accessibility — axe on every route and keyboard walk (E2E-A11Y-01..02) | test | sonnet | S | F-13, F-14, F-15, F-16, F-17, P0-03 | done |
-| [T-09](tasks/T-09.md) | Lighthouse CI — performance, accessibility, best practices (LH-01) | test | haiku | S | F-18, F-19, O-02 | todo |
+| [T-09](tasks/T-09.md) | Lighthouse CI — performance, accessibility, best practices (LH-01) | test | haiku | S | F-18, F-19, O-02 | done |
 | [T-10](tasks/T-10.md) | Post-deploy smoke tests against the live URL (E2E-SMOKE-01..03) | test | haiku | S | F-18, P0-03 | done |
 
 ## Wave 6 — QA & launch
@@ -104,10 +104,10 @@ P0-01 → P0-02 → F-02 → F-03 → F-06 → F-08 → F-16 → F-18 → F-19 �
 | ID | Title | Agent | Model | Size | Depends on | Status |
 |---|---|---|---|---|---|---|
 | [C-04](tasks/C-04.md) | Proofread every page on the deployed site at phone size | content | sonnet | M | O-03 | todo |
-| [C-07](tasks/C-07.md) | Draft gentle openings for the five graphic people (for Shuki's approval) | content | opus | S | D-09 | todo |
+| [C-07](tasks/C-07.md) | Draft gentle openings for the five graphic people (for Shuki's approval) | content | opus | S | D-09 | done |
 | [D-09](tasks/D-09.md) | Design QA of the built app and approval of visual baselines | design | opus | M | T-07, F-13, F-14, F-15, F-16, F-17, F-18 | done |
 | [F-20](tasks/F-20.md) | Remove layout shift — offline-ready message and font swap (from F-19 review) | dev | sonnet | S | F-19, F-18 | done |
-| [F-21](tasks/F-21.md) | Design QA fixes (D-09 findings 1, 2, 5–8, 10–13) | dev | sonnet | M | D-09, F-20 | todo |
+| [F-21](tasks/F-21.md) | Design QA fixes (D-09 findings 1, 2, 5–8, 10–13) | dev | sonnet | M | D-09, F-20 | done |
 | [F-22](tasks/F-22.md) | Gentle opening for graphic people — schema, converter and pages (Shuki's G2 follow-up) | dev | opus | M | F-21 | todo |
 | [H-05](tasks/H-05.md) | Field test the whole route with the deployed app on two phones | human | human | M | O-03 | todo |
 | [H-06](tasks/H-06.md) | Final content and sensitivity sign-off | human | human | S | C-01, C-02, C-04, H-02, H-05, D-09, C-05, C-06 | todo |

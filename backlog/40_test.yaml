@@ -271,7 +271,7 @@
   model: haiku
   wave: 5
   size: S
-  status: todo
+  status: done
   depends_on: [F-18, F-19, O-02]
   owns:
     - lighthouserc.json

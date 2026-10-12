@@ -361,7 +361,7 @@
   model: opus
   wave: 6
   size: S
-  status: todo
+  status: done
   depends_on: [D-09]
   owns:
     - review/C-07-gentle-openings.md
