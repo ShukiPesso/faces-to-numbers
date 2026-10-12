@@ -328,7 +328,7 @@
   model: opus
   wave: 6
   size: M
-  status: todo
+  status: review
   depends_on: [T-01, T-02, T-03, T-04, T-05, T-06, T-07, T-08, T-09, T-10, F-19]
   owns:
     - review/T-11-test-audit.md
