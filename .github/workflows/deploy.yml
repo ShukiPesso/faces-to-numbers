@@ -157,6 +157,25 @@ jobs:
           LIVE_URL: ${{ needs.deploy.outputs.app_url }}
         run: npx playwright test --project=smoke
 
+      # Hosting observations (docs/DEPLOY_BASE44.md §9): selected response headers for a few URLs,
+      # written as one notice annotation so they are readable from the run page and the API.
+      - name: Hosting observations
+        if: ${{ !cancelled() }}
+        env:
+          LIVE_URL: ${{ needs.deploy.outputs.app_url }}
+        run: |
+          base="${LIVE_URL%/}"
+          asset="$(curl -sS --max-time 20 "$base/" | grep -oE '/assets/[^"]+\.js' | head -1 || true)"
+          out="app_url: ${base}"$'\n'
+          for path in / /sw.js /manifest.webmanifest /does-not-exist ${asset:+"$asset"}; do
+            hdr="$(curl -sS -o /dev/null -D - --max-time 20 "${base}${path}" 2>&1 | tr -d '\r' |
+              grep -iE '^(HTTP/|content-type|cache-control|location|service-worker-allowed|strict-transport-security)' || true)"
+            out+="== ${path}"$'\n'"${hdr}"$'\n'
+          done
+          printf '%s' "$out"
+          msg="${out//'%'/'%25'}"; msg="${msg//$'\n'/'%0A'}"
+          echo "::notice title=Hosting observations::${msg}"
+
       - name: Upload smoke report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
