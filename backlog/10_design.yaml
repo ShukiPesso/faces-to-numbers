@@ -181,7 +181,7 @@
   model: opus
   wave: 2
   size: L
-  status: todo
+  status: review
   depends_on: [D-03, D-05, D-06]
   owns:
     - design/mockups/

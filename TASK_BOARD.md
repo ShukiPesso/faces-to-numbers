@@ -47,7 +47,7 @@ P0-01 → P0-02 → F-02 → F-03 → F-06 → F-08 → F-16 → F-18 → T-10 �
 |---|---|---|---|---|---|---|
 | [C-01](tasks/C-01.md) | Proofread the generated JSON against the Markdown sources | content | sonnet | M | F-02 | done |
 | [C-05](tasks/C-05.md) | Second verification pass on open items using the official "Le'ad" memorial site | content | fable | M | C-02 | done |
-| [D-04](tasks/D-04.md) | Responsive page mockups with real content (gate G2) | design | opus | L | D-03, D-05, D-06 | todo |
+| [D-04](tasks/D-04.md) | Responsive page mockups with real content (gate G2) | design | opus | L | D-03, D-05, D-06 | review |
 | [D-07](tasks/D-07.md) | Microcopy review of all UI strings (values only) | design | opus | M | D-01, P0-02 | done |
 | [D-08](tasks/D-08.md) | Brand mark, app icons and social image | design | sonnet | M | D-02 | done |
 | [F-03](tasks/F-03.md) | Content loader, cross-reference validation and fictional E2E fixtures | dev | opus | M | F-02, F-01 | done |
