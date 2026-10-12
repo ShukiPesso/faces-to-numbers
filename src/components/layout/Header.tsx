@@ -16,7 +16,7 @@ export function Header() {
           src="./icons/mark.svg"
           alt=""
           aria-hidden="true"
-          className="size-[1.25em] shrink-0"
+          className="size-[var(--text-xl)] shrink-0"
           width={20}
           height={20}
         />

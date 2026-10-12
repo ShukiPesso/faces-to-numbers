@@ -59,16 +59,18 @@ export function NearbyBanner({ state, onLocate }: NearbyBannerProps) {
 
   return (
     <div className="rounded-lg border-hairline border-border bg-surface p-5 font-body shadow-card">
-      <Button
-        variant="secondary"
-        icon={LocateFixed}
-        busy={locating}
-        fullWidth
-        onClick={onLocate}
-        data-testid="where-am-i"
-      >
-        {t('nearby.button')}
-      </Button>
+      <div className="md:[&>button]:w-auto">
+        <Button
+          variant="secondary"
+          icon={LocateFixed}
+          busy={locating}
+          fullWidth
+          onClick={onLocate}
+          data-testid="where-am-i"
+        >
+          {t('nearby.button')}
+        </Button>
+      </div>
       <p className="mt-2 text-xs text-ink-muted">{t('nearby.privacy')}</p>
       <div
         role="status"
