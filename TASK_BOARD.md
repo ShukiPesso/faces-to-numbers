@@ -76,11 +76,11 @@ P0-01 → P0-02 → F-02 → F-03 → F-06 → F-08 → F-16 → F-18 → T-10 �
 
 | ID | Title | Agent | Model | Size | Depends on | Status |
 |---|---|---|---|---|---|---|
-| [F-11b](tasks/F-11b.md) | Restore the three route-map labels with new UI string keys | dev | haiku | S | F-11 | todo |
-| [F-13](tasks/F-13.md) | Home page | dev | sonnet | M | F-06, F-07, F-10, F-08, D-04 | todo |
-| [F-14](tasks/F-14.md) | Tour overview page | dev | sonnet | M | F-10, F-11, F-12, F-06, D-04 | todo |
-| [F-15](tasks/F-15.md) | Station page | dev | opus | L | F-07, F-09, F-10, F-06, F-04, D-04 | todo |
-| [F-16](tasks/F-16.md) | Person page with reading depth and content-warning gate | dev | opus | L | F-07, F-08, F-09, F-06, D-04 | todo |
+| [F-11b](tasks/F-11b.md) | Restore the three route-map labels with new UI string keys | dev | haiku | S | F-11 | done |
+| [F-13](tasks/F-13.md) | Home page | dev | sonnet | M | F-06, F-07, F-10, F-08, D-04 | done |
+| [F-14](tasks/F-14.md) | Tour overview page | dev | sonnet | M | F-10, F-11, F-12, F-06, D-04 | done |
+| [F-15](tasks/F-15.md) | Station page | dev | opus | L | F-07, F-09, F-10, F-06, F-04, D-04 | done |
+| [F-16](tasks/F-16.md) | Person page with reading depth and content-warning gate | dev | opus | L | F-07, F-08, F-09, F-06, D-04 | done |
 | [F-17](tasks/F-17.md) | About and Sources pages | dev | sonnet | M | F-07, F-03, F-06, D-04 | done |
 
 ## Wave 5 — PWA, deploy & end-to-end tests

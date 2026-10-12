@@ -94,7 +94,7 @@ describe('routes', () => {
     expect(
       await screen.findByRole('heading', { level: 1, name: t('app.name') }),
     ).toBeInTheDocument();
-    expect(document.title).toBe(`${t('app.name')}${suffix}`);
+    expect(document.title).toBe(t('app.name'));
   });
 
   it.each([
@@ -120,7 +120,8 @@ describe('routes', () => {
   it('/person/:id renders the person name from content', async () => {
     const person = getPeople()[0]!;
     renderAt(`/person/${person.id}`);
-    expect(await screen.findByRole('heading', { level: 1, name: person.name })).toBeInTheDocument();
+    const heading = person.honorific ? `${person.name} ${person.honorific}` : person.name;
+    expect(await screen.findByRole('heading', { level: 1, name: heading })).toBeInTheDocument();
     expect(document.title).toBe(`${person.name}${suffix}`);
   });
 

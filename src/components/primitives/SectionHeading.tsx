@@ -14,7 +14,7 @@ export function SectionHeading({ level, id, eyebrow, icon: Icon, children }: Sec
   const size = level === 2 ? 'text-xl' : 'text-lg';
   const above = level === 2 ? 'mt-9 md:mt-10' : 'mt-7';
   return (
-    <header className={`${above} mb-4`}>
+    <div className={`${above} mb-4`}>
       {eyebrow ? (
         <p className="mb-1 font-body text-xs font-semibold text-accent">{eyebrow}</p>
       ) : null}
@@ -27,6 +27,6 @@ export function SectionHeading({ level, id, eyebrow, icon: Icon, children }: Sec
           <Icon className="size-icon-md shrink-0" aria-hidden="true" focusable="false" />
         ) : null}
       </Tag>
-    </header>
+    </div>
   );
 }

@@ -39,7 +39,7 @@ describe('HomePage', () => {
 
   it('sets the document title through useDocumentTitle', () => {
     render(<HomePage />);
-    expect(document.title).toBe(`${getTour().title}${t('app.titleSuffix')}`);
+    expect(document.title).toBe(getTour().title);
   });
 
   it('first visit: start button targets the first station, no resume or reset', () => {

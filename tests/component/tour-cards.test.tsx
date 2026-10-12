@@ -115,7 +115,7 @@ describe('CT-PCARD-01 PersonCard', () => {
     const link = within(card).getByRole('link', {
       name: t('person.toStory', { name: person.name }),
     });
-    expect(link).toHaveAttribute('href', '/person/test-person-1');
+    expect(link).toHaveAttribute('href', '#/person/test-person-1');
     expect(within(card).getAllByRole('link')).toHaveLength(1);
     expect(card).not.toHaveTextContent(t('person.companion'));
   });

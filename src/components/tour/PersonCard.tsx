@@ -31,7 +31,7 @@ export function PersonCard({ person, variant }: PersonCardProps) {
         <Markdown>{person.opening}</Markdown>
       </div>
       <div className="mt-5">
-        <Button variant="secondary" href={personPath(person.id)}>
+        <Button variant="secondary" href={`#${personPath(person.id)}`}>
           {t('person.toStory', { name: person.name })}
         </Button>
       </div>
