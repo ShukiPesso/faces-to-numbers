@@ -1,0 +1,41 @@
+name: Lighthouse
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lighthouse-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lighthouse:
+    name: lighthouse
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      # The three URLs are hard-coded in lighthouserc.json, taken from the real content:
+      #   "/"                       home page
+      #   station "sderot"          content-source/stations/01_sderot.md (slug: sderot)
+      #   person "aner-shapira"     content-source/people/05_aner-shapira.md (id: aner-shapira)
+      # The ?page=... query is only there so Lighthouse CI sees three distinct URLs. It drops
+      # the #fragment when grouping, so without it all three pages would be merged into one.
+      - run: npx --yes @lhci/cli@0.14 autorun
+      - name: Upload Lighthouse reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci/
+          retention-days: 14
+          if-no-files-found: ignore
