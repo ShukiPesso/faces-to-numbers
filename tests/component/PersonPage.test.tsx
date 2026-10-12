@@ -385,9 +385,9 @@ describe('PersonPage — F-22 gentle opening for graphic people', () => {
         // outside the gate, e.g. in `after`, so the blocks are checked, as in the G2 tests.)
         expect(blockquotes(), `${p.id} quote/altQuote`).toEqual([]);
         expect(before, `${p.id} quote`).not.toContain(quoteText(p));
-        // No real person has a gentleOpening yet: the panel starts with the oct7 section.
-        expect(p.gentleOpening).toBeUndefined();
-        expect(screen.getByRole('tabpanel').firstElementChild?.tagName).toBe('SECTION');
+        // Every graphic person has a Shuki-approved gentleOpening (C-07), shown before the gate.
+        expect(p.gentleOpening, `${p.id} gentleOpening`).toBeDefined();
+        expect(before, `${p.id} gentleOpening visible`).toContain(plain(p.gentleOpening ?? ''));
 
         await userEvent.setup().click(screen.getByTestId('warning-show'));
         const after = pageText();

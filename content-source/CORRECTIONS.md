@@ -97,3 +97,10 @@ Every row: date 2026-10-11 · approved by Shuki · applied by exact search-and-r
 | Raz Peretz (`subtitle`) | ״מפקד פלוגה בגדוד 51, גולני״ → ״מפקד פלוגת המפקדה בגדוד 51 של גולני״ | Izkor; ynet r1dihrh30 | 2026-10-11 | approved by Shuki |
 
 The Roni Eshel and station 04 edits are mirrored in the frozen oracle `contracts/example-person.json` / `contracts/example-station.json` (orchestrator decision, C-06).
+
+## 2026-10-12 — Gentle openings (Shuki approved C-07 proposals)
+| Person | Change | Why |
+|---|---|---|
+| Nitzan Libstein, Aner Shapira, Hersh Goldberg-Polin, Raz Peretz, Aviel Rahamim | Added `gentleOpening` (the C-07 proposal, built only from sentences already in each file) | D-09 finding #3: for `graphic` people the regular opening repeated the detail hidden by the content warning. The opening now sits behind the warning; the gentle opening is shown instead. |
+| Aviel Rahamim | No change to `after` / `past` | Shuki decided to keep them visible at 5 minutes as they are. |
+| All | Source titles unchanged | Shuki decided source titles stay accurate as published. |
