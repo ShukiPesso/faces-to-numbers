@@ -33,25 +33,30 @@ const LABELLED_ROADS = ['232', '34', '25', '4', '241', '242'];
 
 /** Places drawn on the map, matched on OSM name:en (letters only, lower case). `major` = larger label. */
 const PLACES = [
-  { en: 'sderot', major: true },
-  { en: 'netivot', major: true },
-  { en: 'kfaraza' },
-  { en: 'nahaloz' },
-  { en: 'beeri' },
-  { en: 'reim' },
-  { en: 'saad' },
-  { en: 'mefalsim' },
-  { en: 'niram' },
-  { en: 'alumim' },
-  { en: 'tkuma' },
-  { en: 'kissufim' },
-  { en: 'einhashlosha' },
-  { en: 'orhaner' },
-  { en: 'ibim' },
-  { en: 'shuva' },
-  { en: 'kfarmaimon' },
+  { he: 'שדרות', en: 'sderot', major: true },
+  { he: 'נתיבות', en: 'netivot', major: true },
+  { he: 'כפר עזה', en: 'kfaraza' },
+  { he: 'נחל עוז', en: 'nahaloz' },
+  { he: 'בארי', en: 'beeri' },
+  { he: 'רעים', en: 'reim' },
+  { he: 'סעד', en: 'saad' },
+  { he: 'מפלסים', en: 'mefalsim' },
+  { he: 'ניר עם', en: 'niram' },
+  { he: 'עלומים', en: 'alumim' },
+  { he: 'תקומה', en: 'tkuma' },
+  { he: 'כיסופים', en: 'kissufim' },
+  { he: 'עין השלושה', en: 'einhashlosha' },
+  { he: 'אור הנר', en: 'orhaner' },
+  { he: 'איבים', en: 'ibim' },
+  { he: 'שובה', en: 'shuva' },
+  { he: 'כפר מימון', en: 'kfarmaimon' },
 ];
 const norm = (s) => (s ?? '').toLowerCase().replace(/[^a-z]/g, '');
+const normHe = (s) =>
+  (s ?? '')
+    .replace(/[^\u05d0-\u05ea ]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
 
 const OVERPASS = 'https://overpass-api.de/api/interpreter';
 const OSRM = 'https://router.project-osrm.org/route/v1/driving';
@@ -65,7 +70,7 @@ async function overpass() {
 way["highway"~"^(motorway|trunk|primary|secondary)$"](${b});
 out geom tags;
 node["place"~"^(city|town|village|hamlet)$"](${b});
-out tags;
+out;
 rel["type"="boundary"]["name:en"="Gaza Strip"];
 out geom;`;
   const res = await fetch(OVERPASS, {
@@ -99,6 +104,7 @@ function buildRoads(elements) {
     if (el.type !== 'way' || !el.geometry) continue;
     const cls = el.tags.highway;
     const ref = (el.tags.ref ?? '').split(';')[0].trim();
+    if (cls === 'secondary' && ref === '') continue; // unnumbered local roads: clutter
     const key = `${cls}|${ref}`;
     if (!groups.has(key)) groups.set(key, { cls, ref, ways: [] });
     groups.get(key).ways.push(el.geometry.map(ll));
@@ -122,12 +128,14 @@ function buildPlaces(elements) {
   const found = new Map();
   for (const el of elements) {
     if (el.type !== 'node' || !el.tags?.place) continue;
-    const key = norm(el.tags['name:en']);
-    const spec = PLACES.find((p) => p.en === key);
-    if (!spec || found.has(key)) continue;
+    const he = normHe(el.tags['name:he'] ?? el.tags.name);
+    const en = norm(el.tags['name:en']);
+    const spec = PLACES.find((p) => p.he === he) ?? PLACES.find((p) => p.en === en);
+    if (!spec || found.has(spec.en)) continue;
+    const key = spec.en;
     found.set(key, {
       id: key,
-      name: el.tags['name:he'] ?? el.tags.name,
+      name: spec.he,
       major: Boolean(spec.major),
       lng: Math.round(el.lon * 1e5) / 1e5,
       lat: Math.round(el.lat * 1e5) / 1e5,
