@@ -176,6 +176,13 @@ describe('CT-DRIVE-01 DriveBanner', () => {
     expect(banner).toBe(screen.getByTestId('driver-warning'));
     expect(banner).toHaveTextContent(t('drive.warning'));
   });
+
+  it('enlarges the warning text in read-aloud mode (text-xl), never smaller than the body', () => {
+    render(<DriveBanner />);
+    const text = screen.getByText(t('drive.warning'));
+    expect(text.className).toContain('[[data-read-aloud=true]_&]:text-xl');
+    expect(text.className).not.toContain('md:text-lg');
+  });
 });
 
 describe('CT-STEP-01 ProgressStepper', () => {

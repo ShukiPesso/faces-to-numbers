@@ -78,7 +78,7 @@ export function SideNav() {
                   aria-hidden="true"
                   className={`flex size-6 shrink-0 items-center justify-center rounded-full border-hairline text-xs ${
                     current
-                      ? 'border-primary bg-primary text-primary-ink'
+                      ? 'border-primary bg-primary text-primary-ink outline outline-1 outline-offset-2 outline-primary'
                       : 'border-ink-muted bg-surface text-ink'
                   }`}
                 >

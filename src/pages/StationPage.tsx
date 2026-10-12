@@ -46,8 +46,8 @@ function withBdi(key: StringKey, params: StringParams): ReactNode[] {
 }
 
 const PN_LINK =
-  'inline-flex w-full min-h-[var(--space-9)] items-center gap-2 rounded-md border-hairline border-primary bg-surface px-3 py-2 font-body text-base font-semibold text-primary no-underline transition-colors duration-[var(--duration-fast)] hover:bg-bg hover:underline active:underline [[data-read-aloud=true]_&]:min-h-[var(--space-10)]';
-const PN_LABEL = '[[data-read-aloud=true]_&]:text-lg';
+  'inline-flex w-full min-h-[var(--space-9)] items-center gap-1 rounded-md border-hairline border-primary bg-surface px-2 py-2 md:gap-2 md:px-3 font-body text-base font-semibold text-primary no-underline transition-colors duration-[var(--duration-fast)] hover:bg-bg hover:underline active:underline [[data-read-aloud=true]_&]:min-h-[var(--space-10)]';
+const PN_LABEL = 'text-balance [[data-read-aloud=true]_&]:text-lg';
 const PN_TITLE = 'font-regular text-xs text-ink-muted';
 const PN_ICON = 'size-icon-md shrink-0 rtl:scale-x-[-1]';
 

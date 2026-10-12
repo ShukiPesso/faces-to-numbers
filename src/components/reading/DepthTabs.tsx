@@ -63,12 +63,12 @@ export function DepthTabs({ value, onChange }: DepthTabsProps) {
               onClick={() => select(index)}
               onKeyDown={(event) => onKeyDown(event, index)}
               className={[
-                'min-h-[var(--tap-min)] px-3 text-center font-body text-base leading-sm',
+                'relative min-h-[var(--tap-min)] px-3 text-center font-body text-base leading-sm',
                 '[[data-read-aloud=true]_&]:min-h-[var(--space-9)]',
                 index > 0 ? 'border-s-hairline border-primary' : 'rounded-s-md',
                 index === TABS.length - 1 ? 'rounded-e-md' : '',
                 selected
-                  ? 'border-b-4 border-b-primary-ink bg-primary font-semibold text-primary-ink'
+                  ? 'bg-primary font-semibold text-primary-ink after:absolute after:inset-x-5 after:bottom-1 after:border-b-accent-line after:border-primary-ink after:content-[""]'
                   : 'bg-surface font-normal text-primary hover:underline',
               ]
                 .filter(Boolean)
