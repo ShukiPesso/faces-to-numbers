@@ -325,7 +325,7 @@
 - id: T-11
   title: Test audit — coverage, gaps, flakiness
   agent: test
-  model: fable
+  model: opus
   wave: 6
   size: M
   status: todo

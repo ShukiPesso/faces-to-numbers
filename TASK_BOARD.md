@@ -113,7 +113,7 @@ P0-01 → P0-02 → F-02 → F-03 → F-06 → F-08 → F-16 → F-18 → F-19 �
 | [H-06](tasks/H-06.md) | Final content and sensitivity sign-off | human | human | S | C-01, C-02, C-04, H-02, H-05, D-09, C-05, C-06 | todo |
 | [L-01](tasks/L-01.md) | Soft launch — final checklist, go/no-go, first users | devops | opus | S | H-06, T-11, D-09, T-09, H-03, O-03, H-05 | todo |
 | [T-07b](tasks/T-07b.md) | Regenerate and harden the visual baselines (D-09 finding | test | sonnet | S | F-21, F-22, T-07 | done |
-| [T-11](tasks/T-11.md) | Test audit — coverage, gaps, flakiness | test | fable | M | T-01, T-02, T-03, T-04, T-05, T-06, T-07, T-08, T-09, T-10, F-19 | todo |
+| [T-11](tasks/T-11.md) | Test audit — coverage, gaps, flakiness | test | opus | M | T-01, T-02, T-03, T-04, T-05, T-06, T-07, T-08, T-09, T-10, F-19 | todo |
 
 **Gate G3 — Launch** (Shuki): field test H-05 passed and sign-off H-06 before L-01.
 
