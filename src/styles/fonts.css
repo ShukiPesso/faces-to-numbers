@@ -7,3 +7,59 @@
 @import '@fontsource/frank-ruhl-libre/latin-500.css';
 @import '@fontsource/frank-ruhl-libre/hebrew-700.css';
 @import '@fontsource/frank-ruhl-libre/latin-700.css';
+
+/*
+ * Metric-matched fallbacks (F-20): while a web font is loading, text is set in a local system font
+ * scaled to the web font's Hebrew letter width and line box, so the swap does not re-flow.
+ * Values: average Hebrew advance and hhea ascent/descent of the shipped fonts (units per em 1000)
+ * against Arial (= Liberation Sans / Arimo) and Times New Roman (= Liberation Serif / Tinos).
+ * tokens.css owns the font-family stacks, which already name 'Heebo' right after 'Assistant' and
+ * 'David Libre' right after 'Frank Ruhl Libre'; neither is bundled, so these two family names carry
+ * the adjusted fallbacks without touching the stacks.
+ */
+@font-face {
+  font-family: 'Heebo';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Arial'), local('ArialMT'), local('Liberation Sans'), local('Arimo');
+  size-adjust: 89.5%;
+  ascent-override: 114.1%;
+  descent-override: 32.1%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Heebo';
+  font-style: normal;
+  font-weight: 600;
+  src: local('Arial Bold'), local('Arial-BoldMT'), local('Liberation Sans Bold'),
+    local('Arimo Bold');
+  size-adjust: 85.1%;
+  ascent-override: 120%;
+  descent-override: 33.7%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'David Libre';
+  font-style: normal;
+  font-weight: 500;
+  src: local('Times New Roman'), local('TimesNewRomanPSMT'), local('Liberation Serif'),
+    local('Tinos');
+  size-adjust: 94.1%;
+  ascent-override: 101.7%;
+  descent-override: 35.5%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'David Libre';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Times New Roman Bold'), local('TimesNewRomanPS-BoldMT'),
+    local('Liberation Serif Bold'), local('Tinos Bold');
+  size-adjust: 96%;
+  ascent-override: 99.7%;
+  descent-override: 34.8%;
+  line-gap-override: 0%;
+}
