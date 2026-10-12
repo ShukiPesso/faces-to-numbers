@@ -17,7 +17,16 @@ export default defineConfig({
   forbidOnly: isCI,
   retries: isCI ? 2 : 0,
   workers: isCI ? 2 : undefined,
-  reporter: [['list'], ['html', { open: 'never' }]],
+  // In CI also emit GitHub annotations and a JSON report, so failures are readable from the
+  // Actions API without downloading logs or artifacts (see .github/workflows/ci.yml).
+  reporter: isCI
+    ? [
+        ['list'],
+        ['html', { open: 'never' }],
+        ['github'],
+        ['json', { outputFile: 'test-results/e2e-report.json' }],
+      ]
+    : [['list'], ['html', { open: 'never' }]],
   use: {
     trace: 'on-first-retry',
   },
