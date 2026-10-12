@@ -7,7 +7,7 @@ subtitle: צומת רעים · כביש 232
 kind: stop
 durationMin: 15
 radiusM: 300
-location: null
+location: { lat: 31.389833, lng: 34.458525, verified: false, note: "מועמד: נקודת המיגונית מעמוד ענן – לא אומתה; זו לא נקודת חניה" }
 personIds: [aner-shapira, hersh-goldberg-polin]
 companionPersonIds: [raz-peretz, aviel-rahamim]
 sensitivity: standard
