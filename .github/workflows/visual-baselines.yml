@@ -1,0 +1,50 @@
+name: Visual baselines
+
+# Regenerates the E2E-LAYOUT-04 screenshots on GitHub's own runner, so they match the
+# environment CI compares against. Manual only. It never touches main: it pushes the new images
+# to a branch `visual-baselines/<run id>`; a PR labelled `visual-change` is then opened from that
+# branch and reviewed before merge (docs/04_TESTING_STRATEGY.md).
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: visual-baselines
+  cancel-in-progress: false
+
+jobs:
+  regenerate:
+    name: regenerate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Regenerate E2E-LAYOUT-04 screenshots (Chromium projects)
+        run: >
+          npx playwright test tests/e2e/layout.spec.ts
+          --grep "E2E-LAYOUT-04"
+          --project=mobile-chrome --project=desktop
+          --update-snapshots=all
+      - name: Push the images to a review branch
+        run: |
+          if git diff --quiet -- tests/e2e/layout.spec.ts-snapshots; then
+            echo "::notice title=Visual baselines::No change — the stored images already match this runner."
+            exit 0
+          fi
+          branch="visual-baselines/${GITHUB_RUN_ID}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add tests/e2e/layout.spec.ts-snapshots
+          git commit -m "test(E2E-LAYOUT-04): regenerate visual baselines on the CI runner (run ${GITHUB_RUN_ID})"
+          git push origin "$branch"
+          echo "::notice title=Visual baselines::Pushed branch ${branch} — open a PR labelled visual-change."
