@@ -284,7 +284,7 @@
   model: opus
   wave: 6
   size: M
-  status: review
+  status: done
   depends_on: [T-07, F-13, F-14, F-15, F-16, F-17, F-18]
   owns:
     - design/qa/

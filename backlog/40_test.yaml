@@ -353,3 +353,29 @@
     - "test -f review/T-11-test-audit.md"
     - "npx vitest run --coverage"
     - "npx playwright test"
+
+- id: T-07b
+  title: Regenerate and harden the visual baselines (D-09 finding #4)
+  agent: test
+  model: sonnet
+  wave: 6
+  size: S
+  status: todo
+  depends_on: [F-21, F-22, T-07]
+  owns:
+    - tests/e2e/layout.spec.ts
+    - tests/e2e/layout.spec.ts-snapshots/
+  reads:
+    - design/qa/D-09-review.md
+    - docs/04_TESTING_STRATEGY.md
+  goal: "Visual baselines reflect the approved, fixed design and would catch a missing brand mark."
+  steps:
+    - "Before full-page screenshots, hide fixed elements that would paint over content (bottom nav, sticky bar, offline panel) with the toHaveScreenshot `mask` option or a style injection — document which."
+    - "Add a separate tight screenshot of the header only (maxDiffPixelRatio 0.001) on both Chromium projects."
+    - "Regenerate the 8 page baselines plus the 2 header baselines with --update-snapshots, run twice more to prove stability, and list the PNG paths in the report for Shuki/D-09 sign-off."
+  dont:
+    - "Do not loosen thresholds for page screenshots."
+  acceptance:
+    - "10 baselines committed, stable on two re-runs; LAYOUT-01..03 still pass."
+  verify:
+    - "flock /tmp/pw-e2e.lock npx playwright test tests/e2e/layout.spec.ts --project=mobile-chrome --project=desktop"

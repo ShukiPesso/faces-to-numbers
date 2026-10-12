@@ -354,3 +354,32 @@
     - "`grep -rn 'הרש ' content-source/ src/content/data/` finds no visitor-facing occurrence of the old spelling."
   verify:
     - "npm run content:build && npm run content:check && npm test && npm run lint && npm run typecheck"
+
+- id: C-07
+  title: Draft gentle openings for the five graphic people (for Shuki's approval)
+  agent: content
+  model: opus
+  wave: 6
+  size: S
+  status: todo
+  depends_on: [D-09]
+  owns:
+    - review/C-07-gentle-openings.md
+  reads:
+    - content-source/people/
+    - content-source/README.md
+    - design/qa/D-09-review.md
+    - design/01-principles.md
+    - docs/03_CONVENTIONS.md
+  goal: "Shuki gets, for each graphic person, a short gentle opening built only from existing approved sentences, ready to approve or edit."
+  steps:
+    - "List every person with oct7Sensitivity: graphic in content-source/people/."
+    - "For each, propose ONE gentle opening (1–2 sentences) assembled only from words and sentences that already exist in that person's own file (opening, personality, past, after, subtitle). You may cut sentences and drop clauses; you may not add facts, adjectives or new wording beyond minimal Hebrew connectors (ו־, ,). It must contain no injury, weapon, wound, killing method or other detail that the gate hides."
+    - "For each proposal show: the proposed text; the exact source sentence(s) it comes from with section names; and a short note on what was left out and why. Offer one alternative where useful."
+    - "Write all of it to review/C-07-gentle-openings.md in Hebrew, with a short English header for the orchestrator."
+  dont:
+    - "Do not edit content-source/. Do not invent facts or quotes."
+  acceptance:
+    - "One proposal per graphic person, each traceable word-for-word to its source sentences."
+  verify:
+    - "test -f review/C-07-gentle-openings.md"
