@@ -60,14 +60,44 @@ describe('RouteMap', () => {
     expect(svg.querySelectorAll('.is-current')).toHaveLength(1);
   });
 
-  it('renders the border label, the north label and the schematic note', () => {
+  it('renders the Gaza Strip, sea, north and scale labels', () => {
     renderMap();
-    const texts = Array.from(screen.getByTestId('route-map').querySelectorAll('text')).map(
-      (node) => node.textContent,
-    );
-    expect(texts).toContain(t('map.border'));
+    const svg = screen.getByTestId('route-map');
+    const texts = Array.from(svg.querySelectorAll('text')).map((node) => node.textContent);
+    expect(texts).toContain(t('map.gaza'));
+    expect(texts).toContain(t('map.sea'));
     expect(texts).toContain(t('map.north'));
-    expect(texts).toContain(t('map.schematicNote'));
+    expect(texts).toContain(t('map.scale5km'));
+    expect(svg.querySelector('[data-testid="map-gaza"]')).not.toBeNull();
+  });
+
+  it('CT-MAP-01 draws main towns and numbered road shields', () => {
+    renderMap();
+    const svg = screen.getByTestId('route-map');
+    expect(svg.querySelector('[data-testid="map-place-sderot"]')).toHaveTextContent('שדרות');
+    expect(svg.querySelector('[data-testid="map-place-netivot"]')).toHaveTextContent('נתיבות');
+    expect(svg.querySelector('[data-testid="map-road-232"]')).toHaveTextContent('232');
+  });
+
+  it('CT-MAP-02 numbers markers by station order and draws one route leg per drive section', () => {
+    const stations = renderMap();
+    const svg = screen.getByTestId('route-map');
+    for (const s of stations) {
+      expect(svg.querySelector(`#marker-${s.id} text`)).toHaveTextContent(String(s.order));
+    }
+    expect(svg.querySelector('[data-testid="route-leg-sderot"]')).toHaveAttribute(
+      'stroke-dasharray',
+    );
+    expect(svg.querySelector('[data-testid="route-leg-nova"]')).not.toHaveAttribute(
+      'stroke-dasharray',
+    );
+  });
+
+  it('CT-MAP-03 says the positions are approximate while any point is unverified, and credits OSM', () => {
+    renderMap();
+    expect(screen.getByTestId('map-unverified-note')).toHaveTextContent(t('map.unverifiedNote'));
+    const credit = screen.getByRole('link', { name: '© OpenStreetMap contributors' });
+    expect(credit).toHaveAttribute('href', 'https://www.openstreetmap.org/copyright');
   });
 
   it('makes no network request', () => {

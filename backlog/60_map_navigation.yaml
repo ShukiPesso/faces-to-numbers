@@ -1,0 +1,79 @@
+# Map & navigation lane — added 2026-10-12 at Shuki's request (Apple Maps button, real route map).
+
+- id: N-01
+  title: Apple Maps navigation button and candidate station coordinates
+  agent: dev
+  model: opus
+  wave: 7
+  size: S
+  status: done
+  depends_on: [F-15]
+  owns:
+    - src/lib/links.ts
+    - src/components/tour/NavLinks.tsx
+    - tests/unit/links.test.ts
+  reads:
+    - review/C-03-coordinates.md
+  goal: >
+    Each station offers Waze, Google Maps and Apple Maps navigation (shown only once its point is
+    verified, H-02). Candidate points from review/C-03 go into content-source with verified:false.
+  steps:
+    - "appleMapsUrl (daddr + dirflg=d), third NavLinks button, he.ts string, tests UT-LINK-04 / CT-NAVL-01 / E2E-LINK-01."
+    - "Candidate coordinates for stations 1, 4, 5, 6, 7 into content-source/stations (verified:false, note)."
+  acceptance:
+    - "Verified point → three buttons with exact hrefs; unverified → none."
+  verify:
+    - "npx vitest run tests/unit/links.test.ts tests/component/tour-cards.test.tsx"
+
+- id: M-01
+  title: Route-map data from OpenStreetMap + OSRM (generator and manual workflow)
+  agent: devops
+  model: opus
+  wave: 7
+  size: M
+  status: done
+  depends_on: [N-01]
+  owns:
+    - scripts/map/
+    - .github/workflows/map-data.yml
+    - src/content/data/map-base.json
+    - tests/unit/map-geo-utils.test.ts
+    - tests/integrity/map-data.test.ts
+  reads:
+    - src/content/data/stations.json
+  goal: >
+    A small offline map background (Gaza Strip, sea, main roads, towns) and the driving route between
+    the stations, generated on GitHub's runner (Overpass + OSRM), committed as map-base.json.
+  steps:
+    - "Pure helpers in scripts/map/geo-utils.mjs (simplify, stitch, clip, sea polygon), unit-tested."
+    - "build-map-data.mjs + Map data workflow pushing map-data/<run id>."
+    - "CI-11 fails when station coordinates change without regenerating."
+  acceptance:
+    - "map-base.json present, < 40 KB, route legs between consecutive stations."
+  verify:
+    - "npx vitest run tests/unit/map-geo-utils.test.ts tests/integrity/map-data.test.ts"
+
+- id: M-02
+  title: Real-scale SVG route map on the tour page (replaces the schematic)
+  agent: dev
+  model: opus
+  wave: 7
+  size: M
+  status: review
+  depends_on: [M-01]
+  owns:
+    - src/components/tour/RouteMap.tsx
+    - tests/component/RouteMap.test.tsx
+  reads:
+    - src/content/data/map-base.json
+    - docs/02_ARCHITECTURE.md
+  goal: >
+    The tour page shows the route over towns and main roads, offline, with numbered markers that keep
+    the visited/current states, a legend, a scale, the OSM credit, and a note while points are unverified.
+  steps:
+    - "Projected SVG, deterministic label placement, road shields, drive legs dashed."
+    - "CT-MAP-01..03; E2E layout/a11y green; new visual baselines via the Visual baselines workflow."
+  acceptance:
+    - "Shuki approves the visual-change PR."
+  verify:
+    - "npx vitest run tests/component/RouteMap.test.tsx"

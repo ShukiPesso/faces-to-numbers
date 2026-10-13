@@ -37,6 +37,8 @@ The site is read-only. Location is processed only on the device. Nothing is sent
 ### ADR-006 — Schematic SVG route map, not map tiles
 Map tiles can't be legally/practically precached and need signal. MVP uses a designed, inline SVG schematic of the route (stations as numbered markers, linked). Real navigation is delegated to Waze / Google Maps deep links.
 
+**Amended 2026-10-12 (M-01/M-02, Shuki's request):** still no tiles, but the SVG is now a **real-scale map**: Gaza Strip, sea, main roads and towns from OpenStreetMap, and the driving route between the stations from OSRM, pre-built into `src/content/data/map-base.json` (~26 KB, imported into the bundle, so it works offline and makes no request). The file is generated on GitHub's runner by the manual **Map data** workflow (`scripts/map/build-map-data.mjs`); re-run it after any station coordinate change (CI-11 fails until you do). Credit "© OpenStreetMap contributors" (ODbL) is shown under the map. Navigation deep links: Waze, Google Maps and Apple Maps.
+
 ### ADR-007 — "Reading depth" instead of rendering guide scripts
 The source pages contain guide-oriented scripts ("30 sec / 2 min / 5 min"). The self-guided UI uses a **depth selector** that controls how much of the person page is shown:
 
