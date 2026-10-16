@@ -48,11 +48,14 @@ Task C-02 fills the "Result" column. Shuki approves every change before it goes 
 ## Stations — facts
 | # | Station | Claim | Source | Status | Result |
 |---|---|---|---|---|---|
-| S1 | Sderot | ~24 terrorists took the police station; Yamam and Caracal; building demolished | walla 3697040 | ✅ | |
+| S1 | Sderot | 26 terrorists took the police station; Yamam and Caracal; building demolished | walla 3697040; IDF probe (kipa 1202167); en.wikipedia Battle of Sderot | ✅ | 2026-10-16: ~24 → 26 (IDF probe), approved by Shuki. |
 | S2 | Sderot | 11 police officers fell in the battle of Sderot | kan 880715 | ✅ | C-06: ״בטבח בשדרות נרצחו 11 שוטרים״ (Kan 880715, city-wide figure). |
 | S3 | Route 232 | 200+ terrorists in three waves; ~30 entered Mefalsim; 12 foreign workers kidnapped; 6 Yamam fell at Sha'ar HaNegev junction; ~77 civilians murdered in the area | davar1 603809 | ✅ | |
 | S4 | Route 232 | memorials along the road; Black Arrow is a closed military area | davar1 489994 (check publication date) | ✅ | |
-| S5 | Nova | 364 murdered, 44 kidnapped; pillars with photos, anemones by artists, trees planted by families; free entry, parking, water, shade, accessible | makom.hamoreshet.org.il | ✅ | |
-| S6 | Tkuma | >1,600 vehicles | kan 714654 | ✅ | |
+| S5 | Nova | 378 murdered (IDF probe, Apr 2025; was 364), 44 kidnapped; pillars with photos, anemones by artists, trees planted by families; free entry, parking, water, shade, accessible | makom.hamoreshet.org.il | ✅ | |
+| S6 | Tkuma | ~1,600 vehicles | kan 714654; en.wikipedia The Car Wall | ✅ | 2026-10-16: ">1,600" → "~1,600" (sources give 1,560–1,600), approved by Shuki. |
 | S7 | Tkuma | open Sun–Fri, closed Saturday (2025) | maslulim-israel | ✅ | C-06: hours updated per poenta.co.il (7.10.2026): Sun–Thu 09:00–17:00, Fri until 13:00, closed Sat; QR signs; booking at tkumacars.com. Not the operator's own hours page. |
 | S8 | Observers' hill | lookout near Sa'ad reservoir / Nahal Oz; candidate coordinates | amudanan P690629 | 🔶 | C-02 MATCH (amudanan). Coordinates: Shuki on site (H-02). |
+
+## 2026-10-16 — Station history levels (`history5`, `historyFull`)
+Research pass by the orchestrator (Wikipedia + a second source for every number; IDF probes preferred where sources conflict). All conflicts and single-source items were listed for Shuki in the project doc `claude/site/history/00_QUESTIONS.md`; Shuki approved the choices on 2026-10-16 (observers: 15; Nova: 378; Sderot station: 26; Tkuma: ~1,600; single-source items kept). Station 07 was rewritten at Shuki's request as "נתיבות – איך קמנו" (Tkuma Administration 1,000-day review; Netivot master plan; CBS figures as reported).

@@ -104,3 +104,12 @@ The Roni Eshel and station 04 edits are mirrored in the frozen oracle `contracts
 | Nitzan Libstein, Aner Shapira, Hersh Goldberg-Polin, Raz Peretz, Aviel Rahamim | Added `gentleOpening` (the C-07 proposal, built only from sentences already in each file) | D-09 finding #3: for `graphic` people the regular opening repeated the detail hidden by the content warning. The opening now sits behind the warning; the gentle opening is shown instead. |
 | Aviel Rahamim | No change to `after` / `past` | Shuki decided to keep them visible at 5 minutes as they are. |
 | All | Source titles unchanged | Shuki decided source titles stay accurate as published. |
+
+## 2026-10-16 — Station history levels and Shuki's decisions
+| Where | Change | Source | Date | Status |
+|---|---|---|---|---|
+| Station 01 Sderot (`background`), Eliyahu Harosh (`oct7`, `guideLevels.s30`) | ״כ-24 מחבלים״ → ״26 מחבלים״ | IDF probe (kipa 1202167); en.wikipedia Battle of Sderot | 2026-10-16 | approved by Shuki |
+| Station 05 Nova (`background`) | ״נרצחו 364״ → ״נרצחו 378״ | IDF probe (kipa 1201838) | 2026-10-16 | approved by Shuki |
+| Station 06 Tkuma (`background`) | ״יותר מ-1,600״ → ״כ-1,600״ | en.wikipedia The Car Wall; ESRA | 2026-10-16 | approved by Shuki |
+| Stations 01–07 | New sections `history5` (5-minute read-aloud) and `historyFull` (full reading); history sources appended to `sources` | see each file | 2026-10-16 | approved by Shuki |
+| Station 07 | Rewritten: title ״נתיבות – איך קמנו״, new `subtitle`, `background`, `talkingPoints`, `accessNotes`, `sources` | nadlancenter 14864, 14406, 8179; maariv 1316114; en.wikipedia Netivot | 2026-10-16 | approved by Shuki |

@@ -33,6 +33,8 @@ const TEXT_KEYS = new Set([
   'after',
   'guideNote',
   'background',
+  'history5',
+  'historyFull',
   'accessNotes',
   'intro',
   'message',
@@ -57,7 +59,7 @@ const SECTION_KEYS: Record<FileType, readonly string[]> = {
     'guideNote',
     'sources',
   ],
-  station: ['background', 'talkingPoints', 'accessNotes', 'sources'],
+  station: ['background', 'history5', 'historyFull', 'talkingPoints', 'accessNotes', 'sources'],
   tour: ['intro', 'message', 'safety', 'howTo', 'closing', 'about', 'rights'],
 };
 

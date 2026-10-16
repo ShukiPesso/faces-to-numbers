@@ -65,6 +65,8 @@ const STATION_KEY_ORDER = [
   'location',
   'radiusM',
   'background',
+  'history5',
+  'historyFull',
   'talkingPoints',
   'personIds',
   'companionPersonIds',

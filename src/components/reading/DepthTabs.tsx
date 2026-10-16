@@ -1,20 +1,17 @@
 import { useRef, type KeyboardEvent } from 'react';
 import type { Depth } from '@/content/schema';
 import { t } from '@/lib/i18n';
+import { PERSON_DEPTH_TABS, type DepthTabsProps, type DepthTab } from './depth-tabs';
 
-export interface DepthTabsProps {
-  value: Depth;
-  onChange: (depth: Depth) => void;
-}
-
-const TABS: ReadonlyArray<{ key: Depth; label: 'depth.s30' | 'depth.m2' | 'depth.m5' }> = [
-  { key: 's30', label: 'depth.s30' },
-  { key: 'm2', label: 'depth.m2' },
-  { key: 'm5', label: 'depth.m5' },
-];
+export type { DepthTab, DepthTabsProps } from './depth-tabs';
 
 /** Reading-depth tablist. In RTL, ArrowLeft moves to the next tab and ArrowRight to the previous. */
-export function DepthTabs({ value, onChange }: DepthTabsProps) {
+export function DepthTabs<K extends string = Depth>({
+  value,
+  onChange,
+  tabs,
+}: DepthTabsProps<K>) {
+  const TABS = (tabs ?? PERSON_DEPTH_TABS) as ReadonlyArray<DepthTab<K>>;
   const refs = useRef<Array<HTMLButtonElement | null>>([]);
 
   const select = (index: number) => {

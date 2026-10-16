@@ -14,6 +14,8 @@ const IsoDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'date must be YYYY
 
 export const SensitivitySchema = z.enum(['standard', 'graphic']);
 export const DepthSchema = z.enum(['s30', 'm2', 'm5']);
+/** Station reading depth: existing background (2 min), history5, historyFull. */
+export const StationDepthSchema = z.enum(['m2', 'm5', 'full']);
 export const PronounSchema = z.enum(['he', 'she']);
 
 export const SourceSchema = z
@@ -126,6 +128,10 @@ export const StationSchema = z
     location: GeoPointSchema.nullable(),
     radiusM: z.number().int().min(100).max(2000),
     background: z.string().min(10),
+    /** 5-minute read-aloud history of the place (Shuki, 2026-10-16). */
+    history5: z.string().min(10).optional(),
+    /** Full, unlimited reading about what happened at the place. */
+    historyFull: z.string().min(10).optional(),
     talkingPoints: z.array(z.string().min(5)).min(1),
     personIds: z.array(IdSchema),
     companionPersonIds: z.array(IdSchema),
@@ -163,6 +169,7 @@ export const TourSchema = z
 
 export type Sensitivity = z.infer<typeof SensitivitySchema>;
 export type Depth = z.infer<typeof DepthSchema>;
+export type StationDepth = z.infer<typeof StationDepthSchema>;
 export type Pronoun = z.infer<typeof PronounSchema>;
 export type Source = z.infer<typeof SourceSchema>;
 export type Photo = z.infer<typeof PhotoSchema>;

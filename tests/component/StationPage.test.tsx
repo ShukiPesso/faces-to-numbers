@@ -127,9 +127,10 @@ describe('StationPage', () => {
     expect(screen.getByTestId('prev-station')).toHaveAttribute('href', '/station/tkuma');
     const firstParagraph = getTour().closing.split('\n\n')[0]!;
     expect(screen.getByText(firstParagraph)).toBeInTheDocument();
-    // No people and no sources in the data → those sections are not rendered.
+    // No people in the data → that section is not rendered. Since 2026-10-16 the Netivot
+    // station has sources, so the sources section is shown.
     expect(screen.queryByText(t('station.people'))).not.toBeInTheDocument();
-    expect(screen.queryByText(t('station.sources'))).not.toBeInTheDocument();
+    expect(screen.getByText(t('station.sources'))).toBeInTheDocument();
   });
 
   it('an unknown slug shows NotFound', () => {
@@ -191,5 +192,62 @@ describe('StationPage', () => {
     }
     const sources = screen.getByRole('heading', { name: t('station.sources') }).closest('section');
     expect(within(sources!).getAllByRole('link')).toHaveLength(tkuma.sources.length);
+  });
+});
+
+describe('StationPage reading depth (Shuki, 2026-10-16)', () => {
+  it('shows 2 min / 5 min / full tabs with 2 min selected and the background text', () => {
+    renderAt('/station/sderot');
+    const tablist = screen.getByTestId('depth-tabs');
+    const tabs = within(tablist).getAllByRole('tab');
+    expect(tabs.map((tab) => tab.textContent)).toEqual([
+      t('depth.m2'),
+      t('depth.m5'),
+      t('depth.full'),
+    ]);
+    expect(within(tablist).getByRole('tab', { name: t('depth.m2') })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    const panel = screen.getByTestId('station-depth-panel');
+    const firstParagraph = station('sderot').background.split('\n\n')[0]!;
+    expect(within(panel).getByText(firstParagraph)).toBeInTheDocument();
+  });
+
+  it('switches to history5 and historyFull', async () => {
+    const user = userEvent.setup();
+    const sderot = station('sderot');
+    renderAt('/station/sderot');
+    await user.click(screen.getByRole('tab', { name: t('depth.m5') }));
+    const panel = screen.getByTestId('station-depth-panel');
+    const first5 = sderot.history5!.split('\n\n')[0]!;
+    expect(within(panel).getByText(first5)).toBeInTheDocument();
+    expect(within(panel).queryByText(t('depth.full.hint'))).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('tab', { name: t('depth.full') }));
+    expect(screen.getByRole('tab', { name: t('depth.full') })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    const fullPanel = screen.getByTestId('station-depth-panel');
+    expect(within(fullPanel).getByText(t('depth.full.hint'))).toBeInTheDocument();
+    expect(within(fullPanel).getByText('העיר שלפני')).toBeInTheDocument();
+  });
+
+  it('every station has both history levels', () => {
+    for (const s of getStations()) {
+      expect(s.history5, s.id).toBeTruthy();
+      expect(s.historyFull, s.id).toBeTruthy();
+    }
+  });
+
+  it('keeps the person depth tabs unchanged (30 sec / 2 min / 5 min)', () => {
+    renderAt('/person/aner-shapira');
+    const tabs = within(screen.getByTestId('depth-tabs')).getAllByRole('tab');
+    expect(tabs.map((tab) => tab.textContent)).toEqual([
+      t('depth.s30'),
+      t('depth.m2'),
+      t('depth.m5'),
+    ]);
   });
 });
