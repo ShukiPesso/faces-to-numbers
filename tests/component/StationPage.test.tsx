@@ -251,3 +251,19 @@ describe('StationPage reading depth (Shuki, 2026-10-16)', () => {
     ]);
   });
 });
+
+describe('StationPage — design system "מאפר לכלנית"', () => {
+  it('opens with a NightBand holding the only h1, and sets the ash theme', () => {
+    renderAt('/station/sderot');
+    const band = screen.getByTestId('night-band');
+    expect(within(band).getByRole('heading', { level: 1 })).toHaveTextContent(station('sderot').title);
+    expect(document.documentElement.dataset.theme).toBe('ash');
+    expect(screen.queryByTestId('rising-anemone')).not.toBeInTheDocument();
+  });
+
+  it('the closing station is bloom and shows the rising anemone', () => {
+    renderAt('/station/closing-drive');
+    expect(document.documentElement.dataset.theme).toBe('bloom');
+    expect(screen.getByTestId('rising-anemone')).toHaveAttribute('alt', '');
+  });
+});

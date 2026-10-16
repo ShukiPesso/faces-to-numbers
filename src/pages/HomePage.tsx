@@ -9,7 +9,7 @@ import { formatMinutes } from '@/lib/format';
 import { t } from '@/lib/i18n';
 import { stationPath } from '@/lib/links';
 import { getVisited, resetProgress } from '@/lib/storage';
-import { PageTitle } from './PageTitle';
+import { NightBand } from '@/components/layout/NightBand';
 
 /** The first station (by order) after the highest visited one; undefined when none is left. */
 function nextAfterVisited(
@@ -64,20 +64,20 @@ export function HomePage() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-content px-4 py-6 md:px-6">
-      <PageTitle>{tour.title}</PageTitle>
-      <p className="mt-2 max-w-measure text-lg text-ink">{tour.subtitle}</p>
-      <p className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-ink-muted">
-        <span className="inline-flex items-center gap-1">
-          <Route className="size-icon-sm shrink-0" aria-hidden="true" focusable="false" />
-          <bdi>{t('home.stationsCount', { n: stations.length })}</bdi>
-        </span>
-        <span aria-hidden="true">·</span>
-        <span className="inline-flex items-center gap-1">
-          <Clock className="size-icon-sm shrink-0" aria-hidden="true" focusable="false" />
-          <bdi>{t('home.totalDuration', { duration: formatMinutes(tour.totalDurationMin) })}</bdi>
-        </span>
-      </p>
+    <div className="mx-auto w-full max-w-content">
+      <NightBand title={tour.title} subtitle={tour.subtitle} centered>
+        <p className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2">
+          <span className="inline-flex items-center gap-1">
+            <Route className="size-icon-sm shrink-0" aria-hidden="true" focusable="false" />
+            <bdi>{t('home.stationsCount', { n: stations.length })}</bdi>
+          </span>
+          <span aria-hidden="true">·</span>
+          <span className="inline-flex items-center gap-1">
+            <Clock className="size-icon-sm shrink-0" aria-hidden="true" focusable="false" />
+            <bdi>{t('home.totalDuration', { duration: formatMinutes(tour.totalDurationMin) })}</bdi>
+          </span>
+        </p>
+      </NightBand>
 
       <div className="mt-6">
         <Markdown>{tour.intro}</Markdown>

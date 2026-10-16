@@ -1,18 +1,77 @@
-/* Design tokens (D-02). Mirrors design/tokens.json. Light theme only. */
-:root {
-  --color-bg: #FAF8F4;
+/* Design tokens. Mirrors design/tokens.css. Two themes (design system "מאפר לכלנית", 2026-10-16):
+   bloom (default, :root) and ash ([data-theme='ash']). Same names in both; see design/02-tokens.md. */
+:root,
+[data-theme='bloom'] {
+  --color-bg: #FBF6EC;
   --color-surface: #FFFFFF;
-  --color-border: #E7E2D8;
+  --color-sunken: #F3E9D3;
+  --color-border: #E7DCC6;
+  --color-line-strong: #6E6557;
   --color-ink: #1B1B1F;
-  --color-ink-muted: #595959;
+  --color-ink-muted: #5A5246;
   --color-primary: #1F3864;
   --color-primary-ink: #FFFFFF;
   --color-accent: #9E1B1B;
   --color-accent-soft: #F7E6E3;
-  --color-gold: #7F6000;
+  --color-gold: #7A5C00;
   --color-gold-soft: #F6EDD3;
-  --color-warning-bg: #FBEFEA;
+  --color-olive: #3F6129;
+  --color-olive-soft: #E6EEDC;
+  --color-warning-bg: #F7E6E3;
+  --color-night: #22402B;
+  --color-on-night: #FBF6EC;
+  --color-on-night-muted: #C9D3C4;
+  --color-accent-on-night: #F59A9A;
   --color-focus: #1A5FB4;
+  --color-focus-on-night: #8CC2FF;
+}
+
+[data-theme='ash'] {
+  --color-bg: #F2F1EF;
+  --color-surface: #FFFFFF;
+  --color-sunken: #E4E2DF;
+  --color-border: #D6D4D0;
+  --color-line-strong: #6E6E6E;
+  --color-ink: #141414;
+  --color-ink-muted: #535353;
+  --color-primary: #141414;
+  --color-primary-ink: #FFFFFF;
+  --color-accent: #B0141F;
+  --color-accent-soft: #EFE3E3;
+  --color-gold: #4D4D4D;
+  --color-gold-soft: #E4E2DF;
+  --color-olive: #3D3D3D;
+  --color-olive-soft: #E4E2DF;
+  --color-warning-bg: #EFE3E3;
+  --color-night: #141414;
+  --color-on-night: #F2F1EF;
+  --color-on-night-muted: #B5B3AF;
+  --color-accent-on-night: #F0545B;
+  --color-focus: #1A5FB4;
+  --color-focus-on-night: #8CC2FF;
+}
+
+/* Inside a night band (NightBand, SilenceMoment) the light/dark roles swap, so ordinary components
+   (text, buttons, focus ring) read on the dark ground without their own night variants. */
+[data-night] {
+  --color-ink: var(--color-on-night);
+  --color-ink-muted: var(--color-on-night-muted);
+  --color-primary: var(--color-on-night);
+  --color-primary-ink: var(--color-night);
+  --color-surface: var(--color-night);
+  --color-bg: var(--color-night);
+  --color-border: var(--color-on-night-muted);
+  --color-focus: var(--color-focus-on-night);
+  --focus-ring: var(--focus-ring-width) solid var(--color-focus-on-night);
+}
+
+:root {
+  --color-map-sea: #DCE7F0;
+  --color-map-sea-ink: #3E5C76;
+  --color-map-gaza: #ECE6DC;
+  --color-map-border: #9E1B1B;
+  --color-map-road: #A39E95;
+  --color-map-road-minor: #CFCAC0;
   --font-body: 'Assistant', 'Heebo', 'Arial Hebrew', Arial, 'Noto Sans Hebrew', system-ui, sans-serif;
   --font-display: 'Frank Ruhl Libre', 'David Libre', 'Times New Roman', 'Noto Serif Hebrew', Georgia, serif;
   --font-weight-regular: 400;

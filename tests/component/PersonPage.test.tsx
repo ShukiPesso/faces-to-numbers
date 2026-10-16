@@ -127,9 +127,11 @@ describe('PersonPage — header', () => {
           expect(el.getAttribute('srcset') ?? '').not.toContain(ref);
         }
       }
-      // The only image is the decorative end-of-story anemone at m5 (D-09 #9, F-22).
+      // The only images are decorative anemones: the night mark in the NightBand header (design
+      // system "מאפר לכלנית", 2026-10-16) and the end-of-story mark at m5 (D-09 #9, F-22).
       const imgs = Array.from(container.querySelectorAll('img'));
       expect(imgs.map((img) => [img.getAttribute('src'), img.getAttribute('alt')])).toEqual([
+        ['./icons/mark-night.svg', ''],
         ['./icons/mark.svg', ''],
       ]);
       unmount();
