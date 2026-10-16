@@ -176,12 +176,12 @@ describe('StationPage', () => {
     expect(button).toHaveAttribute('aria-pressed', 'false');
   });
 
-  it('shows no navigation links for unverified locations', () => {
+  it('shows Waze, Google Maps and Apple Maps links once a location is verified (Shuki, 2026-10-16)', () => {
     renderAt('/station/observers-hill');
-    expect(screen.getByTestId('location-unverified')).toBeInTheDocument();
-    expect(screen.queryByTestId('nav-waze')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('nav-google')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('nav-apple')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('location-unverified')).not.toBeInTheDocument();
+    expect(screen.getByTestId('nav-waze')).toBeInTheDocument();
+    expect(screen.getByTestId('nav-google')).toBeInTheDocument();
+    expect(screen.getByTestId('nav-apple')).toBeInTheDocument();
   });
 
   it('renders every talking point and every source of the station', () => {
