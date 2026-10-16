@@ -44,6 +44,7 @@ export const he = {
   'station.access': 'גישה ושעות',
   'station.lastVerified': 'המידע נבדק לאחרונה ב-{date}',
   'station.navigate': 'ניווט לתחנה',
+  'station.actions': 'שיתוף וניווט לתחנה',
   'station.navigateWaze': 'ניווט ב-Waze',
   'station.navigateGoogle': 'ניווט ב-Google Maps',
   'station.locationUnverified': 'המיקום המדויק של התחנה עדיין בבדיקה. אפשר להיעזר בתיאור.',

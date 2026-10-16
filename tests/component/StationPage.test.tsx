@@ -267,3 +267,26 @@ describe('StationPage — design system "מאפר לכלנית"', () => {
     expect(screen.getByTestId('rising-anemone')).toHaveAttribute('alt', '');
   });
 });
+
+describe('StationPage — action row (Shuki, 2026-10-16)', () => {
+  it('puts share and the three navigation links in one row, before the reading', () => {
+    renderAt('/station/nova');
+    const row = screen.getByTestId('station-actions');
+    for (const id of ['share-button', 'nav-waze', 'nav-google', 'nav-apple']) {
+      expect(within(row).getByTestId(id)).toBeInTheDocument();
+    }
+    expect(within(row).getByTestId('nav-waze')).toHaveAccessibleName(
+      `${t('station.navigateWaze')} (${t('common.externalLink')})`,
+    );
+    const heading = screen.getByRole('heading', { name: t('station.background') });
+    expect(row.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('a drive segment without a location shows only share in the row', () => {
+    renderAt('/station/route-232');
+    const row = screen.getByTestId('station-actions');
+    expect(within(row).getByTestId('share-button')).toBeInTheDocument();
+    expect(within(row).queryByTestId('nav-waze')).not.toBeInTheDocument();
+    expect(screen.getByTestId('location-unverified')).toBeInTheDocument();
+  });
+});
