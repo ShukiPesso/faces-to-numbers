@@ -9,6 +9,8 @@ import {
   ShareButton,
   SourceList,
 } from '@/components/primitives';
+import { DepthTabs } from '@/components/reading/DepthTabs';
+import { STATION_DEPTH_TABS } from '@/components/reading/depth-tabs';
 import { SilenceMoment } from '@/components/reading/SilenceMoment';
 import { DriveBanner } from '@/components/tour/DriveBanner';
 import { NavLinks } from '@/components/tour/NavLinks';
@@ -20,7 +22,7 @@ import {
   getStationBySlug,
   getTour,
 } from '@/content';
-import type { Station } from '@/content/schema';
+import type { Station, StationDepth } from '@/content/schema';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { t, type StringKey, type StringParams } from '@/lib/i18n';
 import { getVisited, markVisited, unmarkVisited } from '@/lib/storage';
@@ -28,6 +30,13 @@ import { stationPath } from '@/lib/links';
 import { NotFoundPage } from './NotFoundPage';
 
 const MARK = '\u0000';
+
+/** Text for one station reading depth; falls back to `background` when a level is missing. */
+function stationText(station: Station, depth: StationDepth): string {
+  if (depth === 'm5') return station.history5 ?? station.background;
+  if (depth === 'full') return station.historyFull ?? station.history5 ?? station.background;
+  return station.background;
+}
 
 /**
  * Renders `t(key, params)` with every parameter value isolated in `<bdi>` (Conventions §4):
@@ -57,6 +66,7 @@ export function StationPage() {
   const station: Station | undefined = getStationBySlug(slug);
   useDocumentTitle(station ? station.title : t('notFound.title'));
   const [visitedIds, setVisitedIds] = useState<string[]>(() => getVisited());
+  const [depth, setDepth] = useState<StationDepth>('m2');
 
   if (!station) return <NotFoundPage />;
 
@@ -66,6 +76,7 @@ export function StationPage() {
   const prev = getPrevStation(station.id);
   const next = getNextStation(station.id);
   const visited = visitedIds.includes(station.id);
+  const hasHistory = Boolean(station.history5 ?? station.historyFull);
 
   const toggleVisited = (): void => {
     if (visited) unmarkVisited(station.id);
@@ -99,7 +110,31 @@ export function StationPage() {
         <SectionHeading level={2} id="station-background">
           {t('station.background')}
         </SectionHeading>
-        <Markdown>{station.background}</Markdown>
+        {hasHistory ? (
+          <>
+            <DepthTabs<StationDepth>
+              value={depth}
+              onChange={setDepth}
+              tabs={STATION_DEPTH_TABS}
+            />
+            <div
+              role="tabpanel"
+              id="depth-panel"
+              aria-labelledby={`depth-tab-${depth}`}
+              tabIndex={0}
+              data-testid="station-depth-panel"
+            >
+              {depth === 'full' ? (
+                <p className="mb-4 max-w-measure font-body text-sm text-ink-muted">
+                  {t('depth.full.hint')}
+                </p>
+              ) : null}
+              <Markdown key={depth}>{stationText(station, depth)}</Markdown>
+            </div>
+          </>
+        ) : (
+          <Markdown>{station.background}</Markdown>
+        )}
       </section>
 
       <section aria-labelledby="station-talking-points">

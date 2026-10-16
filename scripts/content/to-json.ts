@@ -32,7 +32,14 @@ const PERSON_SECTIONS = new Set([
   'guideNote',
   'sources',
 ]);
-const STATION_SECTIONS = new Set(['background', 'talkingPoints', 'accessNotes', 'sources']);
+const STATION_SECTIONS = new Set([
+  'background',
+  'history5',
+  'historyFull',
+  'talkingPoints',
+  'accessNotes',
+  'sources',
+]);
 const TOUR_SECTIONS = new Set([
   'intro',
   'message',
@@ -215,6 +222,8 @@ export function stationFromMd(relPath: string, text: string): Json {
     location: buildLocation(data.location),
     radiusM: data.radiusM,
     background: sections.background,
+    history5: sections.history5,
+    historyFull: sections.historyFull,
     talkingPoints: talkingPoints === undefined ? undefined : parseBullets(talkingPoints, file),
     personIds: data.personIds,
     companionPersonIds: data.companionPersonIds,

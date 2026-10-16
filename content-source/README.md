@@ -37,7 +37,7 @@ Rules:
 2. A section body is every line until the next `## ` line or end of file, with leading/trailing blank lines trimmed. Paragraph breaks (one blank line) are kept as `\n\n`.
 3. Anything before the first `## ` (the `# ` title) is ignored.
 4. Unknown `fieldKey` or a duplicate `fieldKey` → the converter fails.
-5. **Text sections** (body kept verbatim as Markdown): `opening`, `gentleOpening`, `oct7`, `personality`, `past`, `after`, `guideNote`, `background`, `accessNotes`, `intro`, `message`, `closing`, `about`, `rights`.
+5. **Text sections** (body kept verbatim as Markdown): `opening`, `gentleOpening`, `oct7`, `personality`, `past`, `after`, `guideNote`, `background`, `history5`, `historyFull`, `accessNotes`, `intro`, `message`, `closing`, `about`, `rights`.
 6. **Bullet sections**: every line starting with `- ` is one item; the text after `- ` is kept verbatim. Lines that don't start with `- ` are not allowed. Used by: `talkingPoints`, `safety`, `howTo`.
 7. **`guideLevels`**: exactly three bullets in this order, each `- **<label>:** <text>`. Item 1 → `s30`, 2 → `m2`, 3 → `m5`. The value is the text after `:** `.
 8. **`quote` / `altQuote`**: exactly two lines: `> „<text>”` then `> — <by>`. Value `{ text, by }` without the „ ” marks and without "— ".
