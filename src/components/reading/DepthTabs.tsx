@@ -60,7 +60,7 @@ export function DepthTabs<K extends string = Depth>({
               onClick={() => select(index)}
               onKeyDown={(event) => onKeyDown(event, index)}
               className={[
-                'relative min-h-[var(--tap-min)] px-3 text-center font-body text-base leading-sm',
+                'relative min-h-[var(--tap-min)] whitespace-nowrap px-1 text-center font-body text-base leading-sm',
                 '[[data-read-aloud=true]_&]:min-h-[var(--space-9)]',
                 index > 0 ? 'border-s-hairline border-primary' : 'rounded-s-md',
                 index === TABS.length - 1 ? 'rounded-e-md' : '',

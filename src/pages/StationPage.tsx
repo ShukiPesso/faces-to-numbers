@@ -14,7 +14,7 @@ import { STATION_DEPTH_TABS } from '@/components/reading/depth-tabs';
 import { SilenceMoment } from '@/components/reading/SilenceMoment';
 import { NightBand } from '@/components/layout/NightBand';
 import { DriveBanner } from '@/components/tour/DriveBanner';
-import { NavLinks } from '@/components/tour/NavLinks';
+import { NavLinks, NavTiles } from '@/components/tour/NavLinks';
 import { PersonCard } from '@/components/tour/PersonCard';
 import {
   getNextStation,
@@ -110,8 +110,14 @@ export function StationPage() {
           className="mx-auto mb-5 block size-[7.5rem]"
         />
       ) : null}
-      <div className="mt-5">
-        <ShareButton key={station.id} />
+      <div
+        role="group"
+        aria-label={t('station.actions')}
+        data-testid="station-actions"
+        className="mt-5 grid grid-cols-4 gap-2"
+      >
+        <ShareButton key={station.id} compact />
+        <NavTiles location={station.location} />
       </div>
 
       {station.driverWarning ? (
@@ -208,9 +214,11 @@ export function StationPage() {
             {withBdi('station.lastVerified', { date: station.lastVerified })}
           </p>
         ) : null}
-        <div className="mt-4">
-          <NavLinks location={station.location} />
-        </div>
+        {station.location?.verified ? null : (
+          <div className="mt-4">
+            <NavLinks location={station.location} />
+          </div>
+        )}
       </section>
 
       <div className="mt-7">
