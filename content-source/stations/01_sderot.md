@@ -7,7 +7,7 @@ subtitle: תחנת הרכבת · הקרב על תחנת המשטרה
 kind: stop
 durationMin: 15
 radiusM: 600
-location: { lat: 31.515833, lng: 34.587222, verified: false, note: "מועמד: תחנת הרכבת שדרות לפי ויקיפדיה, מעוגל לשנייה (כ-30 מ׳) – לא אומת; מקום החניה לא ידוע" }
+location: { lat: 31.515833, lng: 34.587222, verified: true, verifiedBy: "שוקי", verifiedAt: "2026-10-16", note: "אושר על ידי שוקי (2026-10-16); לבדיקה בשטח מהאפליקציה" }
 personIds: [eliyahu-harosh]
 companionPersonIds: []
 sensitivity: standard

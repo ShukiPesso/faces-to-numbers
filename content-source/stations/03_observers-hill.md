@@ -7,7 +7,7 @@ subtitle: תצפית מול עזה · ליד נחל עוז
 kind: stop
 durationMin: 15
 radiusM: 400
-location: { lat: 31.462451, lng: 34.524394, verified: false, note: "נקודה מועמדת מאתר עמוד ענן – לא אומתה" }
+location: { lat: 31.462451, lng: 34.524394, verified: true, verifiedBy: "שוקי", verifiedAt: "2026-10-16", note: "אושר על ידי שוקי (2026-10-16); לבדיקה בשטח מהאפליקציה" }
 personIds: [roni-eshel]
 companionPersonIds: []
 sensitivity: standard

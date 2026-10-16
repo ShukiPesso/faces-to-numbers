@@ -7,7 +7,7 @@ subtitle: חניון רעים · אתר ההנצחה
 kind: stop
 durationMin: 30
 radiusM: 500
-location: { lat: 31.40104, lng: 34.472548, verified: false, note: "מועמד: מקישור Waze באתר טיולי – לא אומת" }
+location: { lat: 31.40104, lng: 34.472548, verified: true, verifiedBy: "שוקי", verifiedAt: "2026-10-16", note: "אושר על ידי שוקי (2026-10-16); לבדיקה בשטח מהאפליקציה" }
 personIds: [awad-darawshe]
 companionPersonIds: []
 sensitivity: standard

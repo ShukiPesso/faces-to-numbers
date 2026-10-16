@@ -7,7 +7,7 @@ subtitle: תקומה · אתר זיכרון זמני
 kind: stop
 durationMin: 20
 radiusM: 400
-location: { lat: 31.448485, lng: 34.569637, verified: false, note: "מועמד: עמוד ענן – לא אומת" }
+location: { lat: 31.448485, lng: 34.569637, verified: true, verifiedBy: "שוקי", verifiedAt: "2026-10-16", note: "אושר על ידי שוקי (2026-10-16); לבדיקה בשטח מהאפליקציה" }
 personIds: [aviel-rahamim]
 companionPersonIds: []
 sensitivity: standard

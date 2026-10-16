@@ -93,9 +93,9 @@ describe('RouteMap', () => {
     );
   });
 
-  it('CT-MAP-03 says the positions are approximate while any point is unverified, and credits OSM', () => {
+  it('CT-MAP-03 drops the "approximate" note once every point is verified, and credits OSM', () => {
     renderMap();
-    expect(screen.getByTestId('map-unverified-note')).toHaveTextContent(t('map.unverifiedNote'));
+    expect(screen.queryByTestId('map-unverified-note')).not.toBeInTheDocument();
     const credit = screen.getByRole('link', { name: '© OpenStreetMap contributors' });
     expect(credit).toHaveAttribute('href', 'https://www.openstreetmap.org/copyright');
   });

@@ -7,7 +7,7 @@ subtitle: נסיעת סיום מצומת סעד אל עיר שגדלה
 kind: drive
 durationMin: 25
 radiusM: 1000
-location: { lat: 31.42982, lng: 34.59969, verified: false, note: "צומת נתיבות (כביש 25 / כביש 34), לפי חיתוך הכבישים בנתוני OpenStreetMap של המפה – לא אומת בשטח" }
+location: { lat: 31.42982, lng: 34.59969, verified: true, verifiedBy: "שוקי", verifiedAt: "2026-10-16", note: "אושר על ידי שוקי (2026-10-16); לבדיקה בשטח מהאפליקציה" }
 personIds: []
 companionPersonIds: []
 sensitivity: standard
