@@ -1,4 +1,4 @@
-import { useEffect, useRef, type MouseEvent } from 'react';
+import { useEffect, useLayoutEffect, useRef, type MouseEvent } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { BottomNav } from '@/components/layout/BottomNav';
 import { Footer } from '@/components/layout/Footer';
@@ -7,6 +7,7 @@ import { OfflineIndicator } from '@/components/layout/OfflineIndicator';
 import { SideNav } from '@/components/layout/SideNav';
 import { UpdatePrompt } from '@/components/layout/UpdatePrompt';
 import { t } from '@/lib/i18n';
+import { themeForPath } from '@/lib/theme';
 import { useReservedBottomSpace } from './useReservedBottomSpace';
 
 /**
@@ -22,6 +23,11 @@ export function AppLayout() {
   const previousRouteKey = useRef(routeKey);
 
   useReservedBottomSpace(bottomNavRef, routeKey);
+
+  // Ash for pages about what happened, bloom for everything else (src/lib/theme.ts).
+  useLayoutEffect(() => {
+    document.documentElement.dataset.theme = themeForPath(location.pathname);
+  }, [location.pathname]);
 
   // On route change (not on first load): scroll to top and move focus to <main>, unless the new
   // page already moved focus into its own content (e.g. /tour?locate=1 focuses its button).

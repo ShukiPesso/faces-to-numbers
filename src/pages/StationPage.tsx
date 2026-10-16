@@ -12,6 +12,7 @@ import {
 import { DepthTabs } from '@/components/reading/DepthTabs';
 import { STATION_DEPTH_TABS } from '@/components/reading/depth-tabs';
 import { SilenceMoment } from '@/components/reading/SilenceMoment';
+import { NightBand } from '@/components/layout/NightBand';
 import { DriveBanner } from '@/components/tour/DriveBanner';
 import { NavLinks } from '@/components/tour/NavLinks';
 import { PersonCard } from '@/components/tour/PersonCard';
@@ -27,6 +28,7 @@ import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { t, type StringKey, type StringParams } from '@/lib/i18n';
 import { getVisited, markVisited, unmarkVisited } from '@/lib/storage';
 import { stationPath } from '@/lib/links';
+import { CLOSING_STATION_SLUG } from '@/lib/theme';
 import { NotFoundPage } from './NotFoundPage';
 
 const MARK = '\u0000';
@@ -86,16 +88,28 @@ export function StationPage() {
 
   return (
     <>
-      <p className="mb-1 font-body text-sm font-semibold text-ink-muted">
-        {withBdi('tour.stationOf', { n: station.order, total })}
-      </p>
-      <h1 className="font-display text-3xl font-display-bold text-primary">{station.title}</h1>
-      <p className="mt-2 max-w-measure font-body text-base text-ink-muted">{station.subtitle}</p>
-      <p className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 font-body text-sm text-ink-muted">
-        <DurationBadge minutes={station.durationMin} />
-        <span aria-hidden="true">·</span>
-        <span>{t(station.kind === 'drive' ? 'tour.kind.drive' : 'tour.kind.stop')}</span>
-      </p>
+      <NightBand
+        eyebrow={withBdi('tour.stationOf', { n: station.order, total })}
+        title={station.title}
+        subtitle={station.subtitle}
+      >
+        <p className="flex flex-wrap items-center gap-x-3 gap-y-2">
+          <DurationBadge minutes={station.durationMin} />
+          <span aria-hidden="true">·</span>
+          <span>{t(station.kind === 'drive' ? 'tour.kind.drive' : 'tour.kind.stop')}</span>
+        </p>
+      </NightBand>
+      {station.slug === CLOSING_STATION_SLUG ? (
+        <img
+          src="./icons/mark-rising.svg"
+          alt=""
+          aria-hidden="true"
+          width={120}
+          height={120}
+          data-testid="rising-anemone"
+          className="mx-auto mb-5 block size-[7.5rem]"
+        />
+      ) : null}
       <div className="mt-5">
         <ShareButton key={station.id} />
       </div>

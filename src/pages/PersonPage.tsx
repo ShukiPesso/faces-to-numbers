@@ -12,6 +12,7 @@ import {
 } from '@/components/primitives';
 import { ContentWarningGate } from '@/components/reading/ContentWarningGate';
 import { DepthTabs } from '@/components/reading/DepthTabs';
+import { NightBand } from '@/components/layout/NightBand';
 import { getPersonById, getStations } from '@/content';
 import type { Depth, Person } from '@/content/schema';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
@@ -87,7 +88,11 @@ function DepthContent({ person, depth }: DepthContentProps) {
         </ContentWarningGate>
       </StorySection>
       {full ? (
-        <>
+        <div
+          data-theme="bloom"
+          data-testid="awakening"
+          className="mt-9 max-w-measure rounded-e-lg border-s-accent-line border-olive bg-olive-soft px-5 pb-6 md:px-6"
+        >
           <StorySection
             id="person-personality"
             title={t(person.pronoun === 'she' ? 'person.personality.she' : 'person.personality.he')}
@@ -102,7 +107,7 @@ function DepthContent({ person, depth }: DepthContentProps) {
               <Markdown>{person.after}</Markdown>
             </StorySection>
           ) : null}
-        </>
+        </div>
       ) : null}
       {graphic ? null : quotes}
       {full && person.guideNote ? (
@@ -148,16 +153,20 @@ export function PersonPage() {
 
   return (
     <article>
-      {station ? (
-        <Link
-          to={stationPath(station.slug)}
-          className="mb-3 inline-flex min-h-[var(--tap-min)] items-center font-body text-base font-semibold text-primary hover:underline"
-        >
-          {t('person.backToStation', { title: station.title })}
-        </Link>
-      ) : null}
-      <h1 className="font-display text-3xl font-display-bold text-ink">{fullName}</h1>
-      <p className="mt-2 max-w-measure font-body text-base text-ink-muted">{person.subtitle}</p>
+      <NightBand
+        eyebrow={
+          station ? (
+            <Link
+              to={stationPath(station.slug)}
+              className="inline-flex min-h-[var(--tap-min)] items-center font-body text-base font-semibold text-on-night underline"
+            >
+              {t('person.backToStation', { title: station.title })}
+            </Link>
+          ) : undefined
+        }
+        title={fullName}
+        subtitle={person.subtitle}
+      />
       <PhotoFrame photo={person.photo} name={person.name} />
       <ShareButton />
       <DepthTabs value={depth} onChange={setDepth} />

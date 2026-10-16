@@ -46,9 +46,10 @@ export function SilenceMoment({ seconds, prompt }: SilenceMomentProps) {
       tabIndex={-1}
       aria-labelledby={titleId}
       data-testid={state === 'running' ? 'silence-timer' : undefined}
-      className="my-10 flex min-h-[20rem] flex-col items-center justify-center rounded-lg border-hairline border-border bg-bg px-5 py-9 text-center outline-none md:px-7"
+      data-night=""
+      className="my-10 flex min-h-[20rem] flex-col items-center justify-center rounded-lg bg-night px-5 py-9 text-center text-ink outline-none md:px-7"
     >
-      <h2 id={titleId} className="font-display font-display-bold text-xl text-primary">
+      <h2 id={titleId} className="font-display font-display-bold text-xl text-ink">
         {t('silence.title')}
       </h2>
       {state === 'ended' ? (

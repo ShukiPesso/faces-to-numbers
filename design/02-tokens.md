@@ -1,7 +1,7 @@
 # 02 — Design tokens
 
 Source of truth: `design/tokens.json` (flat map of CSS variable name to value) and `design/tokens.css`
-(same names and values). Light theme only. Starting palette from `docs/05_DESIGN_BRIEF.md` §4; **no
+(same names and values). Two themes since 2026-10-16 (design system "מאפר לכלנית"): `bloom` on `:root` / `[data-theme='bloom']` and `ash` on `[data-theme='ash']`; see the section below. Starting palette from `docs/05_DESIGN_BRIEF.md` §4; **no
 palette value had to change**. Four new tokens beyond the required list were added (`--font-weight-*`,
 `--focus-ring-*`); the JSON also carries `$md-min-width`, `$md` and `$readAloud` (override sets that the CSS
 expresses as a media query and an `html[data-read-aloud='true']` block).
@@ -104,3 +104,31 @@ Rules that follow from the table:
 - `--color-border` (#E7E2D8) is 1.22:1 on bg and 1.29:1 on surface. It is a decorative card edge only and is
   not a UI-component boundary. Form inputs and any control whose edge identifies it must use `--color-ink-muted`
   (6.6:1) as border color, not `--color-border`.
+
+
+## Themes: ash and bloom (2026-10-16)
+
+`src/lib/theme.ts` sets `data-theme` on `<html>` per route: stations 1–6 and person pages → `ash`;
+everything else, including the closing station → `bloom`. A nested `data-theme="bloom"` block (a
+person's "who they were") re-declares the bloom values inside an ash page.
+
+| Token | bloom | ash | Use |
+|---|---|---|---|
+| `--color-bg` | #FBF6EC | #F2F1EF | page |
+| `--color-surface` | #FFFFFF | #FFFFFF | cards |
+| `--color-sunken` | #F3E9D3 | #E4E2DF | photo frame, quiet blocks |
+| `--color-border` | #E7DCC6 | #D6D4D0 | decorative card edge |
+| `--color-line-strong` | #6E6557 | #6E6E6E | control edges (≥4.5:1) |
+| `--color-ink` / `-muted` | #1B1B1F / #5A5246 | #141414 / #535353 | text (≥14:1 / ≥6.8:1) |
+| `--color-primary` | #1F3864 | #141414 | primary action, links |
+| `--color-accent` | #9E1B1B | #B0141F | memorial red (≥6.3:1 on bg) |
+| `--color-gold` / `-soft` | #7A5C00 / #F6EDD3 | #4D4D4D / #E4E2DF | quotes |
+| `--color-olive` / `-soft` | #3F6129 / #E6EEDC | #3D3D3D / #E4E2DF | "who they were", the rising |
+| `--color-night` | #22402B | #141414 | NightBand, SilenceMoment |
+| `--color-on-night` / `-muted` | #FBF6EC / #C9D3C4 | #F2F1EF / #B5B3AF | text on night (≥10.6:1 / ≥7.4:1) |
+| `--color-accent-on-night` | #F59A9A | #F0545B | eyebrow on night (≥5.4:1) |
+| `--color-focus-on-night` | #8CC2FF | #8CC2FF | focus ring on night (≥6.1:1) |
+
+Inside `[data-night]` the roles swap: `ink`→`on-night`, `primary`→`on-night`, `primary-ink`→`night`,
+`surface`/`bg`→`night`, focus ring→`focus-on-night`. The full system with live previews: the Design
+System artifact "פנים למספרים – מאפר לכלנית".

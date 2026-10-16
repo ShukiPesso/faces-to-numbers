@@ -86,19 +86,28 @@ weights, no thin weights for body text, no all-caps or letter-spaced Hebrew, no 
 weight). Quotes keep their Hebrew quotation marks exactly as in content and are set in the serif with a gold
 start-border. Read-aloud mode enlarges text and line-height and removes chrome; it never changes wording.
 
-## Color attitude
+## Color attitude — "מאפר לכלנית" (Shuki, 2026-10-16)
 
-Paper and ink do almost all the work; navy marks headings and the primary action; gold frames quotes and
-personal-story blocks (borders and labels only).
+The site has two themes with the same token names (`src/styles/tokens.css`, `src/lib/theme.ts`):
+- **ash** — stations 1–6 and person pages: cold paper, ink-black text and actions, near-black night
+  bands. The only color is memorial red (the anemone). What happened is shown drained of color.
+- **bloom** — home, tour, about, sources and the closing station (נתיבות – איך קמנו): warm wheat paper,
+  navy actions, deep-olive night bands, gold for quotes and olive for the people who helped and for the
+  rising. Inside an ash page, a person's "who they were" sections render as a bloom block
+  (`data-theme="bloom"`, olive start-line): color returns where people return.
+
+**Night bands** (NightBand, SilenceMoment) are the only dark surfaces: a page header with the night
+anemone, eyebrow, title and subtitle, and the silence moment. Inside them `[data-night]` swaps the
+light/dark roles so text, buttons and the focus ring stay legible. Long reading is always on a light
+surface (P7).
 
 **Memorial red is allowed only for:**
-1. the anemone mark;
+1. the anemone marks;
 2. the label and start-border of the driver warning (`DriveBanner`) and of the `ContentWarningGate`;
-3. small section labels (eyebrow text above a section heading).
+3. small section labels (eyebrow text), including the station number on a night band.
 
-Always as text or thin lines (≤ 4 px), never as a fill larger than the mark, never for buttons, links, names,
-numbers or error states, and never as the only carrier of meaning. No dark theme in MVP; no black backgrounds
-for "serious" screens.
+Always as text or thin lines (≤ 4 px), never as a fill larger than the mark, never for buttons, links,
+names, numbers or error states, and never as the only carrier of meaning.
 
 ## Motion rules
 
@@ -115,9 +124,10 @@ for "serious" screens.
 - Never press photos, never `photo.referenceUrl` as a source (Conventions §1.3).
 - No illustrations of the events: no weapons, fire, smoke, blood, vehicles, fences, captivity or map
   "explosions" (Conventions §1.6). The route map is schematic: line, dots, labels.
-- The anemone mark: one small abstract mark, single color, in the logo/header, the app icon, and at most as a
-  small divider at the end of a person's story. Never repeated as a pattern, never as a background, never next
-  to numbers, never animated.
+- The anemone marks (`design/brand/`): the original mark (header, app icon, end of a person's story), the
+  night anemone (only on night bands), the ash and awakening anemones, and the rising anemone (closing
+  station) — a phoenix built from petals and ash, **never with flames**. One mark per screen area; never a
+  pattern or background, never next to numbers, never animated.
 
 ## Words
 
@@ -131,7 +141,8 @@ design (§1.1).
 - [ ] 2. Anything resembles a reward: score, badge, streak, "completed" celebration, confetti, congratulatory
   text, or a celebratory sound/animation.
 - [ ] 3. Memorial red is used outside the three allowed uses, or as a large fill / alarm-style banner.
-- [ ] 4. Dark dramatic theme, "breaking news" styling, or red-alert aesthetics.
+- [ ] 4. A dark surface other than a NightBand or the silence moment, body paragraphs on a dark ground,
+  "breaking news" styling, or red-alert aesthetics.
 - [ ] 5. Any photo of a person that is not cleared, any press photo, or any image/illustration of violence,
   weapons, fire or captivity.
 - [ ] 6. A drive segment without the driver warning, or with anything that changes or asks for attention by

@@ -22,3 +22,12 @@ Paper background `#FAF8F4`, navy `#1F3864` and muted `#595959` for text in the s
 - Do not recolor, outline, add text inside, or combine with flags or other symbols. Keep clear space of at least half the mark's width.
 - Minimum size 16 px (favicon). Provide an accessible name where it is not decorative (`<title>כלנית</title>`).
 - The text in `og-image-1200x630.png` is "פנים למספרים" (Frank Ruhl Libre 700) and `app.tagline` exactly as in `contracts/strings.he.ts` (Assistant 400). If either string changes, regenerate the image.
+
+## Marks added for "מאפר לכלנית" (2026-10-16)
+
+| File | Use |
+|---|---|
+| `mark-night.svg` | The same anemone in #F0545B, the only mark on night bands (`public/icons/mark-night.svg`). |
+| `mark-ash.svg` | The anemone in grey #6E6E6E: empty photo frame, start of the route. |
+| `mark-awakening.svg` | Three red petals, three grey: the turn from ash to bloom. |
+| `mark-rising.svg` | The rising anemone — petals spread as wings out of grey ash; a phoenix without flames. Closing station only; light grounds only. |
