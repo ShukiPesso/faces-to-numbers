@@ -113,3 +113,4 @@ The Roni Eshel and station 04 edits are mirrored in the frozen oracle `contracts
 | Station 06 Tkuma (`background`) | ״יותר מ-1,600״ → ״כ-1,600״ | en.wikipedia The Car Wall; ESRA | 2026-10-16 | approved by Shuki |
 | Stations 01–07 | New sections `history5` (5-minute read-aloud) and `historyFull` (full reading); history sources appended to `sources` | see each file | 2026-10-16 | approved by Shuki |
 | Station 07 | Rewritten: title ״נתיבות – איך קמנו״, new `subtitle`, `background`, `talkingPoints`, `accessNotes`, `sources` | nadlancenter 14864, 14406, 8179; maariv 1316114; en.wikipedia Netivot | 2026-10-16 | approved by Shuki |
+| Station 07 (`location`, `history5`, `accessNotes`) | location moved from Sa'ad to צומת נתיבות (31.42982, 34.59969, verified: false); recommended places: מתחם פריז, מרכז צים, השוק הישן | Shuki (local resident); OSM road junction 25/34 | 2026-10-16 | approved by Shuki |
